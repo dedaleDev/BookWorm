@@ -6,4 +6,4 @@ class db():
         self.user = user
         self.passwd = passwd
         #-----initialisation de la base de donnée-----
-        self.db = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db)
+        self.db = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=db)
