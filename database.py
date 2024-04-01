@@ -9,15 +9,6 @@ class db():
         #-----initialisation de la base de donnée-----
         try :
             self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, db="BookWorm")
-            self.cursor = self.db.cursor()
-            #test si les tables existent
-            self.cursor.execute("SHOW TABLES")
-            if self.cursor.fetchall() == () :
-                print("Base de donnée vide, tentative de création des tables...")
-                if self.create_db() == 0:
-                    print("Tables créées avec succès !")
-                else :
-                    exit(1)
         except : 
             print("Base inexistante, tentative de création de la base de donnée...")
             try :
@@ -28,11 +19,25 @@ class db():
             except :
                 print("Création de la base de donnée échouée ! Veillez verifier vos paramètres de connexion.")
                 exit(1)
+        self.cursor = self.db.cursor()
+        #test si les tables existent
+        self.cursor.execute("SHOW TABLES")
+        list_tablesLoad = self.cursor.fetchall()
+        self.list_tables = ["Auteur","Editeur","Emprunt","Livre","Point de vente", "Utilisateur"]
+        if list_tablesLoad == () :
+            print("Base de donnée vide, tentative de création des tables...")
+            if self.create_db() == 0:
+                print("Tables créées avec succès !")
+            else :
+                exit(1)
+        if list_tablesLoad != self.list_tables:
+            print("Erreur : Base de donnée corrompue ! Les tables ne correspondent pas avec le modèle UML attendu, veuillez vérifier vos tables.")
+            exit(1)
+
 
     def create_db(self) -> int:
         """This function creates the database and the tables if they don't exist. Returns 0 if the operation is successful, 1 otherwise."""
         try : 
-            print("Tentative de création de la base de donnée...")
             print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")#creation de la base de donnée
             if os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")==0 :
                 print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} BookWorm < BookWorm.sql")#importation des tables
