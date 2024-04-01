@@ -22,17 +22,33 @@ class db():
         self.cursor = self.db.cursor()
         #test si les tables existent
         self.cursor.execute("SHOW TABLES")
-        list_tablesLoad = self.cursor.fetchall()
+        tablesLoad = []
+        for table in self.cursor.fetchall():
+            tablesLoad.append(table[0])
         self.list_tables = ["Auteur","Editeur","Emprunt","Livre","Point de vente", "Utilisateur"]
-        if list_tablesLoad == () :
+        if tablesLoad == () :
             print("Base de donnée vide, tentative de création des tables...")
             if self.create_db() == 0:
                 print("Tables créées avec succès !")
             else :
                 exit(1)
-        if list_tablesLoad != self.list_tables:
+        if tablesLoad != self.list_tables:
             print("Erreur : Base de donnée corrompue ! Les tables ne correspondent pas avec le modèle UML attendu, veuillez vérifier vos tables.")
-            exit(1)
+            print("Tables attendues : ",self.list_tables)
+            print("Tables trouvées : ",tablesLoad)
+            if input("Voulez-vous réinitialiser la base de donnée ? (Y/N) : ") == "Y":
+                try :
+                    self.cursor.execute("DROP DATABASE BookWorm")
+                    if self.create_db() == 0:
+                        print("Tables créées avec succès !")
+                    else :
+                        exit(1)
+                except :
+                    print("Erreur : Impossible de supprimer la base de donnée !")
+                    exit(1)
+            else :
+                exit(1)
+
 
 
     def create_db(self) -> int:
