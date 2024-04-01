@@ -31,7 +31,7 @@ CREATE TABLE `Auteur` (
   `ID` int(11) NOT NULL,
   `Nom` varchar(20) NOT NULL,
   `Prénom` varchar(20) NOT NULL,
-  `Biographie` varchar(300) NOT NULL,
+  `Biographie` varchar(1000) NOT NULL,
   `Date de naissance` date NOT NULL DEFAULT current_timestamp(),
   `Date de décès` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44,7 +44,7 @@ CREATE TABLE `Auteur` (
 
 CREATE TABLE `Editeur` (
   `Nom` varchar(20) NOT NULL,
-  `Adresse` varchar(40) NOT NULL
+  `Adresse` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -57,7 +57,7 @@ CREATE TABLE `Emprunt` (
   `ID` int(11) NOT NULL,
   `Livre` varchar(13) NOT NULL,
   `Date` date NOT NULL DEFAULT current_timestamp(),
-  `Utilisateur` varchar(40) NOT NULL
+  `Utilisateur` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -70,14 +70,14 @@ CREATE TABLE `Livre` (
   `ISBN` varchar(13) NOT NULL,
   `Titre` varchar(50) NOT NULL,
   `Auteur` int(11) NOT NULL,
-  `Description` varchar(300) NOT NULL,
-  `Note` int(10) NOT NULL,
+  `Description` varchar(1000) NOT NULL,
+  `Note` float(10) NOT NULL,
   `Date de parution` date NOT NULL,
   `Statut` enum('emprunté','disponible','hors stock','') NOT NULL DEFAULT 'emprunté',
   `Genre` enum('Historique','Romantique','Policier','Science-fiction','Fantastique','Aventure','Biographique','Autobiographique','Épistolaire','Thriller','Tragédie','Drame','Absurde','Philosophique','Politique','Légendes & Mythes','Lettres personnelles','Voyages','Journal intime','Bandes dessinées','Documentaires','Religieux') NOT NULL,
   `Format` enum('Poche','Grand Format','E-book & numérique','Manga','Bande Dessinée','Magazine','CD','DVD & Blu-ray') NOT NULL,
-  `Prix` int(100) NOT NULL,
-  `Point de vente` varchar(40) NOT NULL,
+  `Prix` float(100) NOT NULL,
+  `Point de vente` varchar(100) NOT NULL,
   `Editeur` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -88,9 +88,9 @@ CREATE TABLE `Livre` (
 --
 
 CREATE TABLE `Point de vente` (
-  `Adresse` varchar(40) NOT NULL,
-  `Nom` int(20) NOT NULL,
-  `Site web` varchar(40) NOT NULL,
+  `Adresse` varchar(100) NOT NULL,
+  `Nom` varchar(20) NOT NULL,
+  `Site web` varchar(50) NOT NULL,
   `Tel` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -101,12 +101,12 @@ CREATE TABLE `Point de vente` (
 --
 
 CREATE TABLE `Utilisateur` (
-  `email` varchar(40) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `mdp` varchar(200) NOT NULL,
   `Grade` enum('admin','user') NOT NULL DEFAULT 'user',
   `Nom` varchar(20) NOT NULL,
   `Prénom` varchar(20) NOT NULL,
-  `Adresse` varchar(40) NOT NULL,
+  `Adresse` varchar(100) NOT NULL,
   `Tel` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -194,3 +194,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
