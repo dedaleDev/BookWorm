@@ -76,7 +76,7 @@ CREATE TABLE `Livre` (
   `Statut` enum('emprunté','disponible','hors stock','') NOT NULL DEFAULT 'emprunté',
   `Genre` enum('Historique','Romantique','Policier','Science-fiction','Fantastique','Aventure','Biographique','Autobiographique','Épistolaire','Thriller','Tragédie','Drame','Absurde','Philosophique','Politique','Légendes & Mythes','Lettres personnelles','Voyages','Journal intime','Bandes dessinées','Documentaires','Religieux') NOT NULL,
   `Format` enum('Poche','Grand Format','E-book & numérique','Manga','Bande Dessinée','Magazine','CD','DVD & Blu-ray') NOT NULL,
-  `Prix` float(100) NOT NULL,
+  `Prix` float NOT NULL,
   `Point de vente` varchar(100) NOT NULL,
   `Editeur` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

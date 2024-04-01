@@ -10,26 +10,49 @@ class db():
         try :
             self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, db="BookWorm")
             self.cursor = self.db.cursor()
+            #test si les tables existent
+            self.cursor.execute("SHOW TABLES")
+            if self.cursor.fetchall() == () :
+                print("Base de donnée vide, tentative de création des tables...")
+                if self.create_db() == 0:
+                    print("Tables créées avec succès !")
+                else :
+                    exit(1)
         except : 
             print("Base inexistante, tentative de création de la base de donnée...")
             try :
-                self.create_db()
+                if self.create_db() == 0:
+                    print("Tables créées avec succès !")
+                else :
+                    exit(1)
             except :
                 print("Création de la base de donnée échouée ! Veillez verifier vos paramètres de connexion.")
-                exit()
+                exit(1)
 
-    def create_db(self) -> None:
+    def create_db(self) -> int:
+        """This function creates the database and the tables if they don't exist. Returns 0 if the operation is successful, 1 otherwise."""
         try : 
-            os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")#creation de la base de donnée
-            os.system(f"mysql --host={self.host} --user={self.user} --password={self.host} BookWorm < BookWorm.sql")#importation des tables
-            print("Base de donnée créée avec succès !")
-            input("Voulez-vous ajouter des données d'exemple ? (Y/N) : ")
-            if input() == "Y" :
-                self.loadData()
-                print("Données ajoutées avec succès !")
-        except : 
-            print("Impossible de créer la base de donnée !")
-            return
+            print("Tentative de création de la base de donnée...")
+            print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")#creation de la base de donnée
+            if os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")==0 :
+                print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} BookWorm < BookWorm.sql")#importation des tables
+                if os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} BookWorm < BookWorm.sql")==0 : 
+                    print("---Base de donnée créée avec succès !---")
+                    input("Voulez-vous ajouter des données d'exemple ? (Y/N) : ")
+                    if input() == "Y" :
+                        if self.loadData() == 0:
+                            print("Données ajoutées avec succès !")
+                            return 0
+                        else :
+                            print("Erreur : Impossible d'ajouter le jeu de donnée.")
+                    return 0
+                else :
+                    print("Erreur : Impossible de créer les tables.")
+            else :
+                    print("Erreur : Impossible de créer la base de donnée.")
+        except Exception as e: 
+            print("Erreur : Impossible de créer la base de donnée ! Une erreur est survenue : ",e)
+        return 1
         
     def loadData(self) -> None:
         self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, db="BookWorm")
