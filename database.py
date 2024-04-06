@@ -1,7 +1,17 @@
 import pymysql
-import os
+import os, csv
 
 class db():
+
+    _requetes = {
+    "insertLivre" : "insert into Livre (ISBN, Titre, Auteur, Description, Note, Date de parution, Statut, Genre, Format, Prix, Point de vente, Editeur) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');",
+    "insertAuteur" : "insert into Auteur (Nom, Prénom, Biographie, Date de naissance, Date de décès, Alias) values ('{}','{}','{}','{}','{}','{}');",
+    "insertEditeur" : "insert into Editeur (Nom, Adresse) values ('{}','{}');",
+    "insertEmprunt" : "insert into Emprunt (Livre, Date, Utilisateur) values ('{}','{}','{}');",
+    "insertPointDeVente" : "insert into Point de vente (Adresse, Nome, Site web, Tel) values ('{}','{}','{}','{}');",
+    "insertUtilisateur" : "insert into Utilisateur (email, mdp, Grade, Nom, Prénom, Adresse, Tel) values ('{}','{}','{}','{}','{}','{}');",
+    "insertNote" : "insert into Note (Note, Utilisateur, Livre) values ('{}','{}','{}');",}
+
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234") -> None:
         self.host = host
         self.user = user
@@ -46,18 +56,23 @@ class db():
                 except :
                     print("Erreur : Impossible de supprimer la base de donnée !")
                     exit(1)
-            else :
-                exit(1)
 
-
+    def mkRequest(self, request:str, verbose=True, *args) -> None:
+        """This function executes a request with the given arguments. Warning, this function not commit the request."""
+        try :
+            if verbose:
+                print(f"# {self._requetes[request].format(*args)}")
+            self.cursor.execute(self._requetes[request].format(*args))
+        except Exception as e:
+            print("Erreur : Impossible de créer la requête ! Une erreur est survenue : ",e)
 
     def create_db(self) -> int:
         """This function creates the database and the tables if they don't exist. Returns 0 if the operation is successful, 1 otherwise."""
         try : 
             print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")#creation de la base de donnée
             if os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")==0 :
-                print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} BookWorm < BookWorm.sql")#importation des tables
-                if os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} BookWorm < BookWorm.sql")==0 : 
+                print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} BookWorm < template.sql")#importation des tables
+                if os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} BookWorm < template.sql")==0 : 
                     print("---Base de donnée créée avec succès !---")
                     input("Voulez-vous ajouter des données d'exemple ? (Y/N) : ")
                     if input() == "Y" :
@@ -76,25 +91,19 @@ class db():
         return 1
         
     def loadData(self) -> None:
+        """This function loads the data from the data folder into the database."""
         self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, db="BookWorm")
-        table= [False for i in range(6)]
-        with open('data.csv', 'r') as file:
-            for line in file:
-                if line == """"ID","Nom","Prénom","Biographie","Date de naissance","Date de décès""""" :#à optimiser car pour le moment c'est dégeulasse
-                    table= [False for i in range(6)]
-                    table[0] = True
-                elif line == """"Nom","Adresse""""":
-                    table= [False for i in range(6)]
-                    table[1] = True
-                elif line == """"Nom","Adresse""""":
-                    table= [False for i in range(6)]
-                    table[1] = True
-                else :
-                    print(line)
-                data = line.split(',')
-                
-                self.cursor.execute(f"INSERT INTO books (title, author, year, isbn) VALUES ('{data[0]}', '{data[1]}', {data[2]}, {data[3]})")
-                self.db.commit()
-
-
-    
+        data= ["data/Auteur.csv","data/Editeur.csv","data/Emprunt.csv","data/Livre.csv","data/Note.csv","data/Point de vente.csv","data/Utilisateur.csv"]
+        for file in data:
+            try :
+                with open(file, 'r', encoding="utf-8") as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        self.mkRequest("insert"+file.split("/")[-1].split(".")[0], False, *row)
+                    self.db.commit()
+            except FileNotFoundError or PermissionError as e:
+                print(f"Erreur : Impossible de trouver le fichier {file}  dans le repertoire data ! Le fichier n'existe pas ou vous n'avez pas les droits pour le lire.",e)
+                return 1
+            except Exception as e:
+                print(f"Erreur : Impossible de lire le fichier {file} ! Une erreur est survenue : ",e)
+                return 1

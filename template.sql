@@ -31,6 +31,7 @@ CREATE TABLE `Auteur` (
   `ID` int(11) NOT NULL,
   `Nom` varchar(20) NOT NULL,
   `Prénom` varchar(20) NOT NULL,
+  `Alias` varchar(20) DEFAULT NULL,
   `Biographie` varchar(1000) NOT NULL,
   `Date de naissance` date NOT NULL DEFAULT current_timestamp(),
   `Date de décès` date DEFAULT NULL
@@ -78,7 +79,7 @@ CREATE TABLE `Livre` (
   `Format` enum('Poche','Grand Format','E-book & numérique','Manga','Bande Dessinée','Magazine','CD','DVD & Blu-ray') NOT NULL,
   `Prix` float NOT NULL,
   `Point de vente` varchar(100) NOT NULL,
-  `Editeur` varchar(15) NOT NULL
+  `Editeur` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -91,7 +92,7 @@ CREATE TABLE `Point de vente` (
   `Adresse` varchar(100) NOT NULL,
   `Nom` varchar(20) NOT NULL,
   `Site web` varchar(50) NOT NULL,
-  `Tel` varchar(10) NOT NULL
+  `Tel` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
