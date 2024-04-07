@@ -1,11 +1,11 @@
 import database
 
-debug = False #Permet de faciliter le débugage. Ne pas utiliser en usage normal.
+debug = True #Permet de faciliter le débugage. Ne pas utiliser en usage normal.
 
 if __name__ == '__main__':
     print("""
         ______             _      _    _                      
-        | ___ \           | |    | |  | |                     
+        | ___ \           | |    | |  | | SAE2.0.3 Flavien Diéval                  
         | |_/ / ___   ___ | | __ | |  | | ___  _ __ _ __ ___  
         | ___ \/ _ \ / _ \| |/ / | |/\| |/ _ \| '__| '_ ` _ \ 
         | |_/ / (_) | (_) |   <  \  /\  / (_) | |  | | | | | |

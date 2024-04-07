@@ -4,13 +4,13 @@ import os, csv
 class db():
 
     _requetes = {
-    "insertLivre" : "INSERT INTO Livre (`ISBN`, `Titre`, `Auteur`, `Description`, `Note`, `Date de parution`, `Statut`, `Genre`, `Format`, `Prix`, `Point de vente`, `Editeur`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
-    "insertAuteur" : "INSERT INTO Auteur (`Nom`, `Prénom`, `Biographie`, `Date de naissance`, `Date de décès`, `Alias`) VALUES (%s,%s,%s,%s,%s,%s);",
-    "insertEditeur" : "INSERT INTO Editeur (`Nom`, `Adresse`) VALUES (%s,%s);",
-    "insertEmprunt" : "INSERT INTO Emprunt (`Livre`, `Date`, `Utilisateur`) VALUES (%s,%s,%s);",
-    "insertPointDeVente" : "INSERT INTO Point de vente (`Adresse`, `Nom`, `Site web`, `Tel`) VALUES (%s,%s,%s,%s);",
-    "insertUtilisateur" : "INSERT INTO Utilisateur (`email`, `mdp`, `Grade`, `Nom`, `Prénom`, `Adresse`, `Tel`) VALUES (%s,%s,%s,%s,%s,%s,%s);",
-    "insertNote" : "INSERT INTO Note (`Note`, `Utilisateur`, `Livre`) values (%s,%s,%s);",
+    "insertLivre" : "INSERT INTO `Livre` (`ISBN`, `Titre`, `Auteur`, `Description`, `Note`, `Date de parution`, `Statut`, `Genre`, `Format`, `Prix`, `Point de vente`, `Editeur`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
+    "insertAuteur" : "INSERT INTO `Auteur` (`Nom`, `Prénom`, `Biographie`, `Date de naissance`, `Date de décès`, `Alias`) VALUES (%s,%s,%s,%s,%s,%s);",
+    "insertEditeur" : "INSERT INTO `Editeur` (`Nom`, `Adresse`) VALUES (%s,%s);",
+    "insertEmprunt" : "INSERT INTO `Emprunt` (`Livre`, `Date`, `Utilisateur`) VALUES (%s,%s,%s);",
+    "insertPoint_de_vente" : "INSERT INTO `Point de vente` (`Adresse`, `Nom`, `Site web`, `Tel`) VALUES (%s,%s,%s,%s);",
+    "insertUtilisateur" : "INSERT INTO `Utilisateur` (`email`, `mdp`, `Grade`, `Nom`, `Prénom`, `Adresse`, `Tel`) VALUES (%s,%s,%s,%s,%s,%s,%s);",
+    "insertNote" : "INSERT INTO `Note` (`Note`, `Utilisateur`, `Livre`) values (%s,%s,%s);",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", debug=False) -> None:
@@ -64,25 +64,18 @@ class db():
                     print("Erreur : Impossible de supprimer la base de donnée !")
                     exit(1)
 
-    def mkRequest(self, request:str, verbose=True, *args) -> None:
+    def mkRequest(self, request:str, verbose=False, *args) -> None:
         """This function executes a request with the given arguments. Warning, this function not commit the request."""
         try :
             # Convertir les arguments en chaînes de caractères, ajouter des guillemets autour des chaînes de caractères, et gérer les valeurs NULL
-            args = [f"{arg.replace("'", "''")}" if arg is not None and arg != "None" else "NULL" for arg in args]
+            args = list(args)
             for i in range(len(args)):
-                if args[i] == "''":
-                    print("--#-(remove)-#--")
-                    args[i] = "NULL"
-                if args[i] == '':
-                    args.pop(i)
-            print(args)
-            # Supprimer la virgule après la dernière valeur
-            args = args[:-1] + [args[-1].rstrip(",")]
-            if verbose:
-                print(f"# {self._requetes[request] % tuple(args)}")
+                if args[i] == "":
+                    args[i] = None
             self.cursor.execute(self._requetes[request], tuple(args))
         except Exception as e:
             print(f" La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}")
+            print("Args : ", args)
             print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
             print(f"Nombre d'arguments : {len(args)}\n-------------------------------------------------- ")
 
@@ -112,7 +105,7 @@ class db():
     def loadData(self) -> None:
         """This function loads the data from the data folder into the database."""
         self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, db="BookWorm",init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
-        data= ["data/Auteur.csv","data/Editeur.csv","data/Emprunt.csv","data/Livre.csv","data/Note.csv","data/Point de vente.csv","data/Utilisateur.csv"]
+        data= ["data/Auteur.csv","data/Editeur.csv","data/Point_de_vente.csv","data/Livre.csv","data/Utilisateur.csv","data/Note.csv","data/Emprunt.csv"]
         for file in data:
             try :
                 idTable = ["data/Auteur.csv","data/Note.csv","data/Emprunt.csv"]
@@ -122,17 +115,15 @@ class db():
                     next(reader)
                     self.cursor = self.db.cursor()
                     for row in reader:
-                        print(len(row)-1)
                         if file in idTable:
                             row.pop(0)
                         if ',' in row[-1]:
-                            row[-1] = row[-1].split(',')[0] 
-                        print('-----ROW', row)
+                            row[-1] = row[-1].split(',')[0]
                         self.mkRequest("insert"+file.split("/")[-1].split(".")[0], False, *row)
                     self.db.commit()
             except FileNotFoundError or PermissionError as e:
                 print(f"Erreur : Impossible de trouver le fichier {file}  dans le repertoire data ! Le fichier n'existe pas ou vous n'avez pas les droits pour le lire.",e)
                 return 1
             except Exception as e:
-                print(f"Erreur : Impossible de lire le fichier {file} ! Une erreur est survenue : ",e, e.__traceback__.tb_lineno)
+                print(f"Erreur : Impossible de lire le fichier {file} ! Une erreur est survenue : ",e, "ligne : ", e.__traceback__.tb_lineno)
                 return 1
