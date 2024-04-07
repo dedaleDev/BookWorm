@@ -81,8 +81,21 @@ CREATE TABLE `Livre` (
   `Point de vente` varchar(100) NOT NULL,
   `Editeur` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Note`
+--
+
+CREATE TABLE `Note` (
+  `ID` int(11) NOT NULL,
+  `Note` int(10) NOT NULL,
+  `Utilisateur` varchar(50) NOT NULL,
+  `Livre` varchar(13) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
+
 
 --
 -- Structure de la table `Point de vente`
@@ -145,6 +158,15 @@ ALTER TABLE `Livre`
   ADD KEY `Editeur` (`Editeur`);
 
 --
+-- Index pour la table `Note`
+--
+ALTER TABLE `Note`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `Utilisateur` (`Utilisateur`),
+  ADD KEY `Livre` (`Livre`);
+
+
+--
 -- Index pour la table `Point de vente`
 --
 ALTER TABLE `Point de vente`
@@ -190,6 +212,15 @@ ALTER TABLE `Livre`
   ADD CONSTRAINT `Livre_ibfk_1` FOREIGN KEY (`Auteur`) REFERENCES `Auteur` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `Livre_ibfk_2` FOREIGN KEY (`Point de vente`) REFERENCES `Point de vente` (`Adresse`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `Livre_ibfk_3` FOREIGN KEY (`Editeur`) REFERENCES `Editeur` (`Nom`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+COMMIT;
+
+--
+-- Contraintes pour la table `Note`
+--
+
+ALTER TABLE `Note`
+  ADD CONSTRAINT `Note_ibfk_1` FOREIGN KEY (`Utilisateur`) REFERENCES `Utilisateur` (`email`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `Note_ibfk_2` FOREIGN KEY (`Livre`) REFERENCES `Livre` (`ISBN`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
