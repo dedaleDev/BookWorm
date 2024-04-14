@@ -1,2 +1,3 @@
-INSERT INTO Auteur (`Nom`, `Prénom`, `Biographie`, `Date de naissance`, `Date de décès`, `Alias`) VALUES
-('Riordan','Richard Russel','Richard Russell Rick Riordan Jr, né le 5 juin 1964 à San Antonio au Texas, est un écrivain américain. Il est notamment l''auteur des séries Percy Jackson, Héros de l''Olympe, Les Chroniques de Kane, Magnus Chase et les Dieux d''Asgard et Les Travaux d''Apollon. Il a également aidé à développer la série Les 39 Clés, publiée par Scholastic Corporation, série dont il a écrit le premier tome L''Énigme des catacombes ainsi que le onzième, La Menace Vesper.','1964-06-05','NULL','Rick Riordan');
+listeArguments = ("title","funct", "arg1", "arg2", "arg3")
+
+print(listeArguments[:2])

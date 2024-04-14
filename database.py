@@ -11,21 +11,28 @@ class db():
     "insertPoint_de_vente" : "INSERT INTO `Point de vente` (`Adresse`, `Nom`, `Site web`, `Tel`) VALUES (%s,%s,%s,%s);",
     "insertUtilisateur" : "INSERT INTO `Utilisateur` (`email`, `mdp`, `Grade`, `Nom`, `Prénom`, `Adresse`, `Tel`) VALUES (%s,%s,%s,%s,%s,%s,%s);",
     "insertNote" : "INSERT INTO `Note` (`Note`, `Utilisateur`, `Livre`) values (%s,%s,%s);",
+    "selectAuteurByNom" : "SELECT * FROM `Auteur` WHERE `Nom` = %s ORDER BY `ID` ASC;",
+    "selectAuteurByPrenom" : "SELECT * FROM `Auteur` WHERE `Prénom` LIKE %s ORDER BY `ID` ASC;",
+    "selectAuteurByAlias" : "SELECT * FROM `Auteur` WHERE `Alias` LIKE %s ORDER BY `ID` ASC;",
     }
 
-    def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", debug=False) -> None:
+    def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
         self.host = host
         self.user = user
         self.passwd = passwd
+        self.port = port
         self.debug = debug
+        self.needRestart = False
         #-----initialisation de la base de donnée-----
         try :
-            self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, db="BookWorm", init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
+            self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, port=self.port, db="BookWorm", init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
             if self.debug : 
                 self.cursor = self.db.cursor()
                 self.cursor.execute("DROP DATABASE IF EXISTS BookWorm")
                 self.db.commit()
-                print("Conformément au mode debug, la base de donnée à été effacé au démarrage.")
+                print("Conformément au mode debug, la base de donnée à été effacé au démarrage. Veuillez relancer le programme.")
+                self.needRestart = True
+                return
         except : 
             print("Base inexistante, tentative de création de la base de donnée...")
             try :
@@ -102,15 +109,15 @@ class db():
             print("Erreur : Impossible de créer la base de donnée ! Une erreur est survenue : ",e)
         return 1
         
-    def loadData(self) -> None:
+    def loadData(self) -> int:
         """This function loads the data from the data folder into the database."""
-        self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, db="BookWorm",init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
+        self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, port=self.port, db="BookWorm",init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
         data= ["data/Auteur.csv","data/Editeur.csv","data/Point_de_vente.csv","data/Livre.csv","data/Utilisateur.csv","data/Note.csv","data/Emprunt.csv"]
         for file in data:
             try :
                 idTable = ["data/Auteur.csv","data/Note.csv","data/Emprunt.csv"]
                 with open(file, 'r', encoding="utf-8") as f:
-                    reader = csv.reader(f, delimiter=',')
+                    reader = csv.reader(f, delimiter=';')
                     id = False
                     next(reader)
                     self.cursor = self.db.cursor()
@@ -127,3 +134,5 @@ class db():
             except Exception as e:
                 print(f"Erreur : Impossible de lire le fichier {file} ! Une erreur est survenue : ",e, "ligne : ", e.__traceback__.tb_lineno)
                 return 1
+        return 0
+    
