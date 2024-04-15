@@ -39,7 +39,7 @@ def showMenu(choiceAction : list, title = "Menu") :
                 if len(choiceAction[choice-1]) == 2 :
                     result = choiceAction[choice-1][1]()
                 else :
-                    result = choiceAction[choice-1][1](choiceAction[choice-1][2:])
+                    result = choiceAction[choice-1][1](choiceAction[choice-1][2])
                 print("0K2")
                 if result is not None:  # Si la fonction retourne une valeur, retourner cette valeur
                     return result
@@ -67,15 +67,16 @@ if __name__ == '__main__':
     if debug : 
         print("Attention : Le mode de débuggage est activé, les résultats résultant pourraient être instable.")
     db = database.db(db_HOST,db_USER,db_PASSWD,db_PORT,debug)
+    
     if db.needRestart == True : 
         exit(0)
+    
     print("Connexion à la base de donnée réussie !")
 
     choiceList = [ 
              ("Ajouter un élément",addElement,db),
              ("Rechercher",search)
              ]
-
     while True : 
         result = showMenu(choiceList)
         if result == 2 or result == 0 : 

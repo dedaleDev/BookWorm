@@ -11,9 +11,10 @@ class db():
     "insertPoint_de_vente" : "INSERT INTO `Point de vente` (`Adresse`, `Nom`, `Site web`, `Tel`) VALUES (%s,%s,%s,%s);",
     "insertUtilisateur" : "INSERT INTO `Utilisateur` (`email`, `mdp`, `Grade`, `Nom`, `Prénom`, `Adresse`, `Tel`) VALUES (%s,%s,%s,%s,%s,%s,%s);",
     "insertNote" : "INSERT INTO `Note` (`Note`, `Utilisateur`, `Livre`) values (%s,%s,%s);",
-    "selectAuteurByNom" : "SELECT * FROM `Auteur` WHERE `Nom` = %s ORDER BY `ID` ASC;",
+    "selectAuteurByNom" : "SELECT * FROM `Auteur` WHERE `Nom` Like %s ORDER BY `ID` ASC;",
     "selectAuteurByPrenom" : "SELECT * FROM `Auteur` WHERE `Prénom` LIKE %s ORDER BY `ID` ASC;",
     "selectAuteurByAlias" : "SELECT * FROM `Auteur` WHERE `Alias` LIKE %s ORDER BY `ID` ASC;",
+    "selectPointDeVenteByName" : "SELECT * FROM `Point de vente` WHERE `Nom` LIKE '%s'",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
@@ -79,12 +80,17 @@ class db():
             for i in range(len(args)):
                 if args[i] == "":
                     args[i] = None
+            if verbose :
+                print(f"#{self._requetes[request] % tuple(args)}")
             self.cursor.execute(self._requetes[request], tuple(args))
         except Exception as e:
             print(f" La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}")
             print("Args : ", args)
             print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
             print(f"Nombre d'arguments : {len(args)}\n-------------------------------------------------- ")
+
+    def __str__(self) -> str:
+        return f"Database host : {self.host}, user : {self.user}, password : {self.passwd}, port : {self.port}, debug : {self.debug}"
 
     def create_db(self) -> int:
         """This function creates the database and the tables if they don't exist. Returns 0 if the operation is successful, 1 otherwise."""
