@@ -58,3 +58,7 @@ def searchPointDeVente(nom:str, db:database.db, onlyOne:bool = False)->list:
         return result
     except Exception as e :
         print("Une erreur est survenue lors de la recherche d'un point de vente : ",e ,e.__traceback__.tb_lineno)
+
+
+def searchLivre():
+    pass

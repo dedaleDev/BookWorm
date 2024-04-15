@@ -18,8 +18,16 @@ def addElement(db) -> None:
     showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
 
 
-def search() -> None:
-    return
+def search(db) -> None:
+    while True :
+        choiceListSearch = [
+                ("Livre",operationOnDataBase.searchAuteur, db),
+                ("Auteur",operationOnDataBase.searchAuteur, db),
+                ("Point de vente",operationOnDataBase.searchPointDeVente, db),
+                ("Editeur",operationOnDataBase.searchEditeur, db),
+                ("Tout rechercher",operationOnDataBase.searchAll, db),]
+        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?") == 2 :
+            break
 
 def showMenu(choiceAction : list, title = "Menu") :
     """Show main menu"""
@@ -29,7 +37,7 @@ def showMenu(choiceAction : list, title = "Menu") :
         print(f'\n------------------------------------\n\n{title}')
     for ch  in choiceAction:
         print (f'\t{choiceAction.index(ch)+1} : {ch[0]}')
-    print (f'\t{len(choiceAction)+1} : Quitter\n')
+    print (f'\t{len(choiceAction)+1} : Quitter (Ctrl + C)\n')
     while True :
         try : 
             choice = int(input("Veuillez saisir une opération : ").strip().split(' ')[0])
@@ -40,7 +48,6 @@ def showMenu(choiceAction : list, title = "Menu") :
                     result = choiceAction[choice-1][1]()
                 else :
                     result = choiceAction[choice-1][1](choiceAction[choice-1][2])
-                print("0K2")
                 if result is not None:  # Si la fonction retourne une valeur, retourner cette valeur
                     return result
                 return 1
@@ -75,15 +82,10 @@ if __name__ == '__main__':
 
     choiceList = [ 
              ("Ajouter un élément",addElement,db),
-             ("Rechercher",search)
+             ("Rechercher",search,db),
              ]
     while True : 
         result = showMenu(choiceList)
         if result == 2 or result == 0 : 
             print("\nAu revoir !")
             break
-
-
-
-
-    
