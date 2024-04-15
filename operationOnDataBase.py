@@ -124,11 +124,11 @@ def addAuthor():
 
 def searchAuteur(db:database.db):
     try: 
-        nomPrenomAlias = getAnswer("Recherchez un auteur : ", "str", "L'auteur", 1, 50)
+        nomPrenomAlias = getAnswer("Rechercher un auteur : ", "str", "L'auteur", 1, 50)
         if nomPrenomAlias == None: return
         result = searchEngine.searchAuteur(nomPrenomAlias, db)
         if result == None: return
-        print(f"Résultat de la recherche pour {nomPrenomAlias} :\n")
+        print(f"Résultat de la recherche pour '{nomPrenomAlias}' :\n")
         for i in range(len(result)) : 
             print("------------------------------------")
             if result[i][3] != None: 
@@ -139,7 +139,7 @@ def searchAuteur(db:database.db):
                 print(f"Né le : {result[i][5]}")
             if result[i][6] != "0000-00-00" and result[i][6] != None:
                 print(f"Décédé le : {result[i][6]}")
-            print(f"Biographie : {result[i][4]}")
+            print(f"Biographie : {result[i][4].replace('\n', '')}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
@@ -148,7 +148,21 @@ def searchLivre(db:database.db):
     pass
 
 def searchPointDeVente(db:database.db):
-    pass
+    try :
+        nom = getAnswer("Rechercher un point de vente : ", "str", "Le point de vente", 1, 50)
+        if nom == None: return
+        result = searchEngine.searchPointDeVente(nom, db)
+        if result == None: return
+        print(f"Résultat de la recherche pour '{nom}' :\n")
+        for i in range(len(result)) : 
+            print(f"------------------------------------")
+            print(result[i][1])
+            print(f"Adresse : {result[i][0].replace('\n', '')}")
+            print(f"Site web : {result[i][2]}")
+            print(f"téléphone : {result[i][3]}")
+        input("Appuyez sur entrée pour continuer...")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchEditeur():
     pass

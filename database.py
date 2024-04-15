@@ -14,7 +14,8 @@ class db():
     "selectAuteurByNom" : "SELECT * FROM `Auteur` WHERE `Nom` Like %s ORDER BY `ID` ASC;",
     "selectAuteurByPrenom" : "SELECT * FROM `Auteur` WHERE `Prénom` LIKE %s ORDER BY `ID` ASC;",
     "selectAuteurByAlias" : "SELECT * FROM `Auteur` WHERE `Alias` LIKE %s ORDER BY `ID` ASC;",
-    "selectPointDeVenteByName" : "SELECT * FROM `Point de vente` WHERE `Nom` LIKE '%s'",
+    "selectPointDeVenteByNom" : "SELECT * FROM `Point de vente` WHERE `Nom` LIKE %s",
+    "selectPointDeVenteByAdresse" : "SELECT * FROM `Point de vente` WHERE `Adresse` LIKE %s",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:

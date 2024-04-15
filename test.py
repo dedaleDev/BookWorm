@@ -1,30 +1,9 @@
-def searchAuteur(nom_prenom_alias:str, db:database.db, onlyOne:bool = False)->list:
-    try: 
-        nom_prenom_alias = nom_prenom_alias.split()
-        request_db = ["selectAuteurByPrenom", "selectAuteurByNom", "selectAuteurByAlias"]
-        request = request_db[:len(nom_prenom_alias)]
-        result = []
-        for permutation in [nom_prenom_alias, list(reversed(nom_prenom_alias))]:
-            for i in range(len(permutation)):
-                db.mkRequest(request[i], False, '%'+nom_prenom_alias[i]+'%')
-                result.append(db.cursor.fetchall())
-        result = [list(i[0]) for i in result if i]
-        print(result)
-        if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {' '.join(nom_prenom_alias)}:\n")
-            for i in range(len(result)) : 
-                print(f"{i} : {result[i]}")
-            while True :
-                try :
-                    saisie = input("Veuillez saisir le numéro de l'auteur que vous souhaitez sélectionner : ")
-                    if saisie.isdigit() and int(saisie) >= 1 and int(saisie) <= len(request):
-                        return result[int(saisie)-1]
-                    else:
-                        print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-                except KeyboardInterrupt:
-                    return None
-                except :
-                    print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-        return result
-    except Exception as e :
-        print("Une erreur est survenue lors de la recherche d'auteur : ",e ,e.__traceback__.tb_lineno)
+def formatResult(result:list)->list:
+    temp = []
+    for i in result:#enlève les doublons
+        if i not in temp and i != None and i != ( ):
+            temp.append(i)
+    temp = list(temp[0])
+    return temp
+
+print(formatResult([(), (('12, place des clercs 26000 Valence', 'La Licorne', 'https://fr-fr.facebook.com/librairie.lalicorne/', '0475829117'), ('17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence\n\n', 'Fnac', 'https://www.fnac.com/Valence/Fnac-Valence/cl51/w-4', '0825020020'), ('31 rue Madier de Montjau\n26000 Valence', "L'Étincelle", 'https://librairieletincelle.wordpress.com/', '0973137597'), ('ZC le Plateau des Couleures\n26000 VALENCE\n07.57.59.94.95', 'Cultura', 'https://www.cultura.com', '0986860293'))]))

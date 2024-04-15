@@ -1,13 +1,25 @@
 import database
 
-def searchAuteur(nom_prenom_alias:str, db:database.db, onlyOne:bool = False)->list:
+def formatResult(result:list)->list:
+    print(result)
+    temp = []
+    for i in result:#enlève les doublons
+        if i not in temp and i != None and i != ( ):
+            temp.append(i)
+    temp = list(temp[0])
+    print("SORTIE", result)
+    return temp
+
+
+
+def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
     try: 
-        nom_prenom_alias = nom_prenom_alias.split()
+        recherche = recherche.split()
         request = ["selectAuteurByPrenom", "selectAuteurByNom", "selectAuteurByAlias"]
         result = []
-        for i in range(len(nom_prenom_alias)):
+        for i in range(len(recherche)):
             for j in range(len(request)):
-                db.mkRequest(request[j], False, '%'+nom_prenom_alias[i]+'%')#recherche dans la base de donnée
+                db.mkRequest(request[j], False, '%'+recherche[i]+'%')#recherche dans la base de donnée
                 result.append(db.cursor.fetchall())
         result = [list(i[0]) for i in result if i]#format les résultats
         temp = []
@@ -16,7 +28,7 @@ def searchAuteur(nom_prenom_alias:str, db:database.db, onlyOne:bool = False)->li
                 temp.append(i)
         result = temp
         if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {' '.join(nom_prenom_alias)}:\n")
+            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
                 print(f"{i} : {result[i]}")
             while True :
@@ -34,12 +46,22 @@ def searchAuteur(nom_prenom_alias:str, db:database.db, onlyOne:bool = False)->li
     except Exception as e :
         print("Une erreur est survenue lors de la recherche d'auteur : ",e ,e.__traceback__.tb_lineno)
 
-def searchPointDeVente(nom:str, db:database.db, onlyOne:bool = False)->list:
+def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->list:
     try: 
-        db.mkRequest("selectPointDeVenteByNom", False, '%'+nom+'%')#recherche dans la base de donnée
-        result = db.cursor.fetchall()
+        result = []
+        recherche = recherche.split()
+        request = ["selectPointDeVenteByNom", "selectPointDeVenteByAdresse"]
+        for i in range(len(recherche)):
+            for j in range(len(request)):
+                db.mkRequest(request[j], False, '%'+recherche[i]+'%')#recherche dans la base de donnée
+                result.append(db.cursor.fetchall())
+        temp = []
+        for i in result:#enlève les doublons
+            if i not in temp and i != None and i != ( ):
+                temp.append(i)
+        result = list(temp[0])
         if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {nom}:\n")
+            print(f"Résultat de la recherche pour {recherche}:\n")
             for i in range(len(result)) : 
                 print(f"{i} : {result[i]}")
             while True :
@@ -56,6 +78,7 @@ def searchPointDeVente(nom:str, db:database.db, onlyOne:bool = False)->list:
         return result
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du point de vente : ",e ,e.__traceback__.tb_lineno)
+
 
 
 def searchLivre():
