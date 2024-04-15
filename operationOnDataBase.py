@@ -127,7 +127,6 @@ def searchAuteur(db:database.db):
         nomPrenomAlias = getAnswer("Recherchez un auteur : ", "str", "L'auteur", 1, 50)
         if nomPrenomAlias == None: return
         result = searchEngine.searchAuteur(nomPrenomAlias, db)
-        print(result)
         if result == None: return
         print(f"Résultat de la recherche pour {nomPrenomAlias} :\n")
         for i in range(len(result)) : 
