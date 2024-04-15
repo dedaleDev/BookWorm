@@ -3,12 +3,11 @@ import database
 def searchAuteur(nom_prenom_alias:str, db:database.db, onlyOne:bool = False)->list:
     try: 
         nom_prenom_alias = nom_prenom_alias.split()
-        request_db = ["selectAuteurByPrenom", "selectAuteurByNom", "selectAuteurByAlias"]
-        request = request_db[:len(nom_prenom_alias)]
+        request = ["selectAuteurByPrenom", "selectAuteurByNom", "selectAuteurByAlias"]
         result = []
-        for permutation in [nom_prenom_alias, list(reversed(nom_prenom_alias))]:#permutation des noms et prénoms pour trouver l'auteur
-            for i in range(len(permutation)):
-                db.mkRequest(request[i], False, '%'+nom_prenom_alias[i]+'%')#recherche dans la base de donnée
+        for i in range(len(nom_prenom_alias)):
+            for j in range(len(request)):
+                db.mkRequest(request[j], False, '%'+nom_prenom_alias[i]+'%')#recherche dans la base de donnée
                 result.append(db.cursor.fetchall())
         result = [list(i[0]) for i in result if i]#format les résultats
         temp = []
@@ -37,8 +36,7 @@ def searchAuteur(nom_prenom_alias:str, db:database.db, onlyOne:bool = False)->li
 
 def searchPointDeVente(nom:str, db:database.db, onlyOne:bool = False)->list:
     try: 
-        nom = '%'+nom+'%'
-        db.mkRequest("selectPointDeVenteByName", False, nom)
+        db.mkRequest("selectPointDeVenteByNom", False, '%'+nom+'%')#recherche dans la base de donnée
         result = db.cursor.fetchall()
         if onlyOne and len(result) > 1:
             print(f"Résultat de la recherche pour {nom}:\n")
@@ -57,7 +55,7 @@ def searchPointDeVente(nom:str, db:database.db, onlyOne:bool = False)->list:
                     print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
         return result
     except Exception as e :
-        print("Une erreur est survenue lors de la recherche d'un point de vente : ",e ,e.__traceback__.tb_lineno)
+        print("Une erreur est survenue lors de la recherche du point de vente : ",e ,e.__traceback__.tb_lineno)
 
 
 def searchLivre():

@@ -26,8 +26,8 @@ def search(db) -> None:
                 ("Point de vente",operationOnDataBase.searchPointDeVente, db),
                 ("Editeur",operationOnDataBase.searchEditeur, db),
                 ("Tout rechercher",operationOnDataBase.searchAll, db),]
-        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?") == 2 :
-            break
+        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?") == 0 :
+            return
 
 def showMenu(choiceAction : list, title = "Menu") :
     """Show main menu"""
