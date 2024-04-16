@@ -45,7 +45,7 @@ CREATE TABLE `Auteur` (
 
 CREATE TABLE `Editeur` (
   `Nom` varchar(20) NOT NULL,
-  `Adresse` varchar(100) NOT NULL
+  `Adresse` varchar(120) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

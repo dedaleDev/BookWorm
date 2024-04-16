@@ -61,7 +61,8 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
         except KeyboardInterrupt:
             return None
         except Exception as e:
-            print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.", answer, e, e.__traceback__.tb_lineno)
+            print("Désolé, l'entrée saisie est incorrect. Veuillez réessayer.")
+            #print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.", answer, e, e.__traceback__.tb_lineno)
 
 
 
@@ -121,6 +122,12 @@ def addLivre(db:database.db):
 def addAuthor():
     return
 
+def addPointDeVente():
+    return
+
+def addEditeur():
+    return
+
 def getAuteurNameByID(db:database.db, id:int)->str:
     try :
         db.mkRequest("selectAuteurByID", False, id)
@@ -140,6 +147,8 @@ def searchAuteur(db:database.db):
         result = searchEngine.searchAuteur(nomPrenomAlias, db)
         if result == None: 
             print("Oups, aucun auteur n'a été trouvé pour cette recherche.")
+            if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
+                searchAuteur(db)
             return
         print(f"Résultat de la recherche pour '{nomPrenomAlias}' :\n")
         for i in range(len(result)) : 
@@ -165,6 +174,8 @@ def searchLivre(db:database.db, recherche:str = None):
         result = searchEngine.searchLivre(recherche, db)
         if result == None: 
             print("Oups, aucun livre n'a été trouvé pour cette recherche.")
+            if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
+                searchLivre(db)
             return
         print(f"Résultat de la recherche pour '{recherche}' :\n")
         for i in range(len(result)) : 
@@ -182,6 +193,8 @@ def searchPointDeVente(db:database.db):
         result = searchEngine.searchPointDeVente(nom, db)
         if result == None: 
             print("Oups, aucun point de vente n'a été trouvé pour cette recherche.")
+            if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
+                searchPointDeVente(db)
             return
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
@@ -194,8 +207,28 @@ def searchPointDeVente(db:database.db):
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
-def searchEditeur():
+def searchEditeur(db:database.db):
+    try :
+        nom = getAnswer("Rechercher un éditeur : ", "str", "L'éditeur", 1, 50)
+        if nom == None: return
+        result = searchEngine.searchEditeur(nom, db)
+        if result == None: 
+            print("Oups, aucun éditeur n'a été trouvé pour cette recherche.")
+            if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
+                searchEditeur(db)
+            return
+        print(f"Résultat de la recherche pour '{nom}' :\n")
+        for i in range(len(result)) : 
+            print(f"------------------------------------")
+            print(result[i][0])
+            print(f"Adresse : {result[i][1].replace('\n', '')}")
+        input("Appuyez sur entrée pour continuer...")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
+
+def showEmprunts(db:database.db):
     pass
 
-def searchAll():
+def showUtilisateurs(db:database.db):
     pass

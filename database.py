@@ -24,6 +24,8 @@ class db():
     "selectLivreByAuteurAlias" : "SELECT * FROM Livre JOIN Auteur ON Livre.Auteur = Auteur.ID WHERE Auteur.Alias LIKE %s;",
     "selectLivreByDescription" : "SELECT * FROM `Livre` WHERE `Description` LIKE %s;",
     "selectLivreByGenre" : "SELECT * FROM `Livre` WHERE `Genre` LIKE %s;",
+    "selectEditeurByNom" : "SELECT * FROM `Editeur` WHERE `Nom` LIKE %s;",
+    "selectEditeurByAdresse" : "SELECT * FROM `Editeur` WHERE `Adresse` LIKE %s;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
@@ -141,8 +143,8 @@ class db():
                             continue
                         if file in idTable:
                             row.pop(0)
-                        if  ',' in row[-1]:
-                            row[-1] = row[-1].split(',')[0]
+                        #if  ',' in row[-1]: apparemment inutile actuellement mais à garder au cas où #danger
+                           # row[-1] = row[-1].split(',')[0]
                         self.mkRequest("insert"+file.split("/")[-1].split(".")[0], False, *row)
                     self.db.commit()
             except FileNotFoundError or PermissionError as e:

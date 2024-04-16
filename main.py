@@ -7,14 +7,16 @@ db_USER = "root"
 db_PASSWD = "1234"
 db_PORT = 3306
 
-debug = True #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
+debug = False #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
 #------------------------------------------------------
 
 
 def addElement(db) -> None:
     choiceListAddElement = [
             ("Livre",operationOnDataBase.addLivre, db),
-            ("Auteur",operationOnDataBase.addAuthor)]
+            ("Auteur",operationOnDataBase.addAuthor,db),
+            ("Point de vente",operationOnDataBase.addAuthor),
+            ("Editeur",operationOnDataBase.addAuthor)]
     showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
 
 
@@ -24,10 +26,16 @@ def search(db) -> None:
                 ("Livre",operationOnDataBase.searchLivre, db),
                 ("Auteur",operationOnDataBase.searchAuteur, db),
                 ("Point de vente",operationOnDataBase.searchPointDeVente, db),
-                ("Editeur",operationOnDataBase.searchEditeur, db),
-                ("Tout rechercher",operationOnDataBase.searchAll, db),]
+                ("Editeur",operationOnDataBase.searchEditeur, db)]
         if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir un type de recherche ou un livre : " ) == 0 :
             return
+
+def config():
+    choiceListConfig = [
+            ("Ajouter",addElement, db),
+            ("Editer",),
+            ("Supprimer",),]
+
 
 def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, question:str="Veuillez saisir une opération : "):
     """Show main menu"""
@@ -95,6 +103,8 @@ if __name__ == '__main__':
     choiceList = [ 
             ("Rechercher",search,db),
             ("Configuration (admin)",addElement,db),
+            ("Emprunts (admin)",operationOnDataBase.showEmprunts,db),
+            ("Utilisateurs (admin)",operationOnDataBase.showUtilisateurs,db),
             ]
     while True : 
         result = showMenu(choiceList)
