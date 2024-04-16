@@ -21,7 +21,7 @@ def addElement(db) -> None:
 def search(db) -> None:
     while True :
         choiceListSearch = [
-                ("Livre",operationOnDataBase.searchAuteur, db),
+                ("Livre",operationOnDataBase.searchLivre, db),
                 ("Auteur",operationOnDataBase.searchAuteur, db),
                 ("Point de vente",operationOnDataBase.searchPointDeVente, db),
                 ("Editeur",operationOnDataBase.searchEditeur, db),
@@ -81,9 +81,9 @@ if __name__ == '__main__':
     print("Connexion à la base de donnée réussie !")
 
     choiceList = [ 
-             ("Ajouter un élément",addElement,db),
-             ("Rechercher",search,db),
-             ]
+            ("Rechercher",search,db),
+            ("Ajouter un élément",addElement,db),
+            ]
     while True : 
         result = showMenu(choiceList)
         if result == 2 or result == 0 : 

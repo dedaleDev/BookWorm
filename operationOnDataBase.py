@@ -121,6 +121,17 @@ def addLivre(db:database.db):
 def addAuthor():
     return
 
+def getAuteurNameByID(db:database.db, id:int)->str:
+    try :
+        db.mkRequest("selectAuteurByID", False, id)
+        result = db.cursor.fetchall()
+        if result == None or result == []: return "Auteur inconnu"
+        if result[0][3] != None:
+            return f"{result[0][3]}"
+        return f"{result[0][2]} {result[0][1]}"
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
 
 def searchAuteur(db:database.db):
     try: 
@@ -145,7 +156,19 @@ def searchAuteur(db:database.db):
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchLivre(db:database.db):
-    pass
+    try :
+        recherche = getAnswer("Rechercher un livre : ", "str", "Le livre", 1, 50)
+        if recherche == None: return
+        result = searchEngine.searchLivre(recherche, db)
+        if result == None: return
+        print(f"Résultat de la recherche pour '{recherche}' :\n")
+        for i in range(len(result)) : 
+            print(f"------------------------------------")
+            print(result[i][1].replace('\n', '') )
+            print(f"ISBN : {result[i][0]}\nAuteur: {getAuteurNameByID(db, result[i][2])}\nDescription : {result[i][3].replace('\n', '')}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {result[i][10].replace('\n','')}\nEditeur : {result[i][11]}")
+        input("Appuyez sur entrée pour continuer...")
+    except Exception as e :
+        print("Une erreur est survenue lors de la recherche du livre.", e, e.__traceback__.tb_lineno)
 
 def searchPointDeVente(db:database.db):
     try :

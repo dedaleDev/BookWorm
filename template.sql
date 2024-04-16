@@ -69,7 +69,7 @@ CREATE TABLE `Emprunt` (
 
 CREATE TABLE `Livre` (
   `ISBN` varchar(13) NOT NULL,
-  `Titre` varchar(50) NOT NULL,
+  `Titre` varchar(100) NOT NULL,
   `Auteur` int(11) NOT NULL,
   `Description` varchar(1000) NOT NULL,
   `Note` float(10) NOT NULL,
