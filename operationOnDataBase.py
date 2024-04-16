@@ -138,7 +138,9 @@ def searchAuteur(db:database.db):
         nomPrenomAlias = getAnswer("Rechercher un auteur : ", "str", "L'auteur", 1, 50)
         if nomPrenomAlias == None: return
         result = searchEngine.searchAuteur(nomPrenomAlias, db)
-        if result == None: return
+        if result == None: 
+            print("Oups, aucun auteur n'a été trouvé pour cette recherche.")
+            return
         print(f"Résultat de la recherche pour '{nomPrenomAlias}' :\n")
         for i in range(len(result)) : 
             print("------------------------------------")
@@ -155,12 +157,16 @@ def searchAuteur(db:database.db):
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
-def searchLivre(db:database.db):
+def searchLivre(db:database.db, recherche:str = None):
+    print(recherche)
     try :
-        recherche = getAnswer("Rechercher un livre : ", "str", "Le livre", 1, 50)
+        if recherche == None:
+            recherche = getAnswer("Rechercher un livre : ", "str", "Le livre", 1, 50)
         if recherche == None: return
         result = searchEngine.searchLivre(recherche, db)
-        if result == None: return
+        if result == None: 
+            print("Oups, aucun livre n'a été trouvé pour cette recherche.")
+            return
         print(f"Résultat de la recherche pour '{recherche}' :\n")
         for i in range(len(result)) : 
             print(f"------------------------------------")
@@ -175,7 +181,9 @@ def searchPointDeVente(db:database.db):
         nom = getAnswer("Rechercher un point de vente : ", "str", "Le point de vente", 1, 50)
         if nom == None: return
         result = searchEngine.searchPointDeVente(nom, db)
-        if result == None: return
+        if result == None: 
+            print("Oups, aucun point de vente n'a été trouvé pour cette recherche.")
+            return
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
             print(f"------------------------------------")

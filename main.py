@@ -7,7 +7,7 @@ db_USER = "root"
 db_PASSWD = "1234"
 db_PORT = 3306
 
-debug = False #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
+debug = True #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
 #------------------------------------------------------
 
 
@@ -26,10 +26,10 @@ def search(db) -> None:
                 ("Point de vente",operationOnDataBase.searchPointDeVente, db),
                 ("Editeur",operationOnDataBase.searchEditeur, db),
                 ("Tout rechercher",operationOnDataBase.searchAll, db),]
-        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?") == 0 :
+        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir un type de recherche ou un livre : " ) == 0 :
             return
 
-def showMenu(choiceAction : list, title = "Menu") :
+def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, question:str="Veuillez saisir une opération : "):
     """Show main menu"""
     if title == "Menu" :
         print(f"\n------------------{title}------------------")
@@ -40,10 +40,17 @@ def showMenu(choiceAction : list, title = "Menu") :
     print (f'\t{len(choiceAction)+1} : Quitter (Ctrl + C)\n')
     while True :
         try : 
-            choice = int(input("Veuillez saisir une opération : ").strip().split(' ')[0])
+            operation = input(question).strip().split(' ')[0]
+            if operation.isdigit() :
+                choice = int(operation)
+            elif operation :
+                choice = -1
+            else :
+                print("Choix invalide, veuillez réessayer.")
+                continue
             if choice == len(choiceAction)+1 :#Quitter
                 return 2
-            elif choice >= 1 and len(choiceAction) >= choice:
+            elif choice >= 1 and len(choiceAction) >= choice :
                 if len(choiceAction[choice-1]) == 2 :
                     result = choiceAction[choice-1][1]()
                 else :
@@ -51,12 +58,17 @@ def showMenu(choiceAction : list, title = "Menu") :
                 if result is not None:  # Si la fonction retourne une valeur, retourner cette valeur
                     return result
                 return 1
+            elif defaultChoice and choice == -1:
+                result = choiceAction[0][1](choiceAction[choice-1][2],operation)
+                if result is not None: 
+                    return result
+                return 1
             else :
                 print("Choix invalide, veuillez réessayer.")
         except KeyboardInterrupt : 
             return 0
-        except :
-            print("Choix invalide, veuillez réessayer.")
+        except Exception as e:
+            print("Choix invalide, veuillez réessayer.",e, e.__traceback__.tb_lineno)
 
 
 
@@ -82,7 +94,7 @@ if __name__ == '__main__':
 
     choiceList = [ 
             ("Rechercher",search,db),
-            ("Ajouter un élément",addElement,db),
+            ("Configuration (admin)",addElement,db),
             ]
     while True : 
         result = showMenu(choiceList)

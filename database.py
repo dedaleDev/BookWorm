@@ -137,9 +137,11 @@ class db():
                     next(reader)
                     self.cursor = self.db.cursor()
                     for row in reader:
+                        if row == []:
+                            continue
                         if file in idTable:
                             row.pop(0)
-                        if ',' in row[-1]:
+                        if  ',' in row[-1]:
                             row[-1] = row[-1].split(',')[0]
                         self.mkRequest("insert"+file.split("/")[-1].split(".")[0], False, *row)
                     self.db.commit()
