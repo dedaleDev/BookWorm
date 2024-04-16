@@ -158,7 +158,6 @@ def searchAuteur(db:database.db):
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchLivre(db:database.db, recherche:str = None):
-    print(recherche)
     try :
         if recherche == None:
             recherche = getAnswer("Rechercher un livre : ", "str", "Le livre", 1, 50)

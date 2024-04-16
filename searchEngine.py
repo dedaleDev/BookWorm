@@ -19,6 +19,8 @@ def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
         for i in result:#enlève les doublons
             if i not in temp:
                 temp.append(i)
+        if temp == []:
+            return None
         result = temp
         if onlyOne and len(result) > 1:
             print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
@@ -49,6 +51,8 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
                 temp.append(i)
+        if temp == []:
+            return None
         result = list(temp[0])
         if onlyOne and len(result) > 1:
             print(f"Résultat de la recherche pour {recherche}:\n")
@@ -81,12 +85,12 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
                 print("Recherche d'un code ISBN")
                 request.insert(0, "selectLivreByISBN")
         result = searchEngine(recherche, request, db)
-        print(result)
         temp = []
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
                 temp.append(i)
-        print(temp)
+        if temp == []:
+            return None
         result = list(temp[0])
         if onlyOne and len(result) > 1:
             print(f"Résultat de la recherche pour {recherche}:\n")
