@@ -14,9 +14,9 @@ debug = False #Ne pas utiliser en usage normal cela supprime l'ensemble des donn
 def addElement(db) -> None:
     choiceListAddElement = [
             ("Livre",operationOnDataBase.addLivre, db),
-            ("Auteur",operationOnDataBase.addAuthor,db),
-            ("Point de vente",operationOnDataBase.addAuthor),
-            ("Editeur",operationOnDataBase.addAuthor)]
+            ("Auteur",operationOnDataBase.addAuteur,db),
+            ("Point de vente",operationOnDataBase.addPointDeVente,db),
+            ("Editeur",operationOnDataBase.addEditeur,db)]
     showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
 
 
@@ -27,7 +27,7 @@ def search(db) -> None:
                 ("Auteur",operationOnDataBase.searchAuteur, db),
                 ("Point de vente",operationOnDataBase.searchPointDeVente, db),
                 ("Editeur",operationOnDataBase.searchEditeur, db)]
-        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir un type de recherche ou un livre : " ) == 0 :
+        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir un type de recherche ou un livre : " ) == 2 :
             return
 
 def config():
@@ -74,7 +74,7 @@ def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, qu
             else :
                 print("Choix invalide, veuillez réessayer.")
         except KeyboardInterrupt : 
-            return 0
+            return 2
         except Exception as e:
             print("Choix invalide, veuillez réessayer.",e, e.__traceback__.tb_lineno)
 
@@ -108,6 +108,6 @@ if __name__ == '__main__':
             ]
     while True : 
         result = showMenu(choiceList)
-        if result == 2 or result == 0 : 
+        if result == 2: 
             print("\nAu revoir !")
             break

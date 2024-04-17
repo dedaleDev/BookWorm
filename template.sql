@@ -102,7 +102,7 @@ CREATE TABLE `Note` (
 --
 
 CREATE TABLE `Point de vente` (
-  `Adresse` varchar(100) NOT NULL,
+  `Adresse` varchar(120) NOT NULL,
   `Nom` varchar(20) NOT NULL,
   `Site web` varchar(50) NOT NULL,
   `Tel` varchar(10) DEFAULT NULL
@@ -120,7 +120,7 @@ CREATE TABLE `Utilisateur` (
   `Grade` enum('admin','user') NOT NULL DEFAULT 'user',
   `Nom` varchar(20) NOT NULL,
   `Prénom` varchar(20) NOT NULL,
-  `Adresse` varchar(100) NOT NULL,
+  `Adresse` varchar(120) NOT NULL,
   `Tel` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

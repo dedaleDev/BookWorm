@@ -20,7 +20,7 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
                     print(e, e.__traceback__.tb_lineno)
             answer = input(question).strip()
             if answer == "" and canBeNull:
-                return "Null"
+                return None
             if type == "enum" and enum != []:#ENUM
                 if answer.isdigit() and int(answer) >= 1 and int(answer) <= len(enum):
                     return enum[int(answer)-1]
@@ -64,23 +64,107 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
             print("Désolé, l'entrée saisie est incorrect. Veuillez réessayer.")
             #print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.", answer, e, e.__traceback__.tb_lineno)
 
+def addAuteur(db:database.db):
+    try :
+        print("\n------------Nouvel auteur-----------\n")
+        Nom = getAnswer("Entrez le nom de l'auteur : ", "str", "Le nom de l'auteur", 1, 20)
+        if Nom == None: return
+        Prenom = getAnswer("Entrez le prénom de l'auteur : ", "str", "Le prénom de l'auteur", 1, 20)
+        if Prenom == None: return
+        Alias = getAnswer("Entrez l'alias de l'auteur (facultatif) : ", "str", "L'alias de l'auteur", 0, 20, canBeNull=True)
+        Biographie = getAnswer("Entrez la biographie de l'auteur : ", "str", "La biographie de l'auteur", 0, 1000)
+        if Biographie == None: return
+        DateDeNaissance = getAnswer("Entrez la date de naissance de l'auteur (attendu JJ/MM/AAAA): ", "date", "La date de naissance de l'auteur")
+        if DateDeNaissance == None: return
+        DateDeDeces = getAnswer("Entrez la date de décès de l'auteur (facultatif, attendu JJ/MM/AAAA): ", "date", "La date de décès de l'auteur", canBeNull=True)
+        print("\n------------Recapitulatif-----------\n")
+        if Alias == "Null":
+            print(f"Nom : {Nom}\nPrenom : {Prenom}\nBiographie : {Biographie}\nDate de naissance : {DateDeNaissance}\nDate de décès : {DateDeDeces}")
+        else :
+            print(f"Nom : {Nom}\nPrenom : {Prenom}\nAlias : {Alias}\nBiographie : {Biographie}\nDate de naissance : {DateDeNaissance}\nDate de décès : {DateDeDeces}")
+        if input("Voulez-vous ajouter cet auteur ? (Y/N) : ") == "Y":
+            db.mkRequest("insertAuteur", False, Nom, Prenom, Alias, Biographie, DateDeNaissance, DateDeDeces)
+            db.db.commit()
+            print("Auteur ajouté avec succès !")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de l'ajout de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
+def addEditeur(db:database.db):
+    try :
+        print("\n------------Nouvel éditeur-----------\n")
+        while True :
+            Nom = getAnswer("Entrez le nom de l'éditeur : ", "str", "Le nom de l'éditeur", 1, 20)
+            db.mkRequest("selectEditeurByNom", False, Nom)
+            if db.cursor.fetchall() == ():
+                break
+            print("Désolé, mais un éditeur avec ce nom existe déjà. Veuillez réessayer.")
+        if Nom == None: return
+        Adresse = getAnswer("Entrez l'adresse de l'éditeur : ", "str", "L'adresse de l'éditeur", 1, 120)
+        if Adresse == None: return
+        print("\n------------Recapitulatif-----------\n")
+        print(f"Nom : {Nom}\nAdresse : {Adresse}")
+        if input("Voulez-vous ajouter cet éditeur ? (Y/N) : ") == "Y":
+            db.mkRequest("insertEditeur", False, Nom, Adresse)
+            db.db.commit()
+            print("Editeur ajouté avec succès !")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de l'ajout de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
+def addPointDeVente(db:database.db):
+    try :
+        print("\n------------Nouveau point de vente-----------\n")
+        while True :
+            Adresse = getAnswer("Entrez l'adresse du point de vente : ", "str", "L'adresse du point de vente", 1, 120)
+            db.mkRequest("selectPointDeVenteByAdresse", False, Adresse)
+            if db.cursor.fetchall() == ():
+                break
+            print("Désolé, mais un point de vente avec cette adresse existe déjà. Veuillez réessayer.")
+        if Adresse == None: return
+        Nom = getAnswer("Entrez le nom du point de vente : ", "str", "Le nom du point de vente", 1, 20)
+        if Nom == None: return
+        SiteWeb = getAnswer("Entrez le site web du point de vente : ", "str", "Le site web du point de vente", 1, 50)
+        if SiteWeb == None: return
+        Telephone = getAnswer("Entrez le numéro de téléphone du point de vente : ", "str", "Le numéro de téléphone du point de vente", 10, 10)
+        if Telephone == None: return
+        print("\n------------Recapitulatif-----------\n")
+        print(f"Nom : {Nom}\nAdresse : {Adresse}\nSite web : {SiteWeb}\nTéléphone : {Telephone}")
+        if input("Voulez-vous ajouter ce point de vente ? (Y/N) : ") == "Y":
+            db.mkRequest("insertPointDeVente", False, Adresse, Nom, SiteWeb, Telephone)
+            db.db.commit()
+            print("Point de vente ajouté avec succès !")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de l'ajout du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 
 def addLivre(db:database.db):
     try : 
         print("\n------------Nouveau livre-----------\n")
-        ISBN = getAnswer("Entrez le code ISBN du livre : ", "str","Le code ISBN", 10, 13,)
+        while True :
+            ISBN = getAnswer("Entrez le code ISBN du livre : ", "str","Le code ISBN", 10, 13,)
+            #verification de la clé primaire :
+            db.mkRequest("selectLivreByISBN", False, ISBN)
+            if db.cursor.fetchall() == ():
+                break
+            print("Désolé, mais un livre avec ce code ISBN existe déjà. Veuillez réessayer.")
         if ISBN == None: return
         Titre = getAnswer("Entrez le titre du livre : ", "str","Le titre du livre", 1, 50)
         if Titre == None: return
-        Auteur = getAnswer("Entrez le nom, prénom ou l'alias de l'auteur : ", "str", "L'auteur", 1, 50)
-        if Auteur == None: return
-        try :
-            Auteur = searchEngine.searchAuteur(Auteur, db, True)[0]
-        except : Auteur = None
-        if Auteur == None: 
-            print("Désolé, mais aucun auteur n'a été trouvé pour ce livre.")#proposer d'en ajouter
-            return
+        while True :
+            Auteur = getAnswer("Entrez le nom, prénom ou l'alias de l'auteur : ", "str", "L'auteur", 1, 50)
+            if Auteur == None: return
+            try :
+                Auteur = searchEngine.searchAuteur(Auteur, db, True)[0]
+                break
+            except :
+                print("Désolé, mais aucun auteur n'a été trouvé pour ce livre.")#proposer d'en ajouter
+                saisie = input("Voulez-vous ajouter un auteur ? (Y / N / R (relancer la recherche)) : ")
+                if saisie == "Y":
+                    addAuteur(db)
+                    continue
+                elif saisie == "R":
+                    continue
+                else :
+                    return
         print(f"Vous avez selectionné l'auteur : {Auteur[2]} {Auteur[1]}")
         Description = getAnswer("Entrez une description pour le livre : ", "str", "La description", 0, 1000)
         if Description == None: return
@@ -96,37 +180,53 @@ def addLivre(db:database.db):
         if Format == None: return
         Prix = getAnswer("Entrez le prix moyen du livre en librairie : ", "float", "Le prix", 0, 1000)
         if Prix == None: return
-        PointDeVente = getAnswer("Entrez le nom du point de vente du livre : ", "str", "Le point de vente", 1, 50)
-        try :
-            PointDeVente = searchEngine.searchPointDeVente(PointDeVente, db, True)[0]
-        except : PointDeVente = None
-        if PointDeVente == None: return
+        while True :
+            PointDeVente = getAnswer("Entrez le nom du point de vente du livre : ", "str", "Le point de vente", 1, 50)
+            if PointDeVente == None: return
+            try :
+                PointDeVente = searchEngine.searchPointDeVente(PointDeVente, db, True)[0]
+                break
+            except :
+                print("Désolé, mais aucun point de vente n'a été trouvé pour ce livre.")
+                saisie = input("Voulez-vous ajouter un point de vente ? (Y / N / R (relancer la recherche)) : ")
+                if saisie == "Y":
+                    addPointDeVente(db)
+                    continue
+                elif saisie == "R":
+                    continue
+                else :
+                    return
+        print(f"Vous avez selectionné le point de vente : {PointDeVente[1]}")
+        while True :
+            Editeur = getAnswer("Entrez le nom de l'éditeur du livre : ", "str", "L'éditeur", 1, 50)
+            if Editeur == None: return
+            try :
+                Editeur = searchEngine.searchEditeur(Editeur, db, True)[0]
+                break
+            except :
+                print("Désolé, mais aucun éditeur n'a été trouvé pour ce livre.")
+                saisie = input("Voulez-vous ajouter un éditeur ? (Y / N / R (relancer la recherche)) : ")
+                if saisie == "Y":
+                    addEditeur(db)
+                    continue
+                elif saisie == "R":
+                    continue
+                else :
+                    return
+        print(f"Vous avez selectionné l'éditeur : {Editeur[0]}")
         print("\n------------Recapitulatif-----------\n")
         if Auteur[3] == None : 
-            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[2]}{Auteur[1]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {DateDeParution}\nStatut : {Statut}")
+            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[2]}{Auteur[1]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {DateDeParution}\nStatut : {Statut}\n Genre : {Genre}\nFormat : {Format}\nPrix : {Prix}\nPoint de vente : {PointDeVente[1]}\nEditeur : {Editeur[0]}")
         else :
-            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[3]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {DateDeParution}\nStatut : {Statut}")
-        if input("Voulez-vous ajouter ce livre ? (Y/N) : ") == "Y":
-            db.mkRequest("insertLivre", False, ISBN, Titre, Auteur[0], Description, Note, DateDeParution, Statut)
+            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[3]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {DateDeParution}\nStatut : {Statut}\n Genre : {Genre}\nFormat : {Format}\nPrix : {Prix}\nPoint de vente : {PointDeVente[1]}\nEditeur : {Editeur[0]}")
+        if input("Voulez-vous ajouter ce livre ? (Y/N) : ") != "N":
+            db.mkRequest("insertLivre", False, ISBN, Titre, Auteur[0], Description, Note, DateDeParution, Statut, Genre, Format, Prix, PointDeVente[0], Editeur[0])
             db.db.commit()
             print("Livre ajouté avec succès !")
         else :
             print("Opération annulée.")
     except Exception as e:
         print(f"Une erreur est survenue lors de l'ajout du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
-    
-
-
-    
-
-def addAuthor():
-    return
-
-def addPointDeVente():
-    return
-
-def addEditeur():
-    return
 
 def getAuteurNameByID(db:database.db, id:int)->str:
     try :

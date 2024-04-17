@@ -8,7 +8,6 @@ def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
             result.append(db.cursor.fetchall())
     return result
 
-
 def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
     try: 
         recherche = recherche.split()
@@ -25,7 +24,7 @@ def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
         if onlyOne and len(result) > 1:
             print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i} : {result[i]}")
+                print(f"{i+1} : {', '.join(result[i])}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro de l'auteur que vous souhaitez sélectionner : ")
@@ -55,9 +54,9 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
             return None
         result = list(temp[0])
         if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {recherche}:\n")
+            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i} : {result[i]}")
+                print(f"{i+1} : {', '.join(result[i])}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro du point de vente que vous souhaitez sélectionner : ")
@@ -92,10 +91,10 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
         if temp == []:
             return None
         result = list(temp[0])
-        if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {recherche}:\n")
+        if onlyOne and len(result) > 1:#à enlever eventuellement si inutile
+            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i} : {result[i]}")
+                print(f"{i+1} : {', '.join(result[i])}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro du livre que vous souhaitez sélectionner : ")
@@ -123,9 +122,9 @@ def searchEditeur(recherche:str, db:database.db, onlyOne:bool = False)->list:
                 temp.append(i)
         result = temp
         if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {recherche}:\n")
+            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i} : {result[i]}")
+                print(f"{i+1} : {', '.join(result[i])}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro de l'editeur que vous souhaitez sélectionner : ")
