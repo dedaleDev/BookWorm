@@ -31,11 +31,13 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
                     answer = answer.replace('/', '-')
                 answer = answer.split('-')
                 answer.reverse()
-                print(answer)
-                if len(answer) != 3 or not answer[0].isdigit() or not answer[1].isdigit() or not answer[2].isdigit():
-                    print(f"{content} doit être une date valide. Veuillez réessayer.")
-                else :
-                    return f"{answer[0]}-{answer[1]}-{answer[2]}"
+                try : 
+                    if len(answer) !=3 or int(answer[2]) < 0 or int(answer[2]) > 31 or int(answer[1]) < 0 or int(answer[1]) > 12 or int(answer[0]) < 0 or int(answer[0]) > 2100:
+                        print(f"{content} doit être une date valide. Veuillez réessayer.")
+                    else :
+                        return f"{answer[0]}-{answer[1]}-{answer[2]}"
+                except :
+                    print(f"{content} doit être une date valide attendu JJ/MM/AAAA. Veuillez réessayer.") 
             if type == "int":#INT
                 if answer.isdigit() and int(answer) >= min_int and int(answer) <= max_int:
                     return int(answer)
