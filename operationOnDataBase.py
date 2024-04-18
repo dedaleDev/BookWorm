@@ -283,7 +283,7 @@ def searchLivre(db:database.db, recherche:str = None):
         print(f"Résultat de la recherche pour '{recherche}' :\n")
         for i in range(len(result)) : 
             print(f"------------------------------------")
-            print(result[i][1].replace('\n', '') )
+            print(result[i][1].replace('\n', ''))
             print(f"ISBN : {result[i][0]}\nAuteur: {getAuteurNameByID(db, result[i][2])}\nDescription : {result[i][3].replace('\n', '')}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {result[i][10].replace('\n','')}\nEditeur : {result[i][11]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e :

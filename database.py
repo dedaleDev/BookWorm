@@ -143,8 +143,8 @@ class db():
                             continue
                         if file in idTable:
                             row.pop(0)
-                        if  ',' in row[-1]: 
-                            row[-1] = row[-1].split(',')[0]
+                        #if  ',' in row[-1]: #desativé pour le moment car inutile à priori à voir dans le temps #danger 
+                            #row[-1] = row[-1].split(',')[0]
                         self.mkRequest("insert"+file.split("/")[-1].split(".")[0], False, *row)
                     self.db.commit()
             except FileNotFoundError or PermissionError as e:
