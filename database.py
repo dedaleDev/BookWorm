@@ -5,7 +5,7 @@ class db():
 
     _requetes = {
     "insertLivre" : "INSERT INTO `Livre` (`ISBN`, `Titre`, `Auteur`, `Description`, `Note`, `Date de parution`, `Statut`, `Genre`, `Format`, `Prix`, `Point de vente`, `Editeur`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
-    "insertAuteur" : "INSERT INTO `Auteur` (`Nom`, `Prénom`,`Alias`, `Biographie`, `Date de naissance`, `Date de décès`) VALUES (%s,%s,%s,%s,%s,%s);",
+    "insertAuteur" : "INSERT INTO `Auteur` (`Nom`, `Prénom`, `Biographie`, `Date de naissance`, `Date de décès`,`Alias`) VALUES (%s,%s,%s,%s,%s,%s);",
     "insertEditeur" : "INSERT INTO `Editeur` (`Nom`, `Adresse`) VALUES (%s,%s);",
     "insertEmprunt" : "INSERT INTO `Emprunt` (`Livre`, `Date`, `Utilisateur`) VALUES (%s,%s,%s);",
     "insertPointDeVente" : "INSERT INTO `Point de vente` (`Adresse`, `Nom`, `Site web`, `Tel`) VALUES (%s,%s,%s,%s);",
@@ -129,7 +129,7 @@ class db():
     def loadData(self) -> int:
         """This function loads the data from the data folder into the database."""
         self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, port=self.port, db="BookWorm",init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
-        data= ["data/Auteur.csv","data/Editeur.csv","data/Point_de_vente.csv","data/Livre.csv","data/Utilisateur.csv","data/Note.csv","data/Emprunt.csv"]
+        data= ["data/Auteur.csv","data/Editeur.csv","data/PointDeVente.csv","data/Livre.csv","data/Utilisateur.csv","data/Note.csv","data/Emprunt.csv"]
         for file in data:
             try :
                 idTable = ["data/Auteur.csv","data/Note.csv","data/Emprunt.csv"]
@@ -143,8 +143,8 @@ class db():
                             continue
                         if file in idTable:
                             row.pop(0)
-                        #if  ',' in row[-1]: apparemment inutile actuellement mais à garder au cas où #danger
-                           # row[-1] = row[-1].split(',')[0]
+                        if  ',' in row[-1]: 
+                            row[-1] = row[-1].split(',')[0]
                         self.mkRequest("insert"+file.split("/")[-1].split(".")[0], False, *row)
                     self.db.commit()
             except FileNotFoundError or PermissionError as e:

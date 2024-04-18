@@ -7,7 +7,7 @@ db_USER = "root"
 db_PASSWD = "1234"
 db_PORT = 3306
 
-debug = False #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
+debug = True #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
 #------------------------------------------------------
 
 

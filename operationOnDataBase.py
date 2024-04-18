@@ -252,18 +252,19 @@ def searchAuteur(db:database.db):
             if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
                 searchAuteur(db)
             return
+        print(result)
         print(f"Résultat de la recherche pour '{nomPrenomAlias}' :\n")
         for i in range(len(result)) : 
             print("------------------------------------")
-            if result[i][3] != None: 
-                print(f"{i+1} : {result[i][2]} {result[i][1]} alias : {result[i][3]}")
+            if result[i][6] != None: 
+                print(f"{i+1} : {result[i][2]} {result[i][1]} alias : {result[i][6]}")
             else :
                 print(f"{i+1} : {result[i][2]} {result[i][1]}")
-            if result[i][5] != "0000-00-00":
-                print(f"Né le : {result[i][5]}")
-            if result[i][6] != "0000-00-00" and result[i][6] != None:
-                print(f"Décédé le : {result[i][6]}")
-            print(f"Biographie : {result[i][4].replace('\n', '')}")
+            if result[i][4] != "0000-00-00":
+                print(f"Né le : {result[i][4]}")
+            if result[i][5] != "0000-00-00" and result[i][5] != None:
+                print(f"Décédé le : {result[i][5]}")
+            print(f"Biographie : {result[i][3].replace('\n', '')}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")

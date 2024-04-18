@@ -31,10 +31,10 @@ CREATE TABLE `Auteur` (
   `ID` int(11) NOT NULL,
   `Nom` varchar(20) NOT NULL,
   `Prénom` varchar(20) NOT NULL,
-  `Alias` varchar(20) DEFAULT NULL,
   `Biographie` varchar(1000) NOT NULL,
   `Date de naissance` date NOT NULL DEFAULT current_timestamp(),
-  `Date de décès` date DEFAULT NULL
+  `Date de décès` date DEFAULT NULL,
+  `Alias` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
