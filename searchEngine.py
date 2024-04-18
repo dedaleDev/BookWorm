@@ -1,16 +1,24 @@
 import database
 
 def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
-    result = []
-    for i in range(len(recherche)):
-        for j in range(len(requests)):
-            db.mkRequest(requests[j], False, '%'+recherche[i]+'%')#recherche dans la base de donnée
-            result.append(db.cursor.fetchall())
-    return result
+    try : 
+        result = []
+        blacklistword = ["le", "la", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
+        if len(recherche) > 30:#tronque la recherche si elle est trop longue pour éviter max recursion depth
+            recherche = recherche[:30]
+        for i in range(len(recherche)):
+            if recherche[i].lower() in blacklistword:
+                continue
+            for j in range(len(requests)):
+                db.mkRequest(requests[j], False, '%'+recherche[i]+'%')#recherche dans la base de donnée
+                result.append(db.cursor.fetchall())
+        return result
+    except Exception as e :
+        print("Le moteur de recherche à rencontré une erreur : ",e ,e.__traceback__.tb_lineno)
 
 def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
     try: 
-        recherche = recherche.split()
+        recherche = recherche.strip().split()
         request = ["selectAuteurByPrenom", "selectAuteurByNom", "selectAuteurByAlias"]
         result = searchEngine(recherche, request, db)
         result = [list(i[0]) for i in result if i]#format les résultats
@@ -43,7 +51,7 @@ def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
 def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->list:
     try: 
         result = []
-        recherche = recherche.split()
+        recherche = recherche.strip().split()
         request = ["selectPointDeVenteByNom", "selectPointDeVenteByAdresse"]
         result = searchEngine(recherche, request, db)
         temp = []
@@ -77,20 +85,21 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
 def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
     try: 
         result = []
-        recherche = recherche.split()
+        recherche = recherche.strip().split()
         request = ["selectLivreByTitre", "selectLivreByDescription","selectLivreByAuteurPrénom","selectLivreByAuteurNom","selectLivreByAuteurAlias","selectLivreByGenre"]
         for i in recherche: #evite les recherches de type ISBN si la recherche ne contient pas suffisament de chiffres
             if len(i) > 4 and i.isdigit():
                 print("Recherche d'un code ISBN")
                 request.insert(0, "selectLivreByISBN")
         result = searchEngine(recherche, request, db)
+        result = [livre for elt in result for livre in elt]
         temp = []
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
                 temp.append(i)
         if temp == []:
             return None
-        result = list(temp[0])
+        result = temp
         if onlyOne and len(result) > 1:#à enlever eventuellement si inutile
             print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 

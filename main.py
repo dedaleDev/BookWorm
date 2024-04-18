@@ -48,7 +48,10 @@ def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, qu
     print (f'\t{len(choiceAction)+1} : Quitter (Ctrl + C)\n')
     while True :
         try : 
-            operation = input(question).strip().split(' ')[0]
+            if not defaultChoice :
+                operation = input(question).strip().split(' ')[0]
+            else :
+                operation = input(question).strip()
             if operation.isdigit() :
                 choice = int(operation)
             elif operation :
