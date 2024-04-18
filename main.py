@@ -10,16 +10,6 @@ db_PORT = 3306
 debug = False #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
 #------------------------------------------------------
 
-
-def addElement(db) -> None:
-    choiceListAddElement = [
-            ("Livre",operationOnDataBase.addLivre, db),
-            ("Auteur",operationOnDataBase.addAuteur,db),
-            ("Point de vente",operationOnDataBase.addPointDeVente,db),
-            ("Editeur",operationOnDataBase.addEditeur,db)]
-    showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
-
-
 def search(db) -> None:
     while True :
         choiceListSearch = [
@@ -30,11 +20,42 @@ def search(db) -> None:
         if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir un type de recherche ou un livre : " ) == 2 :
             return
 
-def config():
+def addElement(db) -> None:
+    choiceListAddElement = [
+            ("Livre",operationOnDataBase.addLivre, db),
+            ("Auteur",operationOnDataBase.addAuteur,db),
+            ("Point de vente",operationOnDataBase.addPointDeVente,db),
+            ("Editeur",operationOnDataBase.addEditeur,db),
+            ("Emprunt",operationOnDataBase.addEmprunt,db),
+            ("Utilisateur",operationOnDataBase.addUtilisateur,db)]
+    showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
+
+def deleteElement(db) -> None:
+    choiceListDeleteElement = [
+            ("Livre",operationOnDataBase.deleteLivre, db),
+            ("Auteur",operationOnDataBase.deleteAuteur,db),
+            ("Point de vente",operationOnDataBase.deletePointDeVente,db),
+            ("Editeur",operationOnDataBase.deleteEditeur,db),
+            ("Emprunt",operationOnDataBase.deleteEmprunt,db),
+            ("Utilisateur",operationOnDataBase.deleteUtilisateur,db)]
+    showMenu(choiceAction=choiceListDeleteElement, title= "Que souhaitez vous ajouter ?")
+
+def editElement(db) -> None:
+    choiceListEditElement = [
+            ("Livre",operationOnDataBase.editLivre, db),
+            ("Auteur",operationOnDataBase.editAuteur,db),
+            ("Point de vente",operationOnDataBase.editPointDeVente,db),
+            ("Editeur",operationOnDataBase.editEditeur,db),
+            ("Emprunt",operationOnDataBase.editEmprunt,db),
+            ("Utilisateur",operationOnDataBase.editUtilisateur,db)]
+    showMenu(choiceAction=choiceListEditElement, title= "Que souhaitez vous ajouter ?")
+
+def config(db):
     choiceListConfig = [
-            ("Ajouter",addElement, db),
-            ("Editer",),
-            ("Supprimer",),]
+            ("Ajouter un livre, auteur...",addElement, db),
+            ("Editer un livre, auteur...",editElement, db),
+            ("Supprimer un livre, auteur...",deleteElement, db)]
+    showMenu(choiceAction=choiceListConfig, title= "Menu de configuration")
 
 
 def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, question:str="Veuillez saisir une opération : "):
@@ -105,7 +126,7 @@ if __name__ == '__main__':
 
     choiceList = [ 
             ("Rechercher",search,db),
-            ("Configuration (admin)",addElement,db),
+            ("Configuration (admin)",config,db),
             ("Emprunts (admin)",operationOnDataBase.showEmprunts,db),
             ("Utilisateurs (admin)",operationOnDataBase.showUtilisateurs,db),
             ]

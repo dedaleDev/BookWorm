@@ -85,7 +85,7 @@ def addAuteur(db:database.db):
         else :
             print(f"Nom : {Nom}\nPrenom : {Prenom}\nAlias : {Alias}\nBiographie : {Biographie}\nDate de naissance : {DateDeNaissance}\nDate de décès : {DateDeDeces}")
         if input("Voulez-vous ajouter cet auteur ? (Y/N) : ") == "Y":
-            db.mkRequest("insertAuteur", False, Nom, Prenom, Alias, Biographie, DateDeNaissance, DateDeDeces)
+            db.mkRequest("insertAuteur", False, Nom, Prenom, Biographie, DateDeNaissance, DateDeDeces,Alias)
             db.db.commit()
             print("Auteur ajouté avec succès !")
     except Exception as e:
@@ -229,6 +229,49 @@ def addLivre(db:database.db):
             print("Opération annulée.")
     except Exception as e:
         print(f"Une erreur est survenue lors de l'ajout du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
+
+def addEmprunt(db:database.db):
+    pass
+
+def addUtilisateur(db:database.db):
+    pass
+
+def deleteLivre(db:database.db):
+    pass
+
+def deleteAuteur(db:database.db):
+    pass
+
+def deletePointDeVente(db:database.db):
+    pass
+
+def deleteEditeur(db:database.db):
+    pass
+
+def deleteEmprunt(db:database.db):
+    pass
+
+def deleteUtilisateur(db:database.db):
+    pass
+
+def editLivre(db:database.db):
+    pass
+
+def editAuteur(db:database.db):
+    pass
+
+def editPointDeVente(db:database.db):
+    pass
+
+def editEditeur(db:database.db):
+    pass
+
+def editEmprunt(db:database.db):
+    pass
+
+def editUtilisateur(db:database.db):
+    pass
+
 
 def getAuteurNameByID(db:database.db, id:int)->str:
     try :
