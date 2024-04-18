@@ -235,8 +235,8 @@ def getAuteurNameByID(db:database.db, id:int)->str:
         db.mkRequest("selectAuteurByID", False, id)
         result = db.cursor.fetchall()
         if result == None or result == []: return "Auteur inconnu"
-        if result[0][3] != None:
-            return f"{result[0][3]}"
+        if result[0][6] != None:
+            return f"{result[0][6]}"
         return f"{result[0][2]} {result[0][1]}"
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
@@ -283,8 +283,7 @@ def searchLivre(db:database.db, recherche:str = None):
         print(f"Résultat de la recherche pour '{recherche}' :\n")
         for i in range(len(result)) : 
             print(f"------------------------------------")
-            print(result[i][1].replace('\n', ''))
-            print(f"ISBN : {result[i][0]}\nAuteur: {getAuteurNameByID(db, result[i][2])}\nDescription : {result[i][3].replace('\n', '')}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {result[i][10].replace('\n','')}\nEditeur : {result[i][11]}")
+            print(f"{result[i][1].replace('\n', '')}\nISBN : {result[i][0]}\nAuteur: {getAuteurNameByID(db, result[i][2])}\nDescription : {result[i][3].replace('\n', '')}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {result[i][10].replace('\n','')}\nEditeur : {result[i][11]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du livre.", e, e.__traceback__.tb_lineno)
@@ -302,10 +301,7 @@ def searchPointDeVente(db:database.db):
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
             print(f"------------------------------------")
-            print(result[i][1])
-            print(f"Adresse : {result[i][0].replace('\n', '')}")
-            print(f"Site web : {result[i][2]}")
-            print(f"téléphone : {result[i][3]}")
+            print(f"{result[i][1]}\nAdresse : {result[i][0].replace('\n', '')}\nSite web : {result[i][2]}\nTéléphone : {result[i][3]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
@@ -323,8 +319,7 @@ def searchEditeur(db:database.db):
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
             print(f"------------------------------------")
-            print(result[i][0])
-            print(f"Adresse : {result[i][1].replace('\n', '')}")
+            print(f"{result[i][0]}\nAdresse : {result[i][1].replace('\n', '')}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
