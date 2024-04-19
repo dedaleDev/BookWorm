@@ -2,7 +2,6 @@ import pymysql
 import os, csv
 
 class db():
-
     _requetes = {
     "insertLivre" : "INSERT INTO `Livre` (`ISBN`, `Titre`, `Auteur`, `Description`, `Note`, `Date de parution`, `Statut`, `Genre`, `Format`, `Prix`, `Point de vente`, `Editeur`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
     "insertAuteur" : "INSERT INTO `Auteur` (`Nom`, `Prénom`, `Biographie`, `Date de naissance`, `Date de décès`,`Alias`) VALUES (%s,%s,%s,%s,%s,%s);",
@@ -36,10 +35,11 @@ class db():
     "updateLivre" : "UPDATE `Livre` SET `Titre` = %s, `Auteur` = %s, `Description` = %s, `Note` = %s, `Date de parution` = %s, `Statut` = %s, `Genre` = %s, `Format` = %s, `Prix` = %s, `Point de vente` = %s, `Editeur` = %s WHERE `ISBN` = %s;",
     "updateAuteur" : "UPDATE `Auteur` SET `Nom` = %s, `Prénom` = %s, `Biographie` = %s, `Date de naissance` = %s, `Date de décès` = %s, `Alias` = %s WHERE `ID` = %s;",
     "updatePointDeVente" : "UPDATE `Point de vente` SET `Nom` = %s, `Site web` = %s, `Tel` = %s WHERE `Adresse` = %s;",
-    "updateEditeur" : "UPDATE `Editeur` SET `Adresse` = %s WHERE `Nom` = %s;",
+    "updateEditeur" : "UPDATE `Editeur` SET `Adresse` = %s WHERE `Nom` = %s;"
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
+        """This function initializes the database object."""
         self.host = host
         self.user = user
         self.passwd = passwd
@@ -95,7 +95,12 @@ class db():
                     exit(1)
 
     def mkRequest(self, request:str, verbose=False, *args) -> None:
-        """This function executes a request with the given arguments. Warning, this function not commit the request."""
+        """This function executes a request on the database.
+        Args:
+            request : str : the request to execute on the database (must be in the _requetes dictionary)
+            verbose : bool : if True, the request is displayed on the console
+            *args : tuple : the arguments to pass to the request
+        """
         try :
             # Convertir les arguments en chaînes de caractères, ajouter des guillemets autour des chaînes de caractères, et gérer les valeurs NULL
             args = list(args)
@@ -115,7 +120,11 @@ class db():
         return f"Database host : {self.host}, user : {self.user}, password : {self.passwd}, port : {self.port}, debug : {self.debug}"
 
     def create_db(self) -> int:
-        """This function creates the database and the tables if they don't exist. Returns 0 if the operation is successful, 1 otherwise."""
+        """This function creates the database and the tables.
+        Return :
+            0 : if the database is created successfully
+            1 : if an error occurs
+        """
         try : 
             print(f"\t# mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")#creation de la base de donnée
             if os.system(f"mysql --host={self.host} --user={self.user} --password={self.passwd} -e\"CREATE DATABASE IF NOT EXISTS BookWorm;\"")==0 :
@@ -138,7 +147,11 @@ class db():
         return 1
         
     def loadData(self) -> int:
-        """This function loads the data from the data folder into the database."""
+        """This function loads the data from the data folder into the database.
+        Return :
+            0 : if the data is loaded successfully
+            1 : if an error occurs
+        """
         self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, port=self.port, db="BookWorm",init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
         data= ["data/Auteur.csv","data/Editeur.csv","data/PointDeVente.csv","data/Livre.csv","data/Utilisateur.csv","data/Note.csv","data/Emprunt.csv"]
         for file in data:

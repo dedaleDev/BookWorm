@@ -1,6 +1,14 @@
 import database
 
 def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
+    """This function is the search engine of the program. 
+    Args :
+        recherche : list of str, the words to search
+        requests : list of str, the requests to make in the database
+        db : database object
+    Return :
+        result : list of tuple, the result of the search
+    """
     try : 
         result = []
         blacklistword = ["le", "la", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
@@ -17,6 +25,12 @@ def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
         print("Le moteur de recherche à rencontré une erreur : ",e ,e.__traceback__.tb_lineno)
 
 def getAuteurNameByID(db:database.db, id:int)->str:
+    """This function return the name of the author by his ID
+    Args :
+        db : database object
+        id : int, the ID of the author
+    Return :
+        str : the name of the author"""
     try :
         db.mkRequest("selectAuteurByID", False, id)
         result = db.cursor.fetchall()
@@ -28,6 +42,13 @@ def getAuteurNameByID(db:database.db, id:int)->str:
         print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
+    """This function search an author in the database
+    Args :
+        recherche : str, the name of the author
+        db : database object
+        onlyOne : bool, if True, the function return only one result
+    Return :
+        result : list of tuple, the result of the search"""
     try: 
         recherche = recherche.strip().split()
         request = ["selectAuteurByPrenom", "selectAuteurByNom", "selectAuteurByAlias"]
@@ -65,6 +86,13 @@ def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
         print("Une erreur est survenue lors de la recherche d'auteur : ",e ,e.__traceback__.tb_lineno)
 
 def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->list:
+    """This function search a point of sale in the database
+    Args :
+        recherche : str, the name of the point of sale
+        db : database object
+        onlyOne : bool, if True, the function return only one result
+    Return :
+        result : list of tuple, the result of the search"""
     try: 
         result = []
         recherche = recherche.strip().split()
@@ -99,6 +127,13 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
         print("Une erreur est survenue lors de la recherche du point de vente : ",e ,e.__traceback__.tb_lineno)
 
 def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
+    """This function search a book in the database
+    Args :
+        recherche : str, the name of the book
+        db : database object
+        onlyOne : bool, if True, the function return only one result
+    Return :
+        result : list of tuple, the result of the search"""
     try: 
         result = []
         recherche = recherche.strip().split()
@@ -138,6 +173,13 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
         print("Une erreur est survenue lors de la recherche du livre (searchLivre): ",e ,e.__traceback__.tb_lineno)
 
 def searchEditeur(recherche:str, db:database.db, onlyOne:bool = False)->list:
+    """This function search a publisher in the database
+    Args :
+        recherche : str, the name of the publisher
+        db : database object
+        onlyOne : bool, if True, the function return only one result
+    Return :
+        result : list of tuple, the result of the search"""
     try :
         recherche = recherche.split()
         request = ["selectEditeurByNom", "selectEditeurByAdresse"]

@@ -1,6 +1,18 @@
 import database,searchEngine
 
 def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5, enum:list=[], canBeNull:bool = False)->str:
+    """ This function asks the user a question and returns the answer in the correct format.
+        Args :
+            question : str, question to ask the user
+            type : str, type of the answer expected (like "str", "int", "float", "enum", "date")
+            content : str, content of the answer
+            min_int : int, minimum value for an integer
+            max_int : int, maximum value for an integer
+            enum : list, list of possible values for an enum
+            canBeNull : bool, if True, the answer can be null
+        Return :
+            answer : str, the answer in the correct format
+    """
     while True:
         try : 
             if type == "enum" and enum != []:  # ENUM
@@ -68,6 +80,7 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
             #print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.", answer, e, e.__traceback__.tb_lineno)
 
 def addAuteur(db:database.db):
+    """ This function adds an author to the database."""
     try :
         print("\n---------Nouvel auteur--------\n")
         Nom = getAnswer("Entrez le nom de l'auteur : ", "str", "Le nom de l'auteur", 1, 20).capitalize()
@@ -93,6 +106,7 @@ def addAuteur(db:database.db):
         print(f"Une erreur est survenue lors de l'ajout de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def addEditeur(db:database.db):
+    """ This function adds an editor to the database."""
     try :
         print("\n---------Nouvel éditeur---------\n")
         while True :
@@ -114,6 +128,7 @@ def addEditeur(db:database.db):
         print(f"Une erreur est survenue lors de l'ajout de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def addPointDeVente(db:database.db):
+    """ This function adds a point of sale to the database."""
     try :
         print("\n---Nouveau point de vente---\n")
         while True :
@@ -140,6 +155,7 @@ def addPointDeVente(db:database.db):
 
 
 def addLivre(db:database.db):
+    """ This function adds a book to the database."""
     try : 
         print("\n---------Nouveau livre--------\n")
         while True :
@@ -153,9 +169,12 @@ def addLivre(db:database.db):
         Titre = getAnswer("Entrez le titre du livre : ", "str","Le titre du livre", 1, 50)
         if Titre == None: return
         while True :
-            Auteur = getAnswer("Entrez le nom, prénom ou l'alias de l'auteur : ", "str", "L'auteur", 1, 50)
+            Auteur = getAnswer("Rechercher un auteur (Entrez N pour créer un nouvel auteur): ", "str", "L'auteur", 1, 50)
             if Auteur == None: return
             try :
+                if Auteur == "N":
+                    addAuteur(db)
+                    continue
                 Auteur = searchEngine.searchAuteur(Auteur, db, True)[0]
                 break
             except :
@@ -231,13 +250,8 @@ def addLivre(db:database.db):
     except Exception as e:
         print(f"Une erreur est survenue lors de l'ajout du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
 
-def addEmprunt(db:database.db):
-    pass
-
-def addUtilisateur(db:database.db):
-    pass
-
 def deleteLivre(db:database.db):
+    """ This function deletes a book from the database."""
     try :
         print("\n-----Supprimer un livre-----\n")
         recherche = getAnswer("Entrez le titre du livre à supprimer : ", "str", "Le titre du livre", 1, 50)
@@ -257,9 +271,10 @@ def deleteLivre(db:database.db):
     
 
 def deleteAuteur(db:database.db):
+    """ This function deletes an author from the database."""
     try :
         print("\n----Supprimer un auteur----\n")
-        recherche = getAnswer("Entrez le nom, prénom ou l'alias de l'auteur à supprimer : ", "str", "L'auteur", 1, 50)
+        recherche = getAnswer("Rechercher un auteur à supprimer : ", "str", "L'auteur", 1, 50)
         if recherche == None: return
         auteur = searchEngine.searchAuteur(recherche, db, onlyOne=True)
         if len(auteur) == 1:
@@ -277,6 +292,7 @@ def deleteAuteur(db:database.db):
         print(f"Une erreur est survenue lors de la suppression de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def deletePointDeVente(db:database.db):
+    """This function deletes a point of sale from the database."""
     try :
         print("\n--Supprimer un point de vente--\n")
         recherche = getAnswer("Entrez le nom du point de vente à supprimer : ", "str", "Le point de vente", 1, 50)
@@ -307,6 +323,7 @@ def deletePointDeVente(db:database.db):
         print(f"Une erreur est survenue lors de la suppression du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def deleteEditeur(db:database.db):
+    """ This function deletes an editor from the database."""
     try :
         print("\n---Supprimer un éditeur--\n")
         recherche = getAnswer("Entrez le nom de l'éditeur à supprimer : ", "str", "L'éditeur", 1, 50)
@@ -326,13 +343,8 @@ def deleteEditeur(db:database.db):
     except Exception as e:
         print(f"Une erreur est survenue lors de la suppression de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
-def deleteEmprunt(db:database.db):
-    pass
-
-def deleteUtilisateur(db:database.db):
-    pass
-
 def editLivre(db:database.db):
+    """ This function edits a book in the database."""
     try : 
         print("\n--------Editer un livre--------\n")
         recherche = getAnswer("Recherchez le livre à éditer : ", "str", "Le titre du livre", 1, 50)
@@ -414,6 +426,7 @@ def editLivre(db:database.db):
         print(f"Une erreur est survenue lors de l'édition du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def editAuteur(db:database.db):
+    """ This function edits an author in the database."""
     try :
         print("\n--------Editer un auteur--------\n")
         recherche = getAnswer("Recherchez l'auteur à éditer : ", "str", "L'auteur", 1, 50)
@@ -476,6 +489,7 @@ def editAuteur(db:database.db):
 
 
 def editPointDeVente(db:database.db):
+    """ This function edits a point of sale in the database."""
     try  :
         print("\n----Editer un point de vente----\n")
         recherche = getAnswer("Recherchez le point de vente à éditer : ", "str", "Le point de vente", 1, 50)
@@ -538,6 +552,7 @@ def editPointDeVente(db:database.db):
         print(f"Une erreur est survenue lors de l'édition du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def editEditeur(db:database.db):
+    """ This function edits an editor in the database."""
     try : 
         print("\n----Editer un éditeur----\n")
         recherche = getAnswer("Recherchez l'éditeur à éditer : ", "str", "L'éditeur", 1, 50)
@@ -597,6 +612,7 @@ def editEditeur(db:database.db):
         print(f"Une erreur est survenue lors de l'édition de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchAuteur(db:database.db):
+    """ This function searches for an author in the database."""
     try: 
         nomPrenomAlias = getAnswer("Rechercher un auteur : ", "str", "L'auteur", 1, 50)
         if nomPrenomAlias == None: return
@@ -623,6 +639,11 @@ def searchAuteur(db:database.db):
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchLivre(db:database.db, recherche:str = None):
+    """ This function searches for a book in the database.
+    Args:
+        db (database.db): The database object.
+        recherche (str, optional): The book to search. Defaults to None.
+    """
     try :
         if recherche == None:
             recherche = getAnswer("Rechercher un livre : ", "str", "Le livre", 1, 50)
@@ -642,6 +663,7 @@ def searchLivre(db:database.db, recherche:str = None):
         print("Une erreur est survenue lors de la recherche du livre.", e, e.__traceback__.tb_lineno)
 
 def searchPointDeVente(db:database.db):
+    """ This function searches for a point of sale in the database."""
     try :
         nom = getAnswer("Rechercher un point de vente : ", "str", "Le point de vente", 1, 50)
         if nom == None: return
@@ -660,6 +682,7 @@ def searchPointDeVente(db:database.db):
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchEditeur(db:database.db):
+    """ This function searches for an editor in the database."""
     try :
         nom = getAnswer("Rechercher un éditeur : ", "str", "L'éditeur", 1, 50)
         if nom == None: return

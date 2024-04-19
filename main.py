@@ -10,7 +10,8 @@ db_PORT = 3306
 debug = False #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
 #------------------------------------------------------
 
-def search(db) -> None:
+def search(db:database.db) -> None:
+    """This function creates a search menu and calls the search function from operationOnDataBase.py. Take the database object as a parameter."""
     while True :
         choiceListSearch = [
                 ("Livre",operationOnDataBase.searchLivre, db),
@@ -20,7 +21,8 @@ def search(db) -> None:
         if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir un type de recherche ou un livre : " ) == 2 :
             return
 
-def addElement(db) -> None:
+def addElement(db:database.db) -> None:
+    """This function creates a menu to add an element to the database. Take the database object as a parameter."""
     choiceListAddElement = [
             ("Livre",operationOnDataBase.addLivre, db),
             ("Auteur",operationOnDataBase.addAuteur,db),
@@ -28,7 +30,8 @@ def addElement(db) -> None:
             ("Editeur",operationOnDataBase.addEditeur,db)]
     showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
 
-def deleteElement(db) -> None:
+def deleteElement(db:database.db) -> None:
+    """This function creates a menu to delete an element from the database."""
     choiceListDeleteElement = [
             ("Livre",operationOnDataBase.deleteLivre, db),
             ("Auteur",operationOnDataBase.deleteAuteur,db),
@@ -36,7 +39,8 @@ def deleteElement(db) -> None:
             ("Editeur",operationOnDataBase.deleteEditeur,db)]
     showMenu(choiceAction=choiceListDeleteElement, title= "Que souhaitez vous supprimer ?")
 
-def editElement(db) -> None:
+def editElement(db:database.db) -> None:
+    """This function creates a menu to edit an element from the database."""
     choiceListEditElement = [
             ("Livre",operationOnDataBase.editLivre, db),
             ("Auteur",operationOnDataBase.editAuteur,db),
@@ -44,7 +48,8 @@ def editElement(db) -> None:
             ("Editeur",operationOnDataBase.editEditeur,db)]
     showMenu(choiceAction=choiceListEditElement, title= "Que souhaitez vous editer ?")
 
-def config(db):
+def config(db:database.db):
+    """This function creates a configuration menu."""
     while True :
         choiceListConfig = [
                 ("Ajouter un livre, auteur...",addElement, db),
@@ -55,7 +60,16 @@ def config(db):
 
 
 def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, question:str="Veuillez saisir une opération : "):
-    """Show main menu"""
+    """This function creates a menu with the choiceAction list.
+        Args :
+            choiceAction : list of tuple with the following format : (str, function, *args)
+            title : str, title of the menu
+            defaultChoice : bool, if True, the user can enter a string to select the first choice
+            question : str, question to ask the user
+        Return :
+            1 : if the function returns None
+            2 : if the user wants to quit
+    """
     if title == "Menu" :
         print(f"\n---------------{title}---------------")
     else : 
