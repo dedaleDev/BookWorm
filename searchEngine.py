@@ -16,6 +16,17 @@ def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
     except Exception as e :
         print("Le moteur de recherche à rencontré une erreur : ",e ,e.__traceback__.tb_lineno)
 
+def getAuteurNameByID(db:database.db, id:int)->str:
+    try :
+        db.mkRequest("selectAuteurByID", False, id)
+        result = db.cursor.fetchall()
+        if result == None or result == []: return "Auteur inconnu"
+        if result[0][6] != None:
+            return f"{result[0][6]}"
+        return f"{result[0][2]} {result[0][1]}"
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
 def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
     try: 
         recherche = recherche.strip().split()
@@ -32,7 +43,10 @@ def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
         if onlyOne and len(result) > 1:
             print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i+1} : {', '.join(result[i])}")
+                if result[i][6] != None:
+                    print(f"{i+1} : {result[i][2]} {result[i][1]},   {result[i][6]}")
+                else :
+                    print(f"{i+1} : {result[i][2]} {result[i][1]}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro de l'auteur que vous souhaitez sélectionner : ")
@@ -44,6 +58,8 @@ def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
                     return None
                 except :
                     print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+        if result == []:
+            return None
         return result
     except Exception as e :
         print("Une erreur est survenue lors de la recherche d'auteur : ",e ,e.__traceback__.tb_lineno)
@@ -62,9 +78,9 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
             return None
         result = list(temp[0])
         if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
+            print(f"\nRésultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i+1} : {', '.join(result[i])}")
+                print(f"{i+1} : {result[i][0].replace('\n',' ')},  {result[i][1]}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro du point de vente que vous souhaitez sélectionner : ")
@@ -76,6 +92,8 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
                     return None
                 except :
                     print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+        if result == []:
+            return None
         return result
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du point de vente : ",e ,e.__traceback__.tb_lineno)
@@ -99,9 +117,9 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
             return None
         result = temp
         if onlyOne and len(result) > 1:#à enlever eventuellement si inutile
-            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
+            print(f"\nRésultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i+1} : {', '.join(result[i])}")
+                print(f"{i+1} : {result[i][0]},  {result[i][1]},  {getAuteurNameByID(db,result[i][2])}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro du livre que vous souhaitez sélectionner : ")
@@ -113,6 +131,8 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
                     return None
                 except :
                     print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+        if result == []:
+            return None
         return result
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du livre (searchLivre): ",e ,e.__traceback__.tb_lineno)
@@ -129,9 +149,9 @@ def searchEditeur(recherche:str, db:database.db, onlyOne:bool = False)->list:
                 temp.append(i)
         result = temp
         if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
+            print(f"\nRésultat de la recherche pour {' '.join(recherche)}:\n")
             for i in range(len(result)) : 
-                print(f"{i+1} : {', '.join(result[i])}")
+                print(f"{i+1} :{result[i][0]},  {result[i][1]}")
             while True :
                 try :
                     saisie = input("Veuillez saisir le numéro de l'editeur que vous souhaitez sélectionner : ")
@@ -143,6 +163,10 @@ def searchEditeur(recherche:str, db:database.db, onlyOne:bool = False)->list:
                     return None
                 except :
                     print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+        if result == []:
+            return None
         return result
     except Exception as e :
         print("Une erreur est survenue lors de la recherche d'editeur : ",e ,e.__traceback__.tb_lineno)
+
+

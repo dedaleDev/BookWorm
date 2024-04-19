@@ -25,7 +25,7 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
                 if answer.isdigit() and int(answer) >= 1 and int(answer) <= len(enum):
                     return enum[int(answer)-1]
                 else:
-                    print(f"{content} doit être une valeur de la liste. Veuillez réessayer.")
+                    print(f"{content.capitalize()} doit être une valeur de la liste. Veuillez réessayer.")
             if type == "date":#DATE
                 if '/' in answer:
                     answer = answer.replace('/', '-')
@@ -33,16 +33,17 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
                 answer.reverse()
                 try : 
                     if len(answer) !=3 or int(answer[2]) < 0 or int(answer[2]) > 31 or int(answer[1]) < 0 or int(answer[1]) > 12 or int(answer[0]) < 0 or int(answer[0]) > 2100:
-                        print(f"{content} doit être une date valide. Veuillez réessayer.")
+                        print(f"{content.capitalize()} doit être une date valide. Veuillez réessayer.")
                     else :
                         return f"{answer[0]}-{answer[1]}-{answer[2]}"
                 except :
-                    print(f"{content} doit être une date valide attendu JJ/MM/AAAA. Veuillez réessayer.") 
+                    print(f"{content.capitalize()} doit être une date valide attendu jj/mm/aaaa. Veuillez réessayer.") 
             if type == "int":#INT
+                print(answer)
                 if answer.isdigit() and int(answer) >= min_int and int(answer) <= max_int:
                     return int(answer)
                 else:
-                    print(f"{content} doit être un nombre entier entre {str(min_int)} et {str(max_int) }. Veuillez réessayer.")
+                    print(f"{content.capitalize()} doit être un nombre entier entre {str(min_int)} et {str(max_int) }. Veuillez réessayer.")
             elif type == "str":#STR
                 while answer[0] == ' ':#enlève les espaces en début de chaîne
                     answer = answer[1:]
@@ -59,7 +60,7 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
                 if answer.replace(".", "", 1).isdigit() and float(answer) >= min_int and float(answer) <= max_int:
                     return float(answer)
                 else:
-                    print(f"{content} doit être un nombre réel entre {str(min_int)} et {str(max_int)}. Veuillez réessayer.")
+                    print(f"{content.capitalize()} doit être un nombre réel entre {str(min_int)} et {str(max_int)}. Veuillez réessayer.")
         except KeyboardInterrupt:
             return None
         except Exception as e:
@@ -68,18 +69,18 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
 
 def addAuteur(db:database.db):
     try :
-        print("\n------------Nouvel auteur-----------\n")
-        Nom = getAnswer("Entrez le nom de l'auteur : ", "str", "Le nom de l'auteur", 1, 20)
+        print("\n---------Nouvel auteur--------\n")
+        Nom = getAnswer("Entrez le nom de l'auteur : ", "str", "Le nom de l'auteur", 1, 20).capitalize()
         if Nom == None: return
-        Prenom = getAnswer("Entrez le prénom de l'auteur : ", "str", "Le prénom de l'auteur", 1, 20)
+        Prenom = getAnswer("Entrez le prénom de l'auteur : ", "str", "Le prénom de l'auteur", 1, 20).capitalize()
         if Prenom == None: return
-        Alias = getAnswer("Entrez l'alias de l'auteur (facultatif) : ", "str", "L'alias de l'auteur", 0, 20, canBeNull=True)
+        Alias = getAnswer("Entrez l'alias de l'auteur (facultatif) : ", "str", "L'alias de l'auteur", 0, 20, canBeNull=True).capitalize()
         Biographie = getAnswer("Entrez la biographie de l'auteur : ", "str", "La biographie de l'auteur", 0, 1000)
         if Biographie == None: return
-        DateDeNaissance = getAnswer("Entrez la date de naissance de l'auteur (attendu JJ/MM/AAAA): ", "date", "La date de naissance de l'auteur")
+        DateDeNaissance = getAnswer("Entrez la date de naissance de l'auteur (attendu jj/mm/aaaa): ", "date", "La date de naissance de l'auteur")
         if DateDeNaissance == None: return
-        DateDeDeces = getAnswer("Entrez la date de décès de l'auteur (facultatif, attendu JJ/MM/AAAA): ", "date", "La date de décès de l'auteur", canBeNull=True)
-        print("\n------------Recapitulatif-----------\n")
+        DateDeDeces = getAnswer("Entrez la date de décès de l'auteur (facultatif, attendu jj/mm/aaaa): ", "date", "La date de décès de l'auteur", canBeNull=True)
+        print("\n----------Recapitulatif----------\n")
         if Alias == "Null":
             print(f"Nom : {Nom}\nPrenom : {Prenom}\nBiographie : {Biographie}\nDate de naissance : {DateDeNaissance}\nDate de décès : {DateDeDeces}")
         else :
@@ -93,7 +94,7 @@ def addAuteur(db:database.db):
 
 def addEditeur(db:database.db):
     try :
-        print("\n------------Nouvel éditeur-----------\n")
+        print("\n---------Nouvel éditeur---------\n")
         while True :
             Nom = getAnswer("Entrez le nom de l'éditeur : ", "str", "Le nom de l'éditeur", 1, 20)
             db.mkRequest("selectEditeurByNom", False, Nom)
@@ -103,7 +104,7 @@ def addEditeur(db:database.db):
         if Nom == None: return
         Adresse = getAnswer("Entrez l'adresse de l'éditeur : ", "str", "L'adresse de l'éditeur", 1, 120)
         if Adresse == None: return
-        print("\n------------Recapitulatif-----------\n")
+        print("\n----------Recapitulatif---------\n")
         print(f"Nom : {Nom}\nAdresse : {Adresse}")
         if input("Voulez-vous ajouter cet éditeur ? (Y/N) : ") == "Y":
             db.mkRequest("insertEditeur", False, Nom, Adresse)
@@ -114,7 +115,7 @@ def addEditeur(db:database.db):
 
 def addPointDeVente(db:database.db):
     try :
-        print("\n------------Nouveau point de vente-----------\n")
+        print("\n---Nouveau point de vente---\n")
         while True :
             Adresse = getAnswer("Entrez l'adresse du point de vente : ", "str", "L'adresse du point de vente", 1, 120)
             db.mkRequest("selectPointDeVenteByAdresse", False, Adresse)
@@ -128,7 +129,7 @@ def addPointDeVente(db:database.db):
         if SiteWeb == None: return
         Telephone = getAnswer("Entrez le numéro de téléphone du point de vente : ", "str", "Le numéro de téléphone du point de vente", 10, 10)
         if Telephone == None: return
-        print("\n------------Recapitulatif-----------\n")
+        print("\n----------Recapitulatif---------\n")
         print(f"Nom : {Nom}\nAdresse : {Adresse}\nSite web : {SiteWeb}\nTéléphone : {Telephone}")
         if input("Voulez-vous ajouter ce point de vente ? (Y/N) : ") == "Y":
             db.mkRequest("insertPointDeVente", False, Adresse, Nom, SiteWeb, Telephone)
@@ -140,7 +141,7 @@ def addPointDeVente(db:database.db):
 
 def addLivre(db:database.db):
     try : 
-        print("\n------------Nouveau livre-----------\n")
+        print("\n---------Nouveau livre--------\n")
         while True :
             ISBN = getAnswer("Entrez le code ISBN du livre : ", "str","Le code ISBN", 10, 13,)
             #verification de la clé primaire :
@@ -172,7 +173,7 @@ def addLivre(db:database.db):
         if Description == None: return
         Note = getAnswer("Entrez la note initiale du livre (attendu 0-10) : ", "float", "la note", 0, 10)
         if Note == None: return
-        DateDeParution = getAnswer("Entrez la date de parution du livre (attendu JJ/MM/AAAA): ", "date", "La date de parution")
+        DateDeParution = getAnswer("Entrez la date de parution du livre (attendu jj/mm/aaaa): ", "date", "La date de parution")
         if DateDeParution == None: return
         Statut = getAnswer("Veuillez choisir le statut à attribuer : ", "enum", content="Le statut",enum=["Disponible", "Emprunté", "hors stock"])
         if Statut == None: return
@@ -237,16 +238,93 @@ def addUtilisateur(db:database.db):
     pass
 
 def deleteLivre(db:database.db):
-    pass
+    try :
+        print("\n-----Supprimer un livre-----\n")
+        recherche = getAnswer("Entrez le titre du livre à supprimer : ", "str", "Le titre du livre", 1, 50)
+        if recherche == None: return
+        livre = searchEngine.searchLivre(recherche, db, onlyOne=True)
+        if len(livre) == 1:
+            livre = livre[0]
+        if livre == None: 
+            print("Oups, aucun livre n'a été trouvé pour cette recherche.")
+            return
+        if input(f"Voulez vous vraiment effacer le livre : {livre[1]} (Y/N) ? ") == "Y":
+            db.mkRequest("deleteLivre", False, livre[0])
+            db.db.commit()
+            print("Livre supprimé avec succès !")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la suppression du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
+    
 
 def deleteAuteur(db:database.db):
-    pass
+    try :
+        print("\n----Supprimer un auteur----\n")
+        recherche = getAnswer("Entrez le nom, prénom ou l'alias de l'auteur à supprimer : ", "str", "L'auteur", 1, 50)
+        if recherche == None: return
+        auteur = searchEngine.searchAuteur(recherche, db, onlyOne=True)
+        if len(auteur) == 1:
+            auteur = auteur[0]
+        if auteur == None: 
+            print("Oups, aucun auteur n'a été trouvé pour cette recherche.")
+            return
+        print("Cette opération entrainera la suppression de tous les livres associés à cet auteur.")
+        if input(f"Voulez vous vraiment effacer l'auteur : {auteur[2]} {auteur[1]} (Y/N) ? ") == "Y":
+            db.mkRequest("deleteLivreByAuteur", False, auteur[0])
+            db.mkRequest("deleteAuteur", False, auteur[0])
+            db.db.commit()
+            print("Auteur supprimé avec succès !")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la suppression de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def deletePointDeVente(db:database.db):
-    pass
+    try :
+        print("\n--Supprimer un point de vente--\n")
+        recherche = getAnswer("Entrez le nom du point de vente à supprimer : ", "str", "Le point de vente", 1, 50)
+        if recherche == None: return
+        pointDeVente = searchEngine.searchPointDeVente(recherche, db, onlyOne=True)
+        if len(pointDeVente) == 1:
+            pointDeVente = pointDeVente[0]
+        if pointDeVente == None:
+            print("Oups, aucun point de vente n'a été trouvé pour cette recherche.")
+            return
+        print(f"Cette opération demande le remplacement du point de vente {pointDeVente} pour tous les livres associés.")
+        recherche = getAnswer("Entrez le nom du point de vente de remplacement : ", "str", "Le point de vente", 1, 50)
+        if recherche == None: return
+        pointDeVenteRemplacement = searchEngine.searchPointDeVente(recherche, db, onlyOne=True)
+        if len(pointDeVenteRemplacement) == 1:
+            pointDeVenteRemplacement = pointDeVenteRemplacement[0]
+        if pointDeVenteRemplacement == None:
+            print("Oups, aucun point de vente n'a été trouvé pour cette recherche.")
+            return
+        if input(f"Confirmez vous le remplacement du point de vente {pointDeVente[1]} par {pointDeVenteRemplacement[1]} ? (Y/N) : ") != "Y":
+            print("Opération annulée.")
+            return
+        db.mkRequest("updateLivrePointDeVente", False, pointDeVenteRemplacement[0], pointDeVente[0])
+        db.mkRequest("deletePointDeVente", False, pointDeVente[0])
+        db.db.commit()
+        print("Point de vente supprimé avec succès !")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la suppression du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def deleteEditeur(db:database.db):
-    pass
+    try :
+        print("\n---Supprimer un éditeur--\n")
+        recherche = getAnswer("Entrez le nom de l'éditeur à supprimer : ", "str", "L'éditeur", 1, 50)
+        if recherche == None: return
+        editeur = searchEngine.searchEditeur(recherche, db, onlyOne=True)
+        if len(editeur) == 1:
+            editeur = editeur[0]
+        if editeur == None: 
+            print("Oups, aucun éditeur n'a été trouvé pour cette recherche.")
+            return
+        print("Cette opération entrainera la suppression de tous les livres associés à cet éditeur.")
+        if input(f"Voulez vous vraiment effacer l'éditeur : {editeur[0]} (Y/N) ? ") == "Y":
+            db.mkRequest("deleteLivreByEditeur", False, editeur[0])
+            db.mkRequest("deleteEditeur", False, editeur[0])
+            db.db.commit()
+            print("Editeur supprimé avec succès !")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la suppression de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def deleteEmprunt(db:database.db):
     pass
@@ -255,35 +333,268 @@ def deleteUtilisateur(db:database.db):
     pass
 
 def editLivre(db:database.db):
-    pass
+    try : 
+        print("\n--------Editer un livre--------\n")
+        recherche = getAnswer("Recherchez le livre à éditer : ", "str", "Le titre du livre", 1, 50)
+        if recherche == None: return
+        livre = searchEngine.searchLivre(recherche, db, onlyOne=True)
+        if livre == None:
+            print("Oups, aucun livre n'a été trouvé pour cette recherche.")
+            return
+        if len(livre) == 1:
+            livre = list(livre[0])
+        operation = [["ISBN"],["le titre","str", 1, 50],["l'auteur","str", 1, 50],["la description","str", 0, 1000],["la note","float", 0, 10],["la date de parution (jj/mm/aaaa)","date", 0, 10],["le statut","enum", ["Disponible", "Emprunté", "hors stock"]],["le genre","enum", ["Historique","Romantique","Policier","Science-fiction","Fantastique","Aventure","Biographique","Autobiographique","Épistolaire","Thriller","Tragédie","Drame","Absurde","Philosophique","Politique","Légendes & Mythes","Lettres personnelles","Voyages","Journal intime","Bandes dessinées","Documentaires","Religieux"]],["le format","enum", ["Poche","Grand Format","E-book & numérique","Manga","Bande Dessinée","Magazine","CD","DVD & Blu-ray"]],["le prix","float", 0, 1000],["le point de vente","str", 1, 50],["l'editeur","str", 1, 50],["quiter et sauvegarder (CTRL+C)"]]
+        externalKeyOperation = {"l'auteur":searchEngine.searchAuteur,"le point de vente":searchEngine.searchPointDeVente,"l'editeur":searchEngine.searchEditeur}    
+        print(f"Vous avez selectionné le livre : {livre[1]}")
+        print("Veuillez noter qu'il n'est pas possible d'éditer le code ISBN. Si cela est nécessaire, veuillez supprimer le livre et en ajouter un nouveau.")
+        print("Que voulez-vous modifier ?")
+        while True :
+            for i in range(len(operation)):
+                if i != 0 : #n'affiche pas la clé primaire car pas modifiable
+                    print(f"{i} : {operation[i][0].capitalize()}")
+            try :
+                saisie = int(input("Veuillez saisir le numéro de l'élément à modifier :"))
+                if saisie == 12:
+                    saisie = input("Voulez-vous appliquer les modifications ? (Y / N) : ")
+                    if  saisie == "Y":
+                        db.mkRequest("updateLivre", False,livre[1], livre[2], livre[3], livre[4], livre[5], livre[6], livre[7], livre[8], livre[9], livre[10], livre[11], livre[0])
+                        db.db.commit()
+                        print("Livre modifié avec succès !")
+                        return
+                    elif saisie == "N":
+                        print("Opération annulée.")
+                        return
+                    else :
+                        continue
+            except KeyboardInterrupt:
+                return
+            except :
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+            print(saisie)
+            if  int(saisie) >= 1 and int(saisie) <= len(operation)-1:
+                for i in range(len(operation)):
+                    if i == saisie and i != 0:
+                        if operation[i][0] in externalKeyOperation.keys():
+                            saisie = input(f"Entre la nouvelle valeur pour {operation[i][0]} : ")
+                            change = externalKeyOperation[operation[i][0]](saisie, db, True)
+                            if change == None:
+                                print("Oups, aucun élément n'a été trouvé pour cette recherche.")
+                                continue
+                            if len(change) == 1:
+                                change = change[0]
+                            if change == None:
+                                print("Oups, aucun élément n'a été trouvé pour cette recherche.")
+                                continue
+                            if operation[i][0] == "auteur":
+                                print("Vous avez selectionné : ", change[2], change[1])
+                            else :
+                                print("Vous avez selectionné : ", change[1])
+                            change = change[0]
+                        elif len(operation[i]) == 4:
+                            change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], operation[i][2], operation[i][3])
+                        else :
+                            change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], enum = operation[i][2])
+                        if change == None: return
+                        livre = [change if j == i else livre[j] for j in range(len(livre))]
+                        print(livre)
+                        saisie = input("Voulez-vous appliquer les modifications ? (Y / N / P (poursuivre modifications)) : ")
+                        if  saisie == "Y":
+                            db.mkRequest("updateLivre", False,livre[1], livre[2], livre[3], livre[4], livre[5], livre[6], livre[7], livre[8], livre[9], livre[10], livre[11], livre[0])
+                            db.db.commit()
+                            print("Livre modifié avec succès !")
+                            return
+                        elif saisie == "N":
+                            print("Opération annulée.")
+                            return
+                        else :
+                            continue
+            else:
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+    except Exception as e:  
+        print(f"Une erreur est survenue lors de l'édition du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def editAuteur(db:database.db):
-    pass
+    try :
+        print("\n--------Editer un auteur--------\n")
+        recherche = getAnswer("Recherchez l'auteur à éditer : ", "str", "L'auteur", 1, 50)
+        if recherche == None: return
+        auteur = searchEngine.searchAuteur(recherche, db, True)
+        if auteur == None:
+            print("Oups, aucun auteur n'a été trouvé pour cette recherche.")
+            return
+        if len(auteur) == 1:
+            auteur = list(auteur[0])
+        operation = [["l'id"],["le nom","str", 1, 20],["le prénom","str", 1, 20],["la biographie","str", 0, 1000],["la date de naissance (jj/mm/aaaa)","date", 0, 10],["la date de décès (jj/mm/aaaa)","date", 0, 10, None],["l'alias","str", 0, 20,None],["quiter et sauvegarder (CTRL+C)"]]
+        print(f"Vous avez selectionné l'auteur : {auteur[2]} {auteur[1]}")
+        print("Que voulez-vous modifier ?")
+        while True :
+            for i in range(len(operation)):
+                if i != 0 : #n'affiche pas la clé primaire car pas modifiable
+                    print(f"{i} : {operation[i][0].capitalize()}")
+            try :
+                saisie = int(input("Veuillez saisir le numéro de l'élément à modifier :"))
+            except KeyboardInterrupt:
+                return
+            except :
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+            if  int(saisie) >= 1 and int(saisie) <= len(operation)-1:
+                if saisie == 7 :
+                    saisie = input("Voulez-vous appliquer les modifications ? (Y / N) : ")
+                    if  saisie == "Y":
+                        db.mkRequest("updateAuteur", False,auteur[1], auteur[2], auteur[3], auteur[4], auteur[5],auteur[6], auteur[0])
+                        db.db.commit()
+                        print("Auteur modifié avec succès !")
+                        return
+                    elif saisie == "N":
+                        print("Opération annulée.")
+                        return
+                    else :
+                        continue
+                for i in range(len(operation)):
+                    if i == saisie and i != 0:
+                        if len(operation[i]) == 5:
+                                change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], operation[i][2], operation[i][3], canBeNull=True)
+                        else :
+                            change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], operation[i][2], operation[i][3])
+                        auteur = [change if j == i else auteur[j] for j in range(len(auteur))]
+                        print(auteur)
+                        saisie = input("Voulez-vous appliquer les modifications ? (Y / N / P (poursuivre modifications)) : ")
+                        if  saisie == "Y":
+                            db.mkRequest("updateAuteur", False,auteur[1], auteur[2], auteur[3], auteur[4], auteur[5],auteur[6], auteur[0])
+                            db.db.commit()
+                            print("Auteur modifié avec succès !")
+                            return
+                        elif saisie == "N":
+                            print("Opération annulée.")
+                            return
+                        else :
+                            continue
+            else:
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de l'édition de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
 
 def editPointDeVente(db:database.db):
-    pass
+    try  :
+        print("\n----Editer un point de vente----\n")
+        recherche = getAnswer("Recherchez le point de vente à éditer : ", "str", "Le point de vente", 1, 50)
+        if recherche == None: return
+        pointDeVente = searchEngine.searchPointDeVente(recherche, db, True)
+        if pointDeVente == None:
+            print("Oups, aucun point de vente n'a été trouvé pour cette recherche.")
+            return
+        if len(pointDeVente) == 1:
+            pointDeVente = list(pointDeVente[0])
+        operation = [["l'adresse"],["le nom","str", 1, 20],["le site web","str", 1, 50],["le numéro de téléphone","str", 10, 10, None],["quiter et sauvegarder (CTRL+C)"]]
+        print(f"Vous avez selectionné le point de vente : {pointDeVente[1]}")
+        print("Veuillez noter qu'il n'est pas possible d'éditer l'adresse. Si cela est nécessaire, veuillez supprimer le point de vente et en ajouter un nouveau.")
+        print("Que voulez-vous modifier ?")
+        while True :
+            for i in range(len(operation)):
+                if i != 0 : #n'affiche pas la clé primaire car pas modifiable
+                    print(f"{i} : {operation[i][0].capitalize()}")
+            try :
+                saisie = int(input("Veuillez saisir le numéro de l'élément à modifier :"))
+                if saisie == 4:
+                    saisie = input("Voulez-vous appliquer les modifications ? (Y / N) : ")
+                    if  saisie == "Y":
+                        db.mkRequest("updatePointDeVente", False,pointDeVente[1], pointDeVente[2], pointDeVente[3], pointDeVente[0])
+                        db.db.commit()
+                        print("Point de vente modifié avec succès !")
+                        return
+                    elif saisie == "N":
+                        print("Opération annulée.")
+                        return
+                    else :
+                        continue
+            except KeyboardInterrupt:
+                return
+            except :
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+            if  int(saisie) >= 1 and int(saisie) <= len(operation)-1:
+                for i in range(len(operation)):
+                    if i == saisie and i != 0:
+                        if len(operation[i]) == 5:
+                                change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], operation[i][2], operation[i][3], canBeNull=True)
+                        else :
+                            change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], operation[i][2], operation[i][3])
+                        pointDeVente = [change if j == i else pointDeVente[j] for j in range(len(pointDeVente))]
+                        print(pointDeVente)
+                        saisie = input("Voulez-vous appliquer les modifications ? (Y / N / P (poursuivre modifications)) : ")
+                        if  saisie == "Y":
+                            db.mkRequest("updatePointDeVente", False,pointDeVente[1], pointDeVente[2], pointDeVente[3], pointDeVente[0])
+                            db.db.commit()
+                            print("Point de vente modifié avec succès !")
+                            return
+                        elif saisie == "N":
+                            print("Opération annulée.")
+                            return
+                        else :
+                            continue
+            else:
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+    except Exception as e:
+        print(f"Une erreur est survenue lors de l'édition du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def editEditeur(db:database.db):
-    pass
-
-def editEmprunt(db:database.db):
-    pass
-
-def editUtilisateur(db:database.db):
-    pass
-
-
-def getAuteurNameByID(db:database.db, id:int)->str:
-    try :
-        db.mkRequest("selectAuteurByID", False, id)
-        result = db.cursor.fetchall()
-        if result == None or result == []: return "Auteur inconnu"
-        if result[0][6] != None:
-            return f"{result[0][6]}"
-        return f"{result[0][2]} {result[0][1]}"
+    try : 
+        print("\n----Editer un éditeur----\n")
+        recherche = getAnswer("Recherchez l'éditeur à éditer : ", "str", "L'éditeur", 1, 50)
+        if recherche == None: return
+        editeur = searchEngine.searchEditeur(recherche, db, True)
+        if editeur == None:
+            print("Oups, aucun éditeur n'a été trouvé pour cette recherche.")
+            return
+        if len(editeur) == 1:
+            editeur = list(editeur[0])
+        operation = [["le nom"],["l'adresse","str", 1, 120],["quiter et sauvegarder (CTRL+C)"]]
+        print(f"Vous avez selectionné l'éditeur : {editeur[0]}")
+        print("Veuillez noter qu'il n'est pas possible d'éditer le nom. Si cela est nécessaire, veuillez supprimer l'éditeur et en ajouter un nouveau.")
+        print("Que voulez-vous modifier ?")
+        while True :
+            for i in range(len(operation)):
+                if i != 0 : #n'affiche pas la clé primaire car pas modifiable
+                    print(f"{i} : {operation[i][0].capitalize()}")
+            try :
+                saisie = int(input("Veuillez saisir le numéro de l'élément à modifier :"))
+                if saisie == 2:
+                    saisie = input("Voulez-vous appliquer les modifications ? (Y / N) : ")
+                    if  saisie == "Y":
+                        db.mkRequest("updateEditeur", False,editeur[1], editeur[0])
+                        db.db.commit()
+                        print("Editeur modifié avec succès !")
+                        return
+                    elif saisie == "N":
+                        print("Opération annulée.")
+                        return
+                    else :
+                        continue
+            except KeyboardInterrupt:
+                return
+            except :
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+            if  int(saisie) >= 1 and int(saisie) <= len(operation)-1:
+                for i in range(len(operation)):
+                    if i == saisie and i != 0:
+                        change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], operation[i][2], operation[i][3])
+                        editeur = [change if j == i else editeur[j] for j in range(len(editeur))]
+                        print(editeur)
+                        saisie = input("Voulez-vous appliquer les modifications ? (Y / N / P (poursuivre modifications)) : ")
+                        if  saisie == "Y":
+                            db.mkRequest("updateEditeur", False,editeur[1], editeur[0])
+                            db.db.commit()
+                            print("Editeur modifié avec succès !")
+                            return
+                        elif saisie == "N":
+                            print("Opération annulée.")
+                            return
+                        else :
+                            continue
+            else:
+                print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
     except Exception as e:
-        print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
-
+        print(f"Une erreur est survenue lors de l'édition de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
 def searchAuteur(db:database.db):
     try: 
@@ -295,10 +606,9 @@ def searchAuteur(db:database.db):
             if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
                 searchAuteur(db)
             return
-        print(result)
         print(f"Résultat de la recherche pour '{nomPrenomAlias}' :\n")
         for i in range(len(result)) : 
-            print("------------------------------------")
+            print("-----------------------------------")
             if result[i][6] != None: 
                 print(f"{i+1} : {result[i][2]} {result[i][1]} alias : {result[i][6]}")
             else :
@@ -325,8 +635,8 @@ def searchLivre(db:database.db, recherche:str = None):
             return
         print(f"Résultat de la recherche pour '{recherche}' :\n")
         for i in range(len(result)) : 
-            print(f"------------------------------------")
-            print(f"{result[i][1].replace('\n', '')}\nISBN : {result[i][0]}\nAuteur: {getAuteurNameByID(db, result[i][2])}\nDescription : {result[i][3].replace('\n', '')}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {result[i][10].replace('\n','')}\nEditeur : {result[i][11]}")
+            print(f"-----------------------------------")
+            print(f"{result[i][1].replace('\n', '')}\nISBN : {result[i][0]}\nAuteur: {searchEngine.getAuteurNameByID(db, result[i][2])}\nDescription : {result[i][3].replace('\n', '')}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {result[i][10].replace('\n','')}\nEditeur : {result[i][11]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du livre.", e, e.__traceback__.tb_lineno)
@@ -343,7 +653,7 @@ def searchPointDeVente(db:database.db):
             return
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
-            print(f"------------------------------------")
+            print(f"-----------------------------------")
             print(f"{result[i][1]}\nAdresse : {result[i][0].replace('\n', '')}\nSite web : {result[i][2]}\nTéléphone : {result[i][3]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
@@ -361,15 +671,8 @@ def searchEditeur(db:database.db):
             return
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
-            print(f"------------------------------------")
+            print(f"-----------------------------------")
             print(f"{result[i][0]}\nAdresse : {result[i][1].replace('\n', '')}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
-
-
-def showEmprunts(db:database.db):
-    pass
-
-def showUtilisateurs(db:database.db):
-    pass

@@ -26,6 +26,17 @@ class db():
     "selectLivreByGenre" : "SELECT * FROM `Livre` WHERE `Genre` LIKE %s;",
     "selectEditeurByNom" : "SELECT * FROM `Editeur` WHERE `Nom` LIKE %s;",
     "selectEditeurByAdresse" : "SELECT * FROM `Editeur` WHERE `Adresse` LIKE %s;",
+    "deleteLivre" : "DELETE FROM `Livre` WHERE `ISBN` = %s;",
+    "deleteLivreByAuteur" : "DELETE FROM `Livre` WHERE `Auteur` = %s;",
+    "deleteAuteur" : "DELETE FROM `Auteur` WHERE `ID` = %s;",
+    "deletePointDeVente" : "DELETE FROM `Point de vente` WHERE `Adresse` = %s;",
+    "deleteEditeur" : "DELETE FROM `Editeur` WHERE `Nom` = %s;",
+    "deleteLivreByEditeur" : "DELETE FROM `Livre` WHERE `Editeur` = %s;",
+    "updateLivrePointDeVente" : "UPDATE `Livre` SET `Point de vente` = %s WHERE  `Point de vente`  = %s;",
+    "updateLivre" : "UPDATE `Livre` SET `Titre` = %s, `Auteur` = %s, `Description` = %s, `Note` = %s, `Date de parution` = %s, `Statut` = %s, `Genre` = %s, `Format` = %s, `Prix` = %s, `Point de vente` = %s, `Editeur` = %s WHERE `ISBN` = %s;",
+    "updateAuteur" : "UPDATE `Auteur` SET `Nom` = %s, `Prénom` = %s, `Biographie` = %s, `Date de naissance` = %s, `Date de décès` = %s, `Alias` = %s WHERE `ID` = %s;",
+    "updatePointDeVente" : "UPDATE `Point de vente` SET `Nom` = %s, `Site web` = %s, `Tel` = %s WHERE `Adresse` = %s;",
+    "updateEditeur" : "UPDATE `Editeur` SET `Adresse` = %s WHERE `Nom` = %s;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:

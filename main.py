@@ -25,9 +25,7 @@ def addElement(db) -> None:
             ("Livre",operationOnDataBase.addLivre, db),
             ("Auteur",operationOnDataBase.addAuteur,db),
             ("Point de vente",operationOnDataBase.addPointDeVente,db),
-            ("Editeur",operationOnDataBase.addEditeur,db),
-            ("Emprunt",operationOnDataBase.addEmprunt,db),
-            ("Utilisateur",operationOnDataBase.addUtilisateur,db)]
+            ("Editeur",operationOnDataBase.addEditeur,db)]
     showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
 
 def deleteElement(db) -> None:
@@ -35,33 +33,31 @@ def deleteElement(db) -> None:
             ("Livre",operationOnDataBase.deleteLivre, db),
             ("Auteur",operationOnDataBase.deleteAuteur,db),
             ("Point de vente",operationOnDataBase.deletePointDeVente,db),
-            ("Editeur",operationOnDataBase.deleteEditeur,db),
-            ("Emprunt",operationOnDataBase.deleteEmprunt,db),
-            ("Utilisateur",operationOnDataBase.deleteUtilisateur,db)]
-    showMenu(choiceAction=choiceListDeleteElement, title= "Que souhaitez vous ajouter ?")
+            ("Editeur",operationOnDataBase.deleteEditeur,db)]
+    showMenu(choiceAction=choiceListDeleteElement, title= "Que souhaitez vous supprimer ?")
 
 def editElement(db) -> None:
     choiceListEditElement = [
             ("Livre",operationOnDataBase.editLivre, db),
             ("Auteur",operationOnDataBase.editAuteur,db),
             ("Point de vente",operationOnDataBase.editPointDeVente,db),
-            ("Editeur",operationOnDataBase.editEditeur,db),
-            ("Emprunt",operationOnDataBase.editEmprunt,db),
-            ("Utilisateur",operationOnDataBase.editUtilisateur,db)]
-    showMenu(choiceAction=choiceListEditElement, title= "Que souhaitez vous ajouter ?")
+            ("Editeur",operationOnDataBase.editEditeur,db)]
+    showMenu(choiceAction=choiceListEditElement, title= "Que souhaitez vous editer ?")
 
 def config(db):
-    choiceListConfig = [
-            ("Ajouter un livre, auteur...",addElement, db),
-            ("Editer un livre, auteur...",editElement, db),
-            ("Supprimer un livre, auteur...",deleteElement, db)]
-    showMenu(choiceAction=choiceListConfig, title= "Menu de configuration")
+    while True :
+        choiceListConfig = [
+                ("Ajouter un livre, auteur...",addElement, db),
+                ("Editer un livre, auteur...",editElement, db),
+                ("Supprimer un livre, auteur...",deleteElement, db)]
+        if showMenu(choiceAction=choiceListConfig, title= "Menu de configuration") == 2 :
+            return
 
 
 def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, question:str="Veuillez saisir une opération : "):
     """Show main menu"""
     if title == "Menu" :
-        print(f"\n------------------{title}------------------")
+        print(f"\n---------------{title}---------------")
     else : 
         print(f'\n------------------------------------\n\n{title}')
     for ch  in choiceAction:
@@ -126,9 +122,7 @@ if __name__ == '__main__':
 
     choiceList = [ 
             ("Rechercher",search,db),
-            ("Configuration (admin)",config,db),
-            ("Emprunts (admin)",operationOnDataBase.showEmprunts,db),
-            ("Utilisateurs (admin)",operationOnDataBase.showUtilisateurs,db),
+            ("Configuration (admin)",config,db)
             ]
     while True : 
         result = showMenu(choiceList)
