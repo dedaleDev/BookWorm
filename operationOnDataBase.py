@@ -200,7 +200,7 @@ def addLivre(db:database.db):
         if Note == None: return
         DateDeParution = getAnswer("Entrez la date de parution du livre (attendu jj/mm/aaaa): ", "date", "La date de parution")
         if DateDeParution == None: return
-        Statut = getAnswer("Veuillez choisir le statut à attribuer : ", "enum", content="Le statut",enum=["Disponible", "Emprunté", "hors stock"])
+        Statut = getAnswer("Veuillez choisir le statut à attribuer : ", "enum", content="Le statut",enum=["disponible", "emprunté", "hors stock"])
         if Statut == None: return
         Genre = getAnswer("Veuillez choisir le genre du livre : ", "enum", content="Le genre",enum=["Historique","Romantique","Policier","Science-fiction","Fantastique","Aventure","Biographique","Autobiographique","Épistolaire","Thriller","Tragédie","Drame","Absurde","Philosophique","Politique","Légendes & Mythes","Lettres personnelles","Voyages","Journal intime","Bandes dessinées","Documentaires","Religieux"])
         if Genre == None: return
@@ -267,11 +267,11 @@ def deleteLivre(db:database.db):
         recherche = getAnswer("Entrez le titre du livre à supprimer : ", "str", "Le titre du livre", 1, 50)
         if recherche == None: return
         livre = searchEngine.searchLivre(recherche, db, onlyOne=True)
-        if len(livre) == 1:
-            livre = livre[0]
         if livre == None: 
             print("Oups, aucun livre n'a été trouvé pour cette recherche.")
             return
+        if len(livre) == 1:
+            livre = livre[0]
         if input(f"Voulez vous vraiment effacer le livre : {livre[1]} (Y/N) ? ") == "Y":
             db.mkRequest("deleteLivre", False, livre[0])
             db.db.commit()
@@ -287,11 +287,11 @@ def deleteAuteur(db:database.db):
         recherche = getAnswer("Rechercher un auteur à supprimer : ", "str", "L'auteur", 1, 50)
         if recherche == None: return
         auteur = searchEngine.searchAuteur(recherche, db, onlyOne=True)
-        if len(auteur) == 1:
-            auteur = auteur[0]
         if auteur == None: 
             print("Oups, aucun auteur n'a été trouvé pour cette recherche.")
             return
+        if len(auteur) == 1:
+            auteur = auteur[0]
         print("Cette opération entrainera la suppression de tous les livres associés à cet auteur.")
         if input(f"Voulez vous vraiment effacer l'auteur : {auteur[2]} {auteur[1]} (Y/N) ? ") == "Y":
             db.mkRequest("deleteLivreByAuteur", False, auteur[0])
@@ -313,15 +313,15 @@ def deletePointDeVente(db:database.db):
         if pointDeVente == None:
             print("Oups, aucun point de vente n'a été trouvé pour cette recherche.")
             return
-        print(f"Cette opération demande le remplacement du point de vente {pointDeVente} pour tous les livres associés.")
+        print(f"Cette opération demande le remplacement du point de vente {pointDeVente[1]} pour tous les livres associés.")
         recherche = getAnswer("Entrez le nom du point de vente de remplacement : ", "str", "Le point de vente", 1, 50)
         if recherche == None: return
         pointDeVenteRemplacement = searchEngine.searchPointDeVente(recherche, db, onlyOne=True)
-        if len(pointDeVenteRemplacement) == 1:
-            pointDeVenteRemplacement = pointDeVenteRemplacement[0]
         if pointDeVenteRemplacement == None:
             print("Oups, aucun point de vente n'a été trouvé pour cette recherche.")
             return
+        if len(pointDeVenteRemplacement) == 1:
+            pointDeVenteRemplacement = pointDeVenteRemplacement[0]
         if input(f"Confirmez vous le remplacement du point de vente {pointDeVente[1]} par {pointDeVenteRemplacement[1]} ? (Y/N) : ") != "Y":
             print("Opération annulée.")
             return
@@ -339,11 +339,11 @@ def deleteEditeur(db:database.db):
         recherche = getAnswer("Entrez le nom de l'éditeur à supprimer : ", "str", "L'éditeur", 1, 50)
         if recherche == None: return
         editeur = searchEngine.searchEditeur(recherche, db, onlyOne=True)
-        if len(editeur) == 1:
-            editeur = editeur[0]
         if editeur == None: 
             print("Oups, aucun éditeur n'a été trouvé pour cette recherche.")
             return
+        if len(editeur) == 1:
+            editeur = editeur[0]
         print("Cette opération entrainera la suppression de tous les livres associés à cet éditeur.")
         if input(f"Voulez vous vraiment effacer l'éditeur : {editeur[0]} (Y/N) ? ") == "Y":
             db.mkRequest("deleteLivreByEditeur", False, editeur[0])
@@ -365,7 +365,7 @@ def editLivre(db:database.db):
             return
         if len(livre) == 1:
             livre = list(livre[0])
-        operation = [["ISBN"],["le titre","str", 1, 50],["l'auteur","str", 1, 50],["la description","str", 0, 1000],["la note","float", 0, 10],["la date de parution (jj/mm/aaaa)","date", 0, 10],["le statut","enum", ["Disponible", "Emprunté", "hors stock"]],["le genre","enum", ["Historique","Romantique","Policier","Science-fiction","Fantastique","Aventure","Biographique","Autobiographique","Épistolaire","Thriller","Tragédie","Drame","Absurde","Philosophique","Politique","Légendes & Mythes","Lettres personnelles","Voyages","Journal intime","Bandes dessinées","Documentaires","Religieux"]],["le format","enum", ["Poche","Grand Format","E-book & numérique","Manga","Bande Dessinée","Magazine","CD","DVD & Blu-ray"]],["le prix","float", 0, 1000],["le point de vente","str", 1, 50],["l'editeur","str", 1, 50],["quiter et sauvegarder (CTRL+C)"]]
+        operation = [["ISBN"],["le titre","str", 1, 50],["l'auteur","str", 1, 50],["la description","str", 0, 1000],["la note","float", 0, 10],["la date de parution (jj/mm/aaaa)","date", 0, 10],["le statut","enum", ["disponible", "emprunté", "hors stock"]],["le genre","enum", ["Historique","Romantique","Policier","Science-fiction","Fantastique","Aventure","Biographique","Autobiographique","Épistolaire","Thriller","Tragédie","Drame","Absurde","Philosophique","Politique","Légendes & Mythes","Lettres personnelles","Voyages","Journal intime","Bandes dessinées","Documentaires","Religieux"]],["le format","enum", ["Poche","Grand Format","E-book & numérique","Manga","Bande Dessinée","Magazine","CD","DVD & Blu-ray"]],["le prix","float", 0, 1000],["le point de vente","str", 1, 50],["l'editeur","str", 1, 50],["quiter et sauvegarder (CTRL+C)"]]
         externalKeyOperation = {"l'auteur":searchEngine.searchAuteur,"le point de vente":searchEngine.searchPointDeVente,"l'editeur":searchEngine.searchEditeur}    
         print(f"Vous avez selectionné le livre : {livre[1]}")
         print("Veuillez noter qu'il n'est pas possible d'éditer le code ISBN. Si cela est nécessaire, veuillez supprimer le livre et en ajouter un nouveau.")
@@ -418,7 +418,6 @@ def editLivre(db:database.db):
                             change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], enum = operation[i][2])
                         if change == None: return
                         livre = [change if j == i else livre[j] for j in range(len(livre))]
-                        print(livre)
                         saisie = input("Voulez-vous appliquer les modifications ? (Y / N / P (poursuivre modifications)) : ")
                         if  saisie == "Y":
                             db.mkRequest("updateLivre", False,livre[1], livre[2], livre[3], livre[4], livre[5], livre[6], livre[7], livre[8], livre[9], livre[10], livre[11], livre[0])
@@ -643,7 +642,8 @@ def searchAuteur(db:database.db):
                 print(f"Né le : {result[i][4]}")
             if result[i][5] != "0000-00-00" and result[i][5] != None:
                 print(f"Décédé le : {result[i][5]}")
-            print(f"Biographie : {result[i][3].replace('\n', '')}")
+            biographie = result[i][3].replace('\n', '')
+            print(f"Biographie : {biographie}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
@@ -684,9 +684,11 @@ def filterLivre(livres:list, operation:str,db:database.db)-> list:
                 if livres[i][8] == recherche:
                     result.append(livres[i])
         elif operation == "statut":
-            recherche = getAnswer("Saisir un statut pour appliquer le filtre :", "enum", "Le statut", enum = ["Disponible", "Emprunté", "hors stock"])
+            recherche = getAnswer("Saisir un statut pour appliquer le filtre :", "enum", "Le statut", enum = ["disponible", "emprunté", "hors stock"])
+            print(recherche)
             if recherche == None: return None
             for i in range(len(livres)):
+                print(livres[i][6])
                 if livres[i][6] == recherche:
                     result.append(livres[i])
         elif operation == "éditeur":
@@ -779,9 +781,7 @@ def searchLivre(db:database.db, recherche:str = None):
                 try :
                     entry = int(input("Veuillez saisir un filtre :").strip().split()[0])
                     if entry > 1 and entry <=6:
-                        print(result)
                         result = filterLivre(result, filtre[entry-1].split()[2],db)
-                        print(result)
                         if filterLivre == None:
                             print("Aucun filtre n'a été appliqué.")
                 except :
@@ -800,7 +800,10 @@ def searchLivre(db:database.db, recherche:str = None):
         print(f"Résultat de la recherche pour '{recherche}' :\n")
         for i in range(len(result)) : 
             print(f"-----------------------------------")
-            print(f"{result[i][1].replace('\n', '')}\nISBN : {result[i][0]}\nAuteur: {searchEngine.getAuteurNameByID(db, result[i][2])}\nDescription : {result[i][3].replace('\n', '')}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {result[i][10].replace('\n','')}\nEditeur : {result[i][11]}")
+            titre = result[i][1].replace('\n', '')
+            description = result[i][3].replace('\n', '')
+            pointDeVente = result[i][10].replace('\n', ' ')
+            print(f"{titre}\nISBN : {result[i][0]}\nAuteur: {searchEngine.getAuteurNameByID(db, result[i][2])}\nDescription : {description}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {pointDeVente}\nEditeur : {result[i][11]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du livre.", e, e.__traceback__.tb_lineno)
@@ -819,7 +822,8 @@ def searchPointDeVente(db:database.db):
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
             print(f"-----------------------------------")
-            print(f"{result[i][1]}\nAdresse : {result[i][0].replace('\n', '')}\nSite web : {result[i][2]}\nTéléphone : {result[i][3]}")
+            Adresse = result[i][1].replace('\n', '')
+            print(f"{result[i][1]}\nAdresse : {Adresse}\nSite web : {result[i][2]}\nTéléphone : {result[i][3]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
@@ -838,7 +842,8 @@ def searchEditeur(db:database.db):
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
             print(f"-----------------------------------")
-            print(f"{result[i][0]}\nAdresse : {result[i][1].replace('\n', '')}")
+            Adresse = result[i][1].replace('\n', '')
+            print(f"{result[i][0]}\nAdresse : {Adresse}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
