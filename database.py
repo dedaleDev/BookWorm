@@ -79,7 +79,7 @@ class db():
                 print("Tables créées avec succès !")
             else :
                 exit(1)
-        if tablesLoad != self.list_tables:
+        if tablesLoad != self.list_tables:#verification des tables
             print("Erreur : Base de donnée corrompue ! Les tables ne correspondent pas avec le modèle UML attendu, veuillez vérifier vos tables.")
             print("Tables attendues : ",self.list_tables)
             print("Tables trouvées : ",tablesLoad)
@@ -159,7 +159,6 @@ class db():
                 idTable = ["data/Auteur.csv","data/Note.csv","data/Emprunt.csv"]
                 with open(file, 'r', encoding="utf-8") as f:
                     reader = csv.reader(f, delimiter=';')
-                    id = False
                     next(reader)
                     self.cursor = self.db.cursor()
                     for row in reader:

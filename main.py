@@ -18,7 +18,7 @@ def search(db:database.db) -> None:
                 ("Auteur",operationOnDataBase.searchAuteur, db),
                 ("Point de vente",operationOnDataBase.searchPointDeVente, db),
                 ("Editeur",operationOnDataBase.searchEditeur, db)]
-        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir un type de recherche ou un livre : " ) == 2 :
+        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir l'objet de votre recherche ou rechercher un livre : " ) == 2 :
             return
 
 def addElement(db:database.db) -> None:

@@ -44,8 +44,8 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
                 answer = answer.split('-')
                 answer.reverse()
                 try : 
-                    if len(answer) !=3 or int(answer[2]) < 0 or int(answer[2]) > 31 or int(answer[1]) < 0 or int(answer[1]) > 12 or int(answer[0]) < 0 or int(answer[0]) > 2100:
-                        print(f"{content.capitalize()} doit être une date valide. Veuillez réessayer.")
+                    if len(answer) !=3 or int(answer[2]) <= 0 or int(answer[2]) > 31 or int(answer[1]) <= 0 or int(answer[1]) > 12 or int(answer[0]) <= 0 or int(answer[0]) > 2100:
+                        print(f"{content.capitalize()} doit être une date valide (jj/mm/aaaa). Veuillez réessayer. Si vous ne connaissez pas la date exacte, entrez 1.")
                     else :
                         return f"{answer[0]}-{answer[1]}-{answer[2]}"
                 except :
@@ -175,7 +175,7 @@ def addLivre(db:database.db):
                 if Auteur == "N":
                     addAuteur(db)
                     continue
-                Auteur = searchEngine.searchAuteur(Auteur, db, True)[0]
+                Auteur = searchEngine.searchAuteur(Auteur, db, True)
                 break
             except :
                 print("Désolé, mais aucun auteur n'a été trouvé pour ce livre.")#proposer d'en ajouter
@@ -187,6 +187,8 @@ def addLivre(db:database.db):
                     continue
                 else :
                     return
+        if len(Auteur) == 1:
+            Auteur = list(Auteur[0])
         print(f"Vous avez selectionné l'auteur : {Auteur[2]} {Auteur[1]}")
         Description = getAnswer("Entrez une description pour le livre : ", "str", "La description", 0, 1000)
         if Description == None: return
@@ -206,7 +208,9 @@ def addLivre(db:database.db):
             PointDeVente = getAnswer("Entrez le nom du point de vente du livre : ", "str", "Le point de vente", 1, 50)
             if PointDeVente == None: return
             try :
-                PointDeVente = searchEngine.searchPointDeVente(PointDeVente, db, True)[0]
+                PointDeVente = searchEngine.searchPointDeVente(PointDeVente, db, True)
+                if len(PointDeVente) == 1:
+                    PointDeVente = PointDeVente[0]
                 break
             except :
                 print("Désolé, mais aucun point de vente n'a été trouvé pour ce livre.")
@@ -223,7 +227,9 @@ def addLivre(db:database.db):
             Editeur = getAnswer("Entrez le nom de l'éditeur du livre : ", "str", "L'éditeur", 1, 50)
             if Editeur == None: return
             try :
-                Editeur = searchEngine.searchEditeur(Editeur, db, True)[0]
+                Editeur = searchEngine.searchEditeur(Editeur, db, True)
+                if len(Editeur) == 1:
+                    Editeur = Editeur[0]
                 break
             except :
                 print("Désolé, mais aucun éditeur n'a été trouvé pour ce livre.")
@@ -638,6 +644,109 @@ def searchAuteur(db:database.db):
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
+def filterLivre(livres:list, operation:str,db:database.db)-> list:
+    """ This function filters the books.
+    Args:
+        livres (list): The list of books.
+        operation (str): The operation to perform.
+        db (database.db): The database object.
+    Returns:
+        list: The filtered list of books.
+    """
+    try :
+        result = []
+        if operation == "auteur":
+            recherche = getAnswer("Saisir un auteur pour appliquer le filtre :", "str", "L'auteur", 1, 50)
+            if recherche == None: return None
+            auteur = searchEngine.searchAuteur(recherche, db, onlyOne=True)
+            if result == None: 
+                print("Oups, aucun auteur n'a été trouvé pour cette recherche. Par conséquent, aucun filtre n'a été appliqué.")
+                return None
+            if len(auteur) == 1:
+                auteur = auteur[0]         
+            for i in range(len(livres)):
+                if livres[i][2] == auteur[0]:
+                    result.append(livres[i])
+        elif operation == "genre":
+            recherche = getAnswer("Saisir un genre pour appliquer le filtre :", "enum", "Le genre",enum=["Historique","Romantique","Policier","Science-fiction","Fantastique","Aventure","Biographique","Autobiographique","Épistolaire","Thriller","Tragédie","Drame","Absurde","Philosophique","Politique","Légendes & Mythes","Lettres personnelles","Voyages","Journal intime","Bandes dessinées","Documentaires","Religieux"])
+            if recherche == None: return None
+            for i in range(len(livres)):
+                if livres[i][7] == recherche:
+                    result.append(livres[i])
+        elif operation == "format":
+            recherche = getAnswer("Saisir un format pour appliquer le filtre :", "enum", "Le format",  enum = ["Poche","Grand Format","E-book & numérique","Manga","Bande Dessinée","Magazine","CD","DVD & Blu-ray"])
+            if recherche == None: return None
+            for i in range(len(livres)):
+                if livres[i][8] == recherche:
+                    result.append(livres[i])
+        elif operation == "statut":
+            recherche = getAnswer("Saisir un statut pour appliquer le filtre :", "enum", "Le statut", enum = ["Disponible", "Emprunté", "hors stock"])
+            if recherche == None: return None
+            for i in range(len(livres)):
+                if livres[i][6] == recherche:
+                    result.append(livres[i])
+        elif operation == "éditeur":
+            recherche = getAnswer("Saisir un éditeur pour appliquer le filtre :", "str", "L'éditeur", 1, 50)
+            if recherche == None: return None
+            editeur = searchEngine.searchEditeur(recherche, db, onlyOne=True)
+            if result == None: 
+                print("Oups, aucun éditeur n'a été trouvé pour cette recherche. Par conséquent, aucun filtre n'a été appliqué.")
+                return None
+            if len(editeur) == 1:
+                editeur = editeur[0]
+            for i in range(len(livres)):
+                if livres[i][11] == editeur[0]:
+                    result.append(livres[i])
+        return result
+    except Exception as e:
+        print(f"Une erreur est survenue lors du filtrage des livres :{e}, ligne : {e.__traceback__.tb_lineno}")
+
+def sortLivre(livres:list, operation:str)-> list:
+    """ This function sorts the books.
+    Args:
+        livres (list): The list of books.
+        operation (str): The operation to perform.
+    Returns:
+        list: The sorted list of books.
+    """
+    try :
+        if operation == "note":
+            print("Tri par note")
+            livres.sort(key=lambda x: x[4], reverse=True)
+        elif operation == "ordre alphabétique":
+            print("Tri par ordre alphabétique")
+            livres.sort(key=lambda x: x[1])
+        elif operation == "date de parution":
+            print("Tri par date de parution")
+            #algo de tri sans utiliser sort : 
+            try :
+                for i in range(len(livres)):
+                    for j in range(i+1, len(livres)):
+                        if int(str(livres[i][5]).split('-')[0]) > int(str(livres[j][5]).split('-')[0]) :#si l'année est plus grande
+                            livres[i], livres[j] = livres[j], livres[i]
+                        elif int(str(livres[i][5]).split('-')[0]) == int(str(livres[j][5]).split('-')[0]) :#si l'année est la même
+                            if int(str(livres[i][5]).split('-')[1]) > int(str(livres[j][5]).split('-')[1]) :# mais que le mois est plus grand
+                                livres[i], livres[j] = livres[j], livres[i]
+                            elif int(str(livres[i][5]).split('-')[1]) == int(str(livres[j][5]).split('-')[1]) :#si le mois est le même
+                                if int(str(livres[i][5]).split('-')[2]) > int(str(livres[j][5]).split('-')[2]) :#mais que le jour est plus grand
+                                    livres[i], livres[j] = livres[j], livres[i]
+                livres = livres[::-1]#on inverse la liste pour avoir le tri dans l'ordre croissant
+            except ValueError as e:
+                print(e, e.__traceback__.tb_lineno)
+                pass
+            except Exception as e:
+                print(f"Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno}")
+            print('Résultat du tri par date de parution :')
+        elif operation == "prix":
+            print("Tri par prix")
+            livres.sort(key=lambda x: x[9])
+        elif operation == "point de vente":
+            print("Tri par point de vente")
+            livres.sort(key=lambda x: x[10])
+        return livres
+    except Exception as e:
+        print(f"Une erreur est survenue lors du tri des livres :{e}, ligne : {e.__traceback__.tb_lineno}")
+                     
 def searchLivre(db:database.db, recherche:str = None):
     """ This function searches for a book in the database.
     Args:
@@ -654,6 +763,36 @@ def searchLivre(db:database.db, recherche:str = None):
             if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
                 searchLivre(db)
             return
+        filtre = ["Tout afficher","Filtrer par auteur", "Filtrer par genre","Filtrer par format", "Filtrer par statut", "Filtrer par éditeur"]
+        sortResult = ["ordre alphabétique", "note", "date de parution", "prix", "point de vente"]
+        if len(result) > 1:
+            print(f"Plusieurs résultats ont été trouvés : comment souhaitez-vous procéder ?")
+            print("1 : Tout afficher (par défaut)\n2 : Filtrer\n3 : Trier")
+            entry = input("Veuillez saisir une opération : ").strip()
+            if entry == "2":
+                for i in range(len(filtre)):
+                    print(f"{i+1} : {filtre[i]}")
+                try :
+                    entry = int(input("Veuillez saisir un filtre :").strip().split()[0])
+                    if entry > 1 and entry <=6:
+                        print(result)
+                        result = filterLivre(result, filtre[entry-1].split()[2],db)
+                        print(result)
+                        if filterLivre == None:
+                            print("Aucun filtre n'a été appliqué.")
+                except :
+                    pass
+            elif entry == "3":
+                for i in range(len(sortResult)):
+                    print(f"{i+1} : Par {sortResult[i]}")
+                try :
+                    entry = int(input("Veuillez saisir un tri :").strip().split()[0])
+                    if entry > 1 and entry <=5:
+                        result = sortLivre(result, sortResult[entry-1])
+                        if sortLivre == None:
+                            print("Aucun tri n'a été appliqué.")
+                except :
+                    pass
         print(f"Résultat de la recherche pour '{recherche}' :\n")
         for i in range(len(result)) : 
             print(f"-----------------------------------")
