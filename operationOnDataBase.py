@@ -176,17 +176,21 @@ def addLivre(db:database.db):
                     addAuteur(db)
                     continue
                 Auteur = searchEngine.searchAuteur(Auteur, db, True)
-                break
-            except :
-                print("Désolé, mais aucun auteur n'a été trouvé pour ce livre.")#proposer d'en ajouter
-                saisie = input("Voulez-vous ajouter un auteur ? (Y / N / R (relancer la recherche)) : ")
-                if saisie == "Y":
-                    addAuteur(db)
-                    continue
-                elif saisie == "R":
-                    continue
+                if Auteur == None:
+                    print("Désolé, mais aucun auteur n'a été trouvé pour ce livre.")#proposer d'en ajouter
+                    saisie = input("Voulez-vous ajouter un auteur ? (Y / N / R (relancer la recherche)) : ")
+                    if saisie == "Y":
+                        addAuteur(db)
+                        continue
+                    elif saisie == "R":
+                        continue
+                    else :
+                        return
                 else :
-                    return
+                    break
+            except :
+                print("Une erreur est survenue lors de la recherche de l'auteur. Veuillez réessayer.")
+                return
         if len(Auteur) == 1:
             Auteur = list(Auteur[0])
         print(f"Vous avez selectionné l'auteur : {Auteur[2]} {Auteur[1]}")
