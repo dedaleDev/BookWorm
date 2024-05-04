@@ -15,7 +15,7 @@ class db():
     "selectAuteurByPrenom" : "SELECT * FROM `Auteur` WHERE `Prénom` LIKE %s ORDER BY `ID` ASC;",
     "selectAuteurByAlias" : "SELECT * FROM `Auteur` WHERE `Alias` LIKE %s ORDER BY `ID` ASC;",
     "selectPointDeVenteByNom" : "SELECT * FROM `Point de vente` WHERE `Nom` LIKE %s;",
-    "selectPointDeVenteByAdresse" : "SELECT * FROM `Point de vente` WHERE `Adresse` LIKE %s;",
+    "selectPointDeVenteByAdresse" : "SELECT Nom FROM `Point de vente` WHERE `Adresse` LIKE %s;",
     "selectLivreByISBN" : "SELECT * FROM `Livre` WHERE `ISBN` LIKE %s;",
     "selectLivreByTitre" : "SELECT * FROM `Livre` WHERE `Titre` LIKE %s;",
     "selectLivreByAuteurNom" : "SELECT * FROM Livre JOIN Auteur ON Livre.Auteur = Auteur.ID WHERE Auteur.Nom LIKE %s",
@@ -64,7 +64,7 @@ class db():
                 else :
                     exit(1)
             except :
-                print("Création de la base de donnée échouée ! Veillez verifier vos paramètres de connexion.")
+                print("Création de la base de donnée échouée ! Veuillez vérifier vos paramètres de connexion (en haut du fichier main.py). Si cela ne résout pas le problème, essayez de relancer Apache et MariaDB.")
                 exit(1)
         self.cursor = self.db.cursor()
         #test si les tables existent

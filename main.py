@@ -7,7 +7,7 @@ db_USER = "root"
 db_PASSWD = "1234"
 db_PORT = 3306
 
-debug = False #Ne pas utiliser en usage normal cela supprime l'ensemble des données au démarrage.
+debug = False #Ne pas utiliser en usage normal, cela supprime l'ensemble des données au démarrage. En cas de problème, essayez d'activer ce mode.
 #------------------------------------------------------
 
 def search(db:database.db) -> None:
@@ -18,7 +18,7 @@ def search(db:database.db) -> None:
                 ("Auteur",operationOnDataBase.searchAuteur, db),
                 ("Point de vente",operationOnDataBase.searchPointDeVente, db),
                 ("Editeur",operationOnDataBase.searchEditeur, db)]
-        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez vous rechercher ?", defaultChoice=True, question="Veuillez saisir l'objet de votre recherche ou rechercher un livre : " ) == 2 :
+        if showMenu(choiceAction=choiceListSearch, title= "Que souhaitez-vous rechercher ?", defaultChoice=True, question="Veuillez saisir l'objet de votre recherche ou rechercher un livre : " ) == 2 :
             return
 
 def addElement(db:database.db) -> None:
@@ -28,7 +28,7 @@ def addElement(db:database.db) -> None:
             ("Auteur",operationOnDataBase.addAuteur,db),
             ("Point de vente",operationOnDataBase.addPointDeVente,db),
             ("Editeur",operationOnDataBase.addEditeur,db)]
-    showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez vous ajouter ?")
+    showMenu(choiceAction=choiceListAddElement, title= "Que souhaitez-vous ajouter ?")
 
 def deleteElement(db:database.db) -> None:
     """This function creates a menu to delete an element from the database."""
@@ -37,7 +37,7 @@ def deleteElement(db:database.db) -> None:
             ("Auteur",operationOnDataBase.deleteAuteur,db),
             ("Point de vente",operationOnDataBase.deletePointDeVente,db),
             ("Editeur",operationOnDataBase.deleteEditeur,db)]
-    showMenu(choiceAction=choiceListDeleteElement, title= "Que souhaitez vous supprimer ?")
+    showMenu(choiceAction=choiceListDeleteElement, title= "Que souhaitez-vous supprimer ?")
 
 def editElement(db:database.db) -> None:
     """This function creates a menu to edit an element from the database."""
@@ -46,7 +46,7 @@ def editElement(db:database.db) -> None:
             ("Auteur",operationOnDataBase.editAuteur,db),
             ("Point de vente",operationOnDataBase.editPointDeVente,db),
             ("Editeur",operationOnDataBase.editEditeur,db)]
-    showMenu(choiceAction=choiceListEditElement, title= "Que souhaitez vous editer ?")
+    showMenu(choiceAction=choiceListEditElement, title= "Que souhaitez-vous editer ?")
 
 def config(db:database.db):
     """This function creates a configuration menu."""
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     )
     print("Initialisation...")
     if debug : 
-        print("Attention : Le mode de débuggage est activé, les résultats résultant pourraient être instable.")
+        print("Attention : le mode de débogage est activé, les résultats résultants pourraient être instables.")
     db = database.db(db_HOST,db_USER,db_PASSWD,db_PORT,debug)
     
     if db.needRestart == True : 

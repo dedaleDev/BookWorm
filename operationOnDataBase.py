@@ -1,4 +1,5 @@
 import database,searchEngine
+import datetime
 
 def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5, enum:list=[], canBeNull:bool = False)->str:
     """ This function asks the user a question and returns the answer in the correct format.
@@ -79,6 +80,21 @@ def getAnswer(question:str, type:str, content:str, min_int:int=0, max_int:int=5,
             print("Désolé, l'entrée saisie est incorrect. Veuillez réessayer.")
             #print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.", answer, e, e.__traceback__.tb_lineno)
 
+def unformatDate(date)->str:
+    """ This function formats a date in the format "aaaa-mm-jj" to the format "jj/mm/aaaa".
+        Args :
+            date : str, date in the format "aaaa-mm-jj"
+        Return :
+            date : str, date in the format "jj/mm/aaaa"
+    """
+    try : 
+        #obtenir une str de la date
+        result = date.strftime("%Y-%m-%d").split('-')
+        result.reverse()
+        return f"{result[0]}/{result[1]}/{result[2]}"
+    except :
+        return date
+
 def addAuteur(db:database.db):
     """ This function adds an author to the database."""
     try :
@@ -95,9 +111,9 @@ def addAuteur(db:database.db):
         DateDeDeces = getAnswer("Entrez la date de décès de l'auteur (facultatif, attendu jj/mm/aaaa): ", "date", "La date de décès de l'auteur", canBeNull=True)
         print("\n----------Recapitulatif----------\n")
         if Alias == "Null":
-            print(f"Nom : {Nom}\nPrenom : {Prenom}\nBiographie : {Biographie}\nDate de naissance : {DateDeNaissance}\nDate de décès : {DateDeDeces}")
+            print(f"Nom : {Nom}\nPrenom : {Prenom}\nBiographie : {Biographie}\nDate de naissance : {unformatDate(DateDeNaissance)}\nDate de décès : {unformatDate(DateDeDeces)}")
         else :
-            print(f"Nom : {Nom}\nPrenom : {Prenom}\nAlias : {Alias}\nBiographie : {Biographie}\nDate de naissance : {DateDeNaissance}\nDate de décès : {DateDeDeces}")
+            print(f"Nom : {Nom}\nPrenom : {Prenom}\nAlias : {Alias}\nBiographie : {Biographie}\nDate de naissance : {unformatDate(DateDeNaissance)}\nDate de décès : {unformatDate(DateDeDeces)}")
         if input("Voulez-vous ajouter cet auteur ? (Y/N) : ") == "Y":
             db.mkRequest("insertAuteur", False, Nom, Prenom, Biographie, DateDeNaissance, DateDeDeces,Alias)
             db.db.commit()
@@ -248,9 +264,9 @@ def addLivre(db:database.db):
         print(f"Vous avez selectionné l'éditeur : {Editeur[0]}")
         print("\n------------Recapitulatif-----------\n")
         if Auteur[3] == None : 
-            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[2]}{Auteur[1]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {DateDeParution}\nStatut : {Statut}\n Genre : {Genre}\nFormat : {Format}\nPrix : {Prix}\nPoint de vente : {PointDeVente[1]}\nEditeur : {Editeur[0]}")
+            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[2]}{Auteur[1]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {unformatDate(DateDeParution)}\nStatut : {Statut}\n Genre : {Genre}\nFormat : {Format}\nPrix : {Prix}\nPoint de vente : {PointDeVente[1]}\nEditeur : {Editeur[0]}")
         else :
-            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[3]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {DateDeParution}\nStatut : {Statut}\n Genre : {Genre}\nFormat : {Format}\nPrix : {Prix}\nPoint de vente : {PointDeVente[1]}\nEditeur : {Editeur[0]}")
+            print(f"ISBN : {ISBN}\nTitre : {Titre}\nAuteur : {Auteur[3]}\nDescription : {Description}\nNote : {Note}\nDate de parution : {unformatDate(DateDeParution)}\nStatut : {Statut}\nGenre : {Genre}\nFormat : {Format}\nPrix : {Prix} €\nPoint de vente : {PointDeVente[1]}\nEditeur : {Editeur[0]}")
         if input("Voulez-vous ajouter ce livre ? (Y/N) : ") != "N":
             db.mkRequest("insertLivre", False, ISBN, Titre, Auteur[0], Description, Note, DateDeParution, Statut, Genre, Format, Prix, PointDeVente[0], Editeur[0])
             db.db.commit()
@@ -392,7 +408,6 @@ def editLivre(db:database.db):
                 return
             except :
                 print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-            print(saisie)
             if  int(saisie) >= 1 and int(saisie) <= len(operation)-1:
                 for i in range(len(operation)):
                     if i == saisie and i != 0:
@@ -479,7 +494,6 @@ def editAuteur(db:database.db):
                         else :
                             change = getAnswer(f"Entrez {operation[i][0]} : ", operation[i][1], operation[i][0], operation[i][2], operation[i][3])
                         auteur = [change if j == i else auteur[j] for j in range(len(auteur))]
-                        print(auteur)
                         saisie = input("Voulez-vous appliquer les modifications ? (Y / N / P (poursuivre modifications)) : ")
                         if  saisie == "Y":
                             db.mkRequest("updateAuteur", False,auteur[1], auteur[2], auteur[3], auteur[4], auteur[5],auteur[6], auteur[0])
@@ -639,9 +653,9 @@ def searchAuteur(db:database.db):
             else :
                 print(f"{i+1} : {result[i][2]} {result[i][1]}")
             if result[i][4] != "0000-00-00":
-                print(f"Né le : {result[i][4]}")
+                print(f"Né le : {unformatDate(result[i][4])}")
             if result[i][5] != "0000-00-00" and result[i][5] != None:
-                print(f"Décédé le : {result[i][5]}")
+                print(f"Décédé le : {unformatDate(result[i][5])}")
             biographie = result[i][3].replace('\n', '')
             print(f"Biographie : {biographie}")
         input("Appuyez sur entrée pour continuer...")
@@ -803,7 +817,8 @@ def searchLivre(db:database.db, recherche:str = None):
             titre = result[i][1].replace('\n', '')
             description = result[i][3].replace('\n', '')
             pointDeVente = result[i][10].replace('\n', ' ')
-            print(f"{titre}\nISBN : {result[i][0]}\nAuteur: {searchEngine.getAuteurNameByID(db, result[i][2])}\nDescription : {description}\nNote : {result[i][4]:.1f}/10\nDate de parution : {result[i][5]}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f}\nPoint de vente : {pointDeVente}\nEditeur : {result[i][11]}")
+            nomPointDeVente = searchEngine.getPointDeVenteNameByAddresse(db, result[i][10])
+            print(f"{titre}\nISBN : {result[i][0]}\nAuteur: {searchEngine.getAuteurNameByID(db, result[i][2])}\nDescription : {description}\nNote : {result[i][4]:.1f}/10\nDate de parution : {unformatDate(result[i][5])}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f} €\nPoint de vente : {nomPointDeVente} : {pointDeVente}\nEditeur : {result[i][11]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du livre.", e, e.__traceback__.tb_lineno)
@@ -822,7 +837,7 @@ def searchPointDeVente(db:database.db):
         print(f"Résultat de la recherche pour '{nom}' :\n")
         for i in range(len(result)) : 
             print(f"-----------------------------------")
-            Adresse = result[i][1].replace('\n', '')
+            Adresse = result[i][0].replace('\n', '')
             print(f"{result[i][1]}\nAdresse : {Adresse}\nSite web : {result[i][2]}\nTéléphone : {result[i][3]}")
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
