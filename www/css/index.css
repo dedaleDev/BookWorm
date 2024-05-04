@@ -1,7 +1,49 @@
-img.bestimg{
-    width: 20%;
-    height: 20%;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+body {
+    background-image: url("../img/background.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    padding:  0;
+    margin : 0;
+  }
+
+h1, h2, h3, p {
+    color : #ffffff;
+}
+
+.logo {
+    color: #ffffff;
+    font-size: 5em;
+    text-align: left;
+    margin-top: 10vh;
+}
+
+#ssTitle{
+    font-size: 2em;
+    padding : 0;
+    text-align: center;
+}
+
+#searchButton{
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: black;
+    border-radius: 0px 100% 100% 0px;
+}
+
+#searchButton:hover{
+    background-color: #FF8C42;
+    border-color: #FF8C42;
+    color: black;
+    border-radius: 0px 100% 100% 0px;
+}
+
+#mascotte{
+    width: 100%;
+    height: auto;
+    margin-top: 10vh;
+}
+
+#mascotte:hover{
+    content: url("../img/masscotteOpenEeyes.svg");
 }
