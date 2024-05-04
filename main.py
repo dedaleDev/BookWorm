@@ -1,5 +1,5 @@
-import database, operationOnDataBase
-import os
+import database, operationOnDataBase, server
+import os, cherrypy
 
 #---------------------Configuration---------------------
 db_HOST = "localhost"
@@ -8,6 +8,25 @@ db_PASSWD = "1234"
 db_PORT = 3306
 
 debug = False #Ne pas utiliser en usage normal, cela supprime l'ensemble des données au démarrage. En cas de problème, essayez d'activer ce mode.
+
+serverConf = { #Normalement, il n'est pas nécessaire de modifier ces paramètres
+    'global': {
+    'tools.response_headers.on': True,
+    'tools.sessions.on': True,
+    'tools.sessions.timeout': 6000,
+    'tools.response_headers.headers': [
+        ('Content-Type', 'application/json'),
+        ('Access-Control-Allow-Origin', 'http://127.0.0.1:8000'),
+        ('Access-Control-Allow-Credentials', 'true'),
+        ('Access-Control-Allow-Methods', 'POST, GET'),
+        ('Access-Control-Allow-Headers', 'Content-Type')
+    ],
+    'server.socket_host': '127.0.0.1',
+    'server.socket_port': 8092,
+    'error_page.default': server.jsonify_error
+    }
+}
+
 #------------------------------------------------------
 
 def search(db:database.db) -> None:
@@ -133,6 +152,13 @@ if __name__ == '__main__':
         exit(0)
     
     print("Connexion à la base de donnée réussie !")
+    print("Démarrage du site web...")
+    try : 
+        cherrypy.quickstart(server.API(db), '/api/' )
+        print(f"\033[92mServeur web démarré avec succès à l'adresse http://{serverConf['global']['server.socket_host']}:{serverConf['global']['server.socket_port']} !")
+    except :
+        print("\033[91mErreur : Impossible de démarrer le serveur web. Veuillez vérifier que le port 8092 est disponible. BookWorm va continuer en mode console.")
+    
 
     choiceList = [ 
             ("Rechercher",search,db),
