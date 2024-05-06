@@ -9,21 +9,47 @@ db_PORT = 3306
 
 debug = False #Ne pas utiliser en usage normal, cela supprime l'ensemble des données au démarrage. En cas de problème, essayez d'activer ce mode.
 
-serverConf = { #Normalement, il n'est pas nécessaire de modifier ces paramètres
+www_dir = os.path.abspath('./www')
+print(os.path.join(www_dir, 'css'))
+serverConf = {
     'global': {
-    'tools.response_headers.on': True,
-    'tools.sessions.on': True,
-    'tools.sessions.timeout': 6000,
-    'tools.response_headers.headers': [
-        ('Content-Type', 'application/json'),
-        ('Access-Control-Allow-Origin', 'http://127.0.0.1:8000'),
-        ('Access-Control-Allow-Credentials', 'true'),
-        ('Access-Control-Allow-Methods', 'POST, GET'),
-        ('Access-Control-Allow-Headers', 'Content-Type')
-    ],
-    'server.socket_host': '127.0.0.1',
-    'server.socket_port': 8092,
-    'error_page.default': server.jsonify_error
+        'server.socket_host': 'localhost',
+        'server.socket_port': 8080,
+        'error_page.default': server.jsonify_error,
+    },
+    '/': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': www_dir
+    },
+    '/html': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': os.path.join(www_dir, 'html')
+    },
+    '/css': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': os.path.join(www_dir, 'css')
+    },
+    '/img': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': os.path.join(www_dir, 'img')
+    },
+    '/frameworks': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': os.path.join(www_dir, 'frameworks')
+    },
+    '/js': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': os.path.join(www_dir, 'js'),
+    },
+    '/api': {
+        'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+        'tools.response_headers.on': True,
+        'tools.response_headers.headers': [
+            ('Content-Type', 'application/json'),
+            ('Access-Control-Allow-Origin', '*'),
+            ('Access-Control-Allow-Methods', 'POST, GET'),
+            ('Access-Control-Allow-Headers', 'Content-Type'),
+        ],
     }
 }
 
@@ -132,6 +158,14 @@ def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, qu
             print("Choix invalide, veuillez réessayer.",e, e.__traceback__.tb_lineno)
 
 
+def updateJS(conf: dict):
+    #update the API URL in the index.js file
+    api_url = f"http://{conf['global']['server.socket_host']}:{8080}/api"#à update
+    with open('www/js/index.js', 'r') as f:
+        code = f.read()
+        code = code.replace("const API_URL = '';", f"const API_URL = '{api_url}'")
+    with open('www/js/index.js', 'w+') as f:
+        f.write(f"{code}\n")
 
 if __name__ == '__main__':
     print(r"""
@@ -150,22 +184,10 @@ if __name__ == '__main__':
     
     if db.needRestart == True : 
         exit(0)
-    
     print("Connexion à la base de donnée réussie !")
     print("Démarrage du site web...")
     try : 
-        cherrypy.quickstart(server.API(db), '/api/' )
-        print(f"\033[92mServeur web démarré avec succès à l'adresse http://{serverConf['global']['server.socket_host']}:{serverConf['global']['server.socket_port']} !")
-    except :
-        print("\033[91mErreur : Impossible de démarrer le serveur web. Veuillez vérifier que le port 8092 est disponible. BookWorm va continuer en mode console.")
-    
-
-    choiceList = [ 
-            ("Rechercher",search,db),
-            ("Configuration (admin)",config,db)
-            ]
-    while True : 
-        result = showMenu(choiceList)
-        if result == 2: 
-            print("\nAu revoir !")
-            break
+        updateJS(serverConf)
+        cherrypy.quickstart(server.Server(db,serverConf ), '/', serverConf)
+    except Exception as e:
+        print(f"\033[91mErreur : Impossible de démarrer le serveur web. Veuillez vérifier que le port 8080 et 8092 sont disponibles. {e} ligne : {e.__traceback__.tb_lineno}\033[0m")
