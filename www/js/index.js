@@ -1,22 +1,14 @@
-const API_URL = '';
+
+const API_URL = 'http://127.0.0.1:8080'
 const searchInput = document.querySelector('input.form-control');
 const searchButton = document.querySelector('button#searchButton');
 
 searchButton.addEventListener('click', async (e) => {
-  console.log("searchButton clicked");
-  e.preventDefault(); // prevent default form submission
-  console.log("searchInput.value : ", searchInput.value);
-  const searchValue = searchInput.value.trim();
+  e.preventDefault(); // evite le rechargement de la page
+  const searchValue = searchInput.value.trim();// recupere la valeur de l'input sans les espaces
   if (searchValue) {
     try {
-      console.log("API_URL : ", API_URL);
-      const response = await fetch("/search", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ searchValue })
-      });
+        window.location.href = `search?search=${searchValue}`;
     } catch (error) {
       console.error(error);
     }
