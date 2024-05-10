@@ -1,5 +1,5 @@
 import database, operationOnDataBase, server
-import os, cherrypy
+import os, cherrypy, shutil
 
 #---------------------Configuration---------------------
 db_HOST = "localhost"
@@ -13,7 +13,7 @@ www_dir = os.path.abspath('./www')
 print(os.path.join(www_dir, 'css'))
 serverConf = {
     'global': {
-        'server.socket_host': 'localhost',
+        'server.socket_host': '127.0.0.1',
         'server.socket_port': 8080,
         'error_page.default': server.jsonify_error,
     },
@@ -157,15 +157,51 @@ def showMenu(choiceAction : list, title = "Menu", defaultChoice:bool = False, qu
         except Exception as e:
             print("Choix invalide, veuillez réessayer.",e, e.__traceback__.tb_lineno)
 
+def cleanFileNameForLivre()->None :
+    """This function renames the files in the ./www/img/livre folder to remove spaces and add the .jpg extension."""
+    try :
+        path= os.listdir('www/img/livres')
+        for file in path :  
+            try : 
+                if file.split('.')[-1] != 'jpg' :
+                    newFileName = file.split('.')[0]+'.jpg'
+                    os.rename(f'./www/img/livres/{file}', f'./www/img/livres/{newFileName}')
+                    file = newFileName
+                bannedChar = ['"',"'",'/','\\','?','*','<','>','|',':', ' ']
+                dicoAccentChar = {'à':'a','á':'a','ã':'a','å':'a','ä':'a','é':'e','è':'e','ë':'e','ê':'e','î':'i','ï':'i','î':'i','ô':'o','ö':'o','ò':'o','õ':'o','û':'u','ü':'u','ù':'u','ç':'c'}
+                newFileName = file
+                for char in bannedChar :
+                    if char in newFileName :
+                        newFileName = newFileName.replace(char,'_')
+                for char in dicoAccentChar.keys() :
+                    if char in newFileName :
+                        newFileName = newFileName.replace(char,dicoAccentChar[char])
+                if newFileName != file :
+                    os.rename(f'./www/img/livres/{file}', f'./www/img/livres/{newFileName}')
+            except Exception as e:
+                print(f"Erreur lors de la modification des fichiers : {e} ligne : {e.__traceback__.tb_lineno}")
+    except Exception as e:
+        print(f"Erreur lors de la modification des fichiers : {e} ligne : {e.__traceback__.tb_lineno}")
 
 def updateJS(conf: dict):
-    #update the API URL in the index.js file
-    api_url = f"http://{conf['global']['server.socket_host']}:{8080}/api"#à update
-    with open('www/js/index.js', 'r') as f:
-        code = f.read()
-        code = code.replace("const API_URL = '';", f"const API_URL = '{api_url}'")
-    with open('www/js/index.js', 'w+') as f:
-        f.write(f"{code}\n")
+    """This function updates the API_URL in js files. 
+    Args : 
+        conf : dict, configuration of the server cherrypy"""
+    try :
+        api_url = f"http://{conf['global']['server.socket_host']}:{conf['global']['server.socket_port']}"
+        files = ['www/js/index.js', 'www/js/search.js']
+        for file in files :
+            with open(file, 'r', encoding='utf-8') as f:
+                code = f.readlines()
+                with open(file, 'w', encoding='utf-8') as newFile : 
+                    for line in code :
+                        if line.startswith("const API_URL ="):
+                            line = f"const API_URL = '{api_url}'\n"
+                        newFile.write(line)
+    except Exception as e: 
+        print(f"\033[91mErreur : Impossible de modifier correctement les urls d'API. {e} ligne : {e.__traceback__.tb_lineno}\033[0m")
+
+
 
 if __name__ == '__main__':
     print(r"""
@@ -186,6 +222,7 @@ if __name__ == '__main__':
         exit(0)
     print("Connexion à la base de donnée réussie !")
     print("Démarrage du site web...")
+    cleanFileNameForLivre()
     try : 
         updateJS(serverConf)
         cherrypy.quickstart(server.Server(db,serverConf ), '/', serverConf)

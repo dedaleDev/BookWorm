@@ -767,22 +767,18 @@ def sortLivre(livres:list, operation:str)-> list:
     except Exception as e:
         print(f"Une erreur est survenue lors du tri des livres :{e}, ligne : {e.__traceback__.tb_lineno}")
                      
-def searchLivre(db:database.db, recherche:str = None):
+def searchLivre(db:database.db, recherche:str):
     """ This function searches for a book in the database.
     Args:
         db (database.db): The database object.
         recherche (str, optional): The book to search. Defaults to None.
     """
     try :
-        if recherche == None:
-            recherche = getAnswer("Rechercher un livre : ", "str", "Le livre", 1, 50)
-        if recherche == None: return
         result = searchEngine.searchLivre(recherche, db)
         if result == None: 
             print("Oups, aucun livre n'a été trouvé pour cette recherche.")
-            if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
-                searchLivre(db)
-            return
+            return None
+        return result
         filtre = ["Tout afficher","Filtrer par auteur", "Filtrer par genre","Filtrer par format", "Filtrer par statut", "Filtrer par éditeur"]
         sortResult = ["ordre alphabétique", "note", "date de parution", "prix", "point de vente"]
         if len(result) > 1:

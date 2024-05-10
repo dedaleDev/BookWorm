@@ -1,4 +1,4 @@
-import operationOnDataBase, database
+import operationOnDataBase, database, jsonFormater
 import cherrypy, os, json
 
 class Server(object):
@@ -18,17 +18,25 @@ class Server(object):
     
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def search(self, search):
-        print("Recherche d'un livre...")
-        if cherrypy.request.method == 'POST':
-            search = operationOnDataBase.searchLivre(self.db, search)
-            if search == None:
-                raise cherrypy.HTTPError(status=404, message="Oups, nous n'avons rien trouvé pour votre recherche... Veuillez réessayer")
-            return self.makeResponse(content=search)
+    def searchLivre(self, search):
+        try : 
+            searchResult = operationOnDataBase.searchLivre(self.db, search)
+            searchResult = jsonFormater.formatLivreToJson(searchResult, self.db)
+            print(f"\033[91mRecherche effectuée :  {searchResult}\033[0m")
+            print(f"\033[91mreponse :  {self.makeResponse(content=searchResult)}\033[0m")
+            return self.makeResponse(content=searchResult)
+        except Exception as e:
+            print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, searchResult, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
+    
     
     @cherrypy.expose
     def index(self) -> str :
         return open('www/html/index.html', encoding="utf-8")
+    
+    @cherrypy.expose
+    def search(self, search) -> str :
+        return open('www/html/search.html', encoding="utf-8")
 
 
 def jsonify_error(status, message, traceback, version):
