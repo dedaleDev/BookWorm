@@ -858,3 +858,4 @@ def searchEditeur(db:database.db):
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
+        
