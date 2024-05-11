@@ -14,8 +14,7 @@ h1, h2, h3, p {
 .logo {
     color: #ffffff;
     font-size: 5em;
-    text-align: left;
-    margin-top: 10vh;
+    text-align:  center;
 }
 
 #ssTitle{
