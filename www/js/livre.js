@@ -1,8 +1,7 @@
 const API_URL = 'http://127.0.0.1:8080'
 
 var _template = " <div class='row justify-content-center'> \
-<a href='livre?isbn={{ isbn }}'\
-<div class='col-md-4'>\
+<div class='col-md-10'>\
     <div class='card mb-3'>\
         <h5 class='card-header'></strong>{{ titre }}</h5>\
         <div class='card-body'>\
@@ -19,27 +18,30 @@ var _template = " <div class='row justify-content-center'> \
             </ul>\
         </div>\
     </div>\
-</a>\
 </div>";
 
-async function loadLivre() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isbn = urlParams.get('isbn');
+async function loadLivre(isbn) {
     console.log("livre: ", isbn);
     let response =  await fetch(`${API_URL}/getLivre?isbn=${isbn}`);
     let livreData = await response.json();
     livreData = JSON.parse(livreData["content"]);
     console.log("response: ", livreData);
-    return livreData;
+    return livreData[isbn];
 }
+const urlParams = new URLSearchParams(window.location.search);
+const isbn = urlParams.get('isbn');
 
-loadLivre().then(livreData => {
+loadLivre(isbn).then(livreData => {
     if (typeof livreData === 'object' && livreData !== null) {
+            console.log("livreData: ", livreData);
             let template = _template.replace("{{ titre }}", livreData["titre"]).replace("{{ auteur }}", livreData["auteur"]).replace("{{ note }}", livreData["note"]).replace("{{ isbn }}", livreData["isbn"]).replace("{{ dateDeParution }}", livreData["dateDeParution"]).replace("{{ status }}", livreData["status"]).replace("{{ genre }}", livreData["genre"]).replace("{{ description }}", livreData["description"]).replace("{{ format }}", livreData["format"]).replace("{{ pointDeVente }}", livreData["pointDeVente"]).replace("{{ prix }}", livreData["prix"]).replace("{{ editeur }}", livreData["editeur"]);
-            document.getElementById("searchResult").innerHTML += template;
+            template = template.replace("{{ isbn }}", livreData[isbn]);
+            document.getElementById("LivreInfo").innerHTML += template;
+            console.log('img/livres/'+isbn+'.jpg')
+            document.getElementById("imgLivre").src = `img/livres/${isbn}.jpg`;
         }
     else {
-        document.getElementById("searchResult").innerHTML = "<br><h2 class='text-center' style='color:white'>Oups, aucun résultat n'a été trouvé.<h2><br><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>";
+        document.getElementById("LivreInfo").innerHTML = "<br><h2 class='text-center' style='color:white'>Oups, aucun résultat n'a été trouvé.<h2><br><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>";
     }
     
 });

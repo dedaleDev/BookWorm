@@ -12,7 +12,7 @@ searchButton.addEventListener('click', async (e) => {
   const searchValue = searchInput.value.trim();// recupere la valeur de l'input sans les espaces
   if (searchValue) {
     try {
-        window.location.href = `search?search=${searchValue}`;
+        window.location.href = `search?search=${searchValue}&type=livre`;
     } catch (error) {
       console.error(error);
     }
