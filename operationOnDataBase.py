@@ -634,18 +634,19 @@ def editEditeur(db:database.db):
     except Exception as e:
         print(f"Une erreur est survenue lors de l'édition de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
-def searchAuteur(db:database.db):
+def searchAuteur(db:database.db, search:str=None):
     """ This function searches for an author in the database."""
     try: 
-        nomPrenomAlias = getAnswer("Rechercher un auteur : ", "str", "L'auteur", 1, 50)
-        if nomPrenomAlias == None: return
-        result = searchEngine.searchAuteur(nomPrenomAlias, db)
+        if search == None : 
+            search = getAnswer("Rechercher un auteur : ", "str", "L'auteur", 1, 50)
+            if search == None: return
+        result = searchEngine.searchAuteur(search, db)
         if result == None: 
             print("Oups, aucun auteur n'a été trouvé pour cette recherche.")
             if input("Voulez-vous lancer une nouvelle recherche ? (Y/N) : ") == "Y":
                 searchAuteur(db)
             return
-        print(f"Résultat de la recherche pour '{nomPrenomAlias}' :\n")
+        print(f"Résultat de la recherche pour '{search}' :\n")
         for i in range(len(result)) : 
             print("-----------------------------------")
             if result[i][6] != None: 
@@ -767,58 +768,6 @@ def sortLivre(livres:list, operation:str)-> list:
     except Exception as e:
         print(f"Une erreur est survenue lors du tri des livres :{e}, ligne : {e.__traceback__.tb_lineno}")
                      
-def searchLivre(db:database.db, recherche:str):
-    """ This function searches for a book in the database.
-    Args:
-        db (database.db): The database object.
-        recherche (str, optional): The book to search. Defaults to None.
-    """
-    try :
-        result = searchEngine.searchLivre(recherche, db)
-        if result == None: 
-            print("Oups, aucun livre n'a été trouvé pour cette recherche.")
-            return None
-        return result
-        filtre = ["Tout afficher","Filtrer par auteur", "Filtrer par genre","Filtrer par format", "Filtrer par statut", "Filtrer par éditeur"]
-        sortResult = ["ordre alphabétique", "note", "date de parution", "prix", "point de vente"]
-        if len(result) > 1:
-            print(f"Plusieurs résultats ont été trouvés : comment souhaitez-vous procéder ?")
-            print("1 : Tout afficher (par défaut)\n2 : Filtrer\n3 : Trier")
-            entry = input("Veuillez saisir une opération : ").strip()
-            if entry == "2":
-                for i in range(len(filtre)):
-                    print(f"{i+1} : {filtre[i]}")
-                try :
-                    entry = int(input("Veuillez saisir un filtre :").strip().split()[0])
-                    if entry > 1 and entry <=6:
-                        result = filterLivre(result, filtre[entry-1].split()[2],db)
-                        if filterLivre == None:
-                            print("Aucun filtre n'a été appliqué.")
-                except :
-                    pass
-            elif entry == "3":
-                for i in range(len(sortResult)):
-                    print(f"{i+1} : Par {sortResult[i]}")
-                try :
-                    entry = int(input("Veuillez saisir un tri :").strip().split()[0])
-                    if entry > 1 and entry <=5:
-                        result = sortLivre(result, sortResult[entry-1])
-                        if sortLivre == None:
-                            print("Aucun tri n'a été appliqué.")
-                except :
-                    pass
-        print(f"Résultat de la recherche pour '{recherche}' :\n")
-        for i in range(len(result)) : 
-            print(f"-----------------------------------")
-            titre = result[i][1].replace('\n', '')
-            description = result[i][3].replace('\n', '')
-            pointDeVente = result[i][10].replace('\n', ' ')
-            nomPointDeVente = searchEngine.getPointDeVenteNameByAddresse(db, result[i][10])
-            print(f"{titre}\nISBN : {result[i][0]}\nAuteur: {searchEngine.getAuteurNameByID(db, result[i][2])}\nDescription : {description}\nNote : {result[i][4]:.1f}/10\nDate de parution : {unformatDate(result[i][5])}\nStatut : {result[i][6]}\nGenre : {result[i][7]}\nFormat : {result[i][8]}\nPrix : {result[i][9]:.2f} €\nPoint de vente : {nomPointDeVente} : {pointDeVente}\nEditeur : {result[i][11]}")
-        input("Appuyez sur entrée pour continuer...")
-    except Exception as e :
-        print("Une erreur est survenue lors de la recherche du livre.", e, e.__traceback__.tb_lineno)
-
 def searchPointDeVente(db:database.db):
     """ This function searches for a point of sale in the database."""
     try :

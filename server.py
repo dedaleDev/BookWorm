@@ -1,4 +1,4 @@
-import operationOnDataBase, database, utils
+import operationOnDataBase, database, utils, searchEngine
 import cherrypy, os, json, shutil, random
 
 class Server(object):
@@ -20,9 +20,11 @@ class Server(object):
     
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def searchLivre(self, search):
+    def searchLivre(self, search:str) -> str:
         try : 
-            searchResult = operationOnDataBase.searchLivre(self.db, search)
+            searchResult = searchEngine.searchLivre(search,self.db)
+            print(searchResult)
+            if searchResult == None : return None
             searchResult = utils.formatLivreToJson(searchResult, self.db)
             return self.makeResponse(content=searchResult)
         except Exception as e:
@@ -31,7 +33,21 @@ class Server(object):
     
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def livre(self, isbn:str) -> str:
+    def searchAuteur(self, search:str) -> str:
+        print("OK")
+        try : 
+            searchResult = searchEngine.searchAuteur(search, self.db)
+            if searchResult == None : return None
+            searchResult = utils.formatAuteurToJson(searchResult)
+            print("OK2", searchResult)
+            return self.makeResponse(content=searchResult)
+        except Exception as e:
+            print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getLivre(self, isbn:str) -> str:
         try : 
             self.db.mkRequest("selectLivreByISBN",False, isbn)
             livre = self.db.cursor.fetchall()
@@ -50,17 +66,17 @@ class Server(object):
         return open('www/html/index.html', encoding="utf-8")
     
     @cherrypy.expose
-    def search(self, search) -> str :
+    def search(self, search:str, type:str="livre") -> str :
         return open('www/html/search.html', encoding="utf-8")
 
     @cherrypy.expose
-    def livre(self) -> str :
+    def livre(self, isbn) -> str :
         return open('www/html/livre.html', encoding="utf-8")
         
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def updateBestLivres(self) -> str :
-        if self.timeToRefresh <= 0:
+        if self.timeToRefresh != 0:
             self.timeToRefresh -= 1
             return
         self.timeToRefresh = 5
