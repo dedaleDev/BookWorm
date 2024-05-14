@@ -1,2 +1,2 @@
-# SAE2.3
-Bookworm is a library manager
+# BookWorm
+Bookworm is a personal library manager
