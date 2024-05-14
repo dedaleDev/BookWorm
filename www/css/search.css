@@ -20,3 +20,17 @@ a{
     color: #ffffff;
     text-decoration: none;
 }
+
+#searchButton{
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: black;
+    border-radius: 0px 100% 100% 0px;
+}
+
+#searchButton:hover{
+    background-color: #FF8C42;
+    border-color: #FF8C42;
+    color: black;
+    border-radius: 0px 100% 100% 0px;
+}
