@@ -164,7 +164,14 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
         temp = []
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
-                temp.append(i)
+                doublon = False
+                for j in temp : 
+                    if i[0] == j[0]:
+                        doublon = True
+                        break
+                if not doublon:
+                    temp.append(i)
+                        
         if temp == []:
             return None
         result = temp
@@ -183,8 +190,6 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
                     return None
                 except :
                     print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-        if result == []:
-            return None
         return result
     except Exception as e :
         print("Une erreur est survenue lors de la recherche du livre (searchLivre): ",e ,e.__traceback__.tb_lineno)

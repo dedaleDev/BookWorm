@@ -20,12 +20,19 @@ class Server(object):
     
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def searchLivre(self, search:str) -> str:
+    def searchLivre(self, search:str, sort:str, auteur:str="Tous") -> str:
+        sortList = ["sortByAlpha", "sortByNote", "sortByDate", "sortByPrix"]
+        if sort not in sortList:
+            sort = "sortByAlpha"
         try : 
             searchResult = searchEngine.searchLivre(search,self.db)
-            print(searchResult)
+            #print("SEARCH RESULT", searchResult)
             if searchResult == None : return None
-            searchResult = utils.formatLivreToJson(searchResult, self.db)
+            searchResult= operationOnDataBase.sortLivre(searchResult,sort)
+            if auteur != "Tous":
+                searchResult = operationOnDataBase.filterLivreByAuteur(searchResult, auteur, self.db)
+            searchResult = utils.formatLivreToJsonOrdered(searchResult, self.db)
+           
             return self.makeResponse(content=searchResult)
         except Exception as e:
             print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, searchResult, "\033[0m")
@@ -34,12 +41,34 @@ class Server(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def searchAuteur(self, search:str) -> str:
-        print("OK")
         try : 
             searchResult = searchEngine.searchAuteur(search, self.db)
             if searchResult == None : return None
             searchResult = utils.formatAuteurToJson(searchResult)
-            print("OK2", searchResult)
+            return self.makeResponse(content=searchResult)
+        except Exception as e:
+            print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def searchPointDeVente(self, search:str) -> str:
+        try : 
+            searchResult = searchEngine.searchPointDeVente(search, self.db)
+            if searchResult == None : return None
+            searchResult = utils.formatPointDeVenteToJson(searchResult)
+            return self.makeResponse(content=searchResult)
+        except Exception as e:
+            print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def searchEditeur(self, search:str) -> str:
+        try : 
+            searchResult = searchEngine.searchEditeur(search, self.db)
+            if searchResult == None : return None
+            searchResult = utils.formatEditeurToJson(searchResult)
             return self.makeResponse(content=searchResult)
         except Exception as e:
             print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, "\033[0m")
@@ -51,7 +80,6 @@ class Server(object):
         try : 
             self.db.mkRequest("selectLivreByISBN",False, isbn)
             livre = self.db.cursor.fetchall()
-            print("LIVRE : ",livre)
             if livre is not None:
                 livre = utils.formatLivreToJson(livre, self.db)
                 return self.makeResponse(content=livre)
@@ -66,7 +94,7 @@ class Server(object):
         return open('www/html/index.html', encoding="utf-8")
     
     @cherrypy.expose
-    def search(self, search:str, type:str="livre") -> str :
+    def search(self, search:str, type:str="livre", sort="default", auteur="Tous") -> str :
         return open('www/html/search.html', encoding="utf-8")
 
     @cherrypy.expose

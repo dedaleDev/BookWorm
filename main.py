@@ -13,7 +13,7 @@ www_dir = os.path.abspath('./www')
 print(os.path.join(www_dir, 'css'))
 serverConf = {
     'global': {
-        'server.socket_host': '127.0.0.1',
+        'server.socket_host': '192.168.1.20',#si necessaire, changez l'adresse IP du site web
         'server.socket_port': 8080,
         'error_page.default': server.jsonify_error,
     },

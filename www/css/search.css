@@ -16,7 +16,7 @@ height: auto;
 margin-top: 10vh;
 }
 
-a{
+#logo{
     color: #ffffff;
     text-decoration: none;
 }
@@ -34,3 +34,4 @@ a{
     color: black;
     border-radius: 0px 100% 100% 0px;
 }
+

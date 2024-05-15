@@ -8,9 +8,9 @@
         <link rel="stylesheet" href="../css/search.css">
     </head>
     <body>
-        <h1 class="logo" style="padding: 5vh;"><a href="./">BookWorm</a></h3>
+        <h1 class="logo" style="padding-top: 5vh; padding-left: 5vh;"><a id="logo" href="./">BookWorm</a></h3>
         <form class="form-horizontal">
-            <div class="input-group" style="padding: 5vh; padding-bottom: 2vh;">
+            <div class="input-group" style="padding: 5vh; padding-bottom: 2vh;  padding-top: 1vh;">
                 <input id="searchInput" type="text" class="form-control" placeholder="Rechercher" value="">
                 <span class="input-group-btn">
                 <button class="btn btn-primary" id="searchButton">
@@ -20,25 +20,33 @@
             </div>
             <div class="d-flex justify-content-start" style="padding-left: 5vh;">
                 <div class="dropdown" style="padding-right: 5vh;">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button id="selectTypeButton" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
                         Type de recherche
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" id="selectLivre">Livre</a></li>
-                        <li><a class="dropdown-item" id="selectAuteur">Auteur</a></li>
-                        <li><a class="dropdown-item" id="selectPointDeVente">Point de vente</a></li>
-                        <li><a class="dropdown-item" id="selectEditeur">Editeur</a></li>
+                        <li><a   class="dropdown-item" id="selectLivre">Livre</a></li>
+                        <li><a  class="dropdown-item" id="selectAuteur">Auteur</a></li>
+                        <li><a  class="dropdown-item" id="selectPointDeVente">Point de vente</a></li>
+                        <li><a  class="dropdown-item" id="selectEditeur">Editeur</a></li>
                     </ul>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button id="selectSortButton" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
                         Trier par...
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Ordre alphabétique</a></li>
-                        <li><a class="dropdown-item" href="#">Note</a></li>
-                        <li><a class="dropdown-item" href="#">Date de parution</a></li>
+                        <li><a class="dropdown-item" id="sortByAlpha">Ordre alphabétique</a></li>
+                        <li><a class="dropdown-item" id="sortByNote">Note</a></li>
+                        <li><a class="dropdown-item" id="sortByDate">Date de parution</a></li>
+                        <li><a class="dropdown-item" id="sortByPrix">Prix</a></li>
                     </ul>
+                </div>
+                <div id="dropdownAuteurFilter" class="dropdown" style="padding-left: 5vh;">
+                    <button id="selectSortButton" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
+                      Filtrer
+                    </button>
+                    <div id="FilterAuteur" class="dropdown-menu">
+                    </div>
                 </div>
             </div>
             </form>

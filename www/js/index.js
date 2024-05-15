@@ -1,5 +1,5 @@
 
-const API_URL = 'http://127.0.0.1:8080'
+const API_URL = 'http://192.168.1.20:8080'
 const searchInput = document.querySelector('input.form-control');
 const searchButton = document.querySelector('button#searchButton');
 
@@ -12,7 +12,7 @@ searchButton.addEventListener('click', async (e) => {
   const searchValue = searchInput.value.trim();// recupere la valeur de l'input sans les espaces
   if (searchValue) {
     try {
-        window.location.href = `search?search=${searchValue}&type=livre`;
+        window.location.href = `search?search=${searchValue}&type=Livre`;
     } catch (error) {
       console.error(error);
     }

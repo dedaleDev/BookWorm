@@ -722,6 +722,24 @@ def filterLivre(livres:list, operation:str,db:database.db)-> list:
     except Exception as e:
         print(f"Une erreur est survenue lors du filtrage des livres :{e}, ligne : {e.__traceback__.tb_lineno}")
 
+
+def filterLivreByAuteur(livres:list[tuple], auteur:str,db:database.db)-> list:
+    """ This function filters the books by author.
+    Args : 
+        livres (list): The list of books.
+        auteur (str): The author.
+        db (database.db): The database object.
+    Returns:
+        list: The filtered list of books."""
+    result = []
+    
+    for i in range(len(livres)):
+        if searchEngine.getAuteurNameByID(db,livres[i][2]) == auteur:
+            result.append(livres[i])
+    print(f"Résultat du filtrage par auteur : '{auteur}'", result)
+    return result
+
+
 def sortLivre(livres:list, operation:str)-> list:
     """ This function sorts the books.
     Args:
@@ -731,15 +749,14 @@ def sortLivre(livres:list, operation:str)-> list:
         list: The sorted list of books.
     """
     try :
-        if operation == "note":
+        if operation == "sortByNote":
             print("Tri par note")
             livres.sort(key=lambda x: x[4], reverse=True)
-        elif operation == "ordre alphabétique":
+        elif operation == "sortByAlpha":
             print("Tri par ordre alphabétique")
             livres.sort(key=lambda x: x[1])
-        elif operation == "date de parution":
+        elif operation == "sortByDate":
             print("Tri par date de parution")
-            #algo de tri sans utiliser sort : 
             try :
                 for i in range(len(livres)):
                     for j in range(i+1, len(livres)):
@@ -758,12 +775,9 @@ def sortLivre(livres:list, operation:str)-> list:
             except Exception as e:
                 print(f"Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno}")
             print('Résultat du tri par date de parution :')
-        elif operation == "prix":
+        elif operation == "sortByPrix":
             print("Tri par prix")
             livres.sort(key=lambda x: x[9])
-        elif operation == "point de vente":
-            print("Tri par point de vente")
-            livres.sort(key=lambda x: x[10])
         return livres
     except Exception as e:
         print(f"Une erreur est survenue lors du tri des livres :{e}, ligne : {e.__traceback__.tb_lineno}")
