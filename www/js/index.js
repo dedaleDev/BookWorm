@@ -1,4 +1,3 @@
-
 const API_URL = 'http://192.168.1.20:8080'
 const searchInput = document.querySelector('input.form-control');
 const searchButton = document.querySelector('button#searchButton');

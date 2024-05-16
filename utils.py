@@ -146,3 +146,24 @@ def formatLivreToJson(data:list[tuple], db:database.db)->json:
     except Exception as e:
         print("\033[31mErreur lors de la conversion en JSON : ",e, e.__traceback__.tb_lineno, "\033[0m")
         return None
+    
+def formatUserToJson(data:list[tuple])->json:
+    try :
+        result = {}
+        for item in data:
+            if len(item) != 7:
+                item = item[:7]
+            email, mdp, grade, nom, prénom, adresse, tel = item
+            result[email] = {
+                'mdp':mdp,
+                'grade':grade,
+                'nom':nom,
+                'prénom':prénom,
+                'adresse':adresse,
+                'tel':tel
+            }
+        json_result = json.dumps(result, indent=4)
+        return json_result
+    except Exception as e:
+        print("\033[31mErreur lors de la conversion en JSON : ",e, e.__traceback__.tb_lineno, "\033[0m")
+        return None

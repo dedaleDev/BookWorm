@@ -37,7 +37,7 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, searchResult, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
-    
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def searchAuteur(self, search:str) -> str:
@@ -49,7 +49,7 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
-    
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def searchPointDeVente(self, search:str) -> str:
@@ -61,7 +61,7 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
-    
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def searchEditeur(self, search:str) -> str:
@@ -73,7 +73,7 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue : "+ str(e))
-    
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def getLivre(self, isbn:str) -> str:
@@ -88,11 +88,47 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la recherche : ",e, e.__traceback__.tb_lineno,livre, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue")
-        
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def checkLogin(self, email:str, password:str) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            print("USER",user)
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    return self.makeResponse(content="success")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la tentative de conneion : ",e, e.__traceback__.tb_lineno, user, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getUserInfo(self, email:str, password:str) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    user = utils.formatUserToJson(user)
+                    return self.makeResponse(content=user)
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la tentative de conneion : ",e, e.__traceback__.tb_lineno, user, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
     @cherrypy.expose
     def index(self) -> str :
         return open('www/html/index.html', encoding="utf-8")
-    
+
     @cherrypy.expose
     def search(self, search:str, type:str="livre", sort="default", auteur="Tous") -> str :
         return open('www/html/search.html', encoding="utf-8")
@@ -100,7 +136,15 @@ class Server(object):
     @cherrypy.expose
     def livre(self, isbn) -> str :
         return open('www/html/livre.html', encoding="utf-8")
-        
+
+    @cherrypy.expose
+    def login(self) -> str :
+        return open('www/html/login.html', encoding="utf-8")
+
+    @cherrypy.expose
+    def account(self) -> str :
+        return open('www/html/account.html', encoding="utf-8")
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def updateBestLivres(self) -> str :
