@@ -25,7 +25,7 @@ async function loadLivre(isbn) {
     let response =  await fetch(`${API_URL}/getLivre?isbn=${isbn}`);
     let livreData = await response.json();
     livreData = JSON.parse(livreData["content"]);
-    console.log("response: ", livreData);
+    console.log("livre: ", livreData);
     return livreData[isbn];
 }
 const urlParams = new URLSearchParams(window.location.search);

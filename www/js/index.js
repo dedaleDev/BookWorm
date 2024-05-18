@@ -2,6 +2,27 @@ const API_URL = 'http://192.168.1.20:8080'
 const searchInput = document.querySelector('input.form-control');
 const searchButton = document.querySelector('button#searchButton');
 
+
+let email, password;
+
+async function checkLoginAndGetUserInfo() {
+    let decodedCookie = decodeURIComponent(document.cookie).split(';');
+    for (let i = 0; i < decodedCookie.length; i++) {
+        let c = decodedCookie[i].trim();
+        if (c.startsWith('email=')) {
+            email = c.substring('email='.length);
+        }
+        if (c.startsWith('password=')) {
+            password = c.substring('password='.length);
+        }
+    }
+    const response = await fetch(`${API_URL}/checkLogin?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+    const data = await response.json();
+    if (data["content"] === 'success') {
+      document.getElementById("account").src = "../img/account.svg"
+    }
+}
+checkLoginAndGetUserInfo()
 async function updateBestLivres() {
   await fetch(`${API_URL}/updateBestLivres`);
 }

@@ -1,5 +1,30 @@
 const API_URL = 'http://192.168.1.20:8080'
 
+async function checkLoginAndGetUserInfo() {
+  let decodedCookie = decodeURIComponent(document.cookie).split(';');
+  let email, password;
+  for (let i = 0; i < decodedCookie.length; i++) {
+      let c = decodedCookie[i];
+      while (c.charAt(0) === ' ') {
+          c = c.substring(1);
+      }
+      if (c.indexOf('email=') === 0) {
+          email = c.substring("email=".length, c.length);
+      }
+      if (c.indexOf('password=') === 0) {
+          password = c.substring("password=".length, c.length);
+      }
+  }
+  if (email && password) {
+      let response = await fetch(`${API_URL}/checkLogin?email=${email}&password=${password}`);
+      const data = await response.json();
+      if (data["content"] === 'success') {
+        window.location.href = '/account';
+      }
+  }
+}
+
+checkLoginAndGetUserInfo();
 const signupButton = document.getElementById('signupButton');
 const signinButton = document.getElementById('signinButton');
 

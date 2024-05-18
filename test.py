@@ -1,122 +1,74 @@
-[
-    {
-        "ISBN": "2070624544",
-        "titre": "Harry Potter - : Harry Potter et le prisonnier d'Azkaban",
-        "auteur": "J. K. Rowling",
-        "description": "Harry Potter a treize ans. Apr\u00e8s des vacances insupportables chez les horribles Dursley, il retrouve ses fid\u00e8les amis, Ron et Hermione, pour prendre le train qui les ram\u00e8ne au coll\u00e8ge Poudlard. Le monde des gens ordinaires, les Moldus, comme celui des sorciers, est en \u00e9moi : aux derni\u00e8res nouvelles, Sirius Black, un dangereux criminel proche de Voldemort, s'est \u00e9chapp\u00e9 de la prison d'Azkaban. Les redoutables gardiens de la prison assureront la s\u00e9curit\u00e9 du coll\u00e8ge Poudlard, car le prisonnier \u00e9vad\u00e9 recherche Harry Potter, responsable de l'\u00e9limination de son ma\u00eetre. C'est donc sous bonne garde que l'apprenti sorcier fait sa troisi\u00e8me rentr\u00e9e. Au programme : des cours de divination, la fabrication d'une potion de ratatinage, le dressage des hippogriffes... Mais Harry est-il vraiment \u00e0 l'abri du danger qui le menace ?",
-        "note": 10.0,
-        "dateDeParution": "19/10/1999",
-        "status": "emprunt\u00e9",
-        "genre": "Fantastique",
-        "format": "Grand Format",
-        "prix": 9.99,
-        "pointDeVente": "17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence\n\n",
-        "pointDeVenteName": "Fnac",
-        "editeur": "Gallimard"
-    },
-    {
-        "ISBN": "2070541290",
-        "titre": "Harry Potter - Tome 2 : Harry potter et la chambre des secrets",
-        "auteur": "J. K. Rowling",
-        "description": "Cette deuxi\u00e8me aventure d'Harry Potter m\u00eale avec g\u00e9nie humour, myst\u00e8re et frisson. L'intrigue savamment ficel\u00e9e et pleine de rebondissements inattendus envo\u00fbte litt\u00e9ralement le lecteur de la premi\u00e8re \u00e0 la derni\u00e8re page. Un r\u00e9gal !",
-        "note": 10.0,
-        "dateDeParution": "01/11/1999",
-        "status": "hors stock",
-        "genre": "Fantastique",
-        "format": "Grand Format",
-        "prix": 22.5,
-        "pointDeVente": "12, place des clercs 26000 Valence",
-        "pointDeVenteName": "La Licorne",
-        "editeur": "Gallimard"
-    },
-    {
-        "ISBN": "2070543587",
-        "titre": "Harry Potter - Tome 4 : Harry potter et la coupe de feu",
-        "auteur": "J. K. Rowling",
-        "description": "Apr\u00e8s un horrible \u00e9t\u00e9 chez les Dursley, Harry Potter entre en quatri\u00e8me ann\u00e9e au coll\u00e8ge de Poudlard. \u00c0 quatorze ans, il voudrait simplement \u00eatre un jeune sorcier comme les autres, retrouver ses amis Ron et Hermione, assister avec eux \u00e0 la Coupe du Monde de Quidditch, apprendre de nouveaux sortil\u00e8ges et essayer des potions inconnues. Une grande nouvelle l'attend \u00e0 son arriv\u00e9e : la tenue \u00e0 Poudlard d'un tournoi de magie entre les plus c\u00e9l\u00e8bres \u00e9coles de sorcellerie. D\u00e9j\u00e0 les spectaculaires d\u00e9l\u00e9gations \u00e9trang\u00e8res font leur entr\u00e9e... Harry se r\u00e9jouit. Trop vite. Il va se trouver plong\u00e9 au coeur des \u00e9v\u00e9nements les plus dramatiques qu'il ait jamais eu \u00e0 affronter.\nEnvo\u00fbtant, dr\u00f4le, bouleversant, ce quatri\u00e8me tome est le pilier central des aventures de Harry Potter.",
-        "note": 10.0,
-        "dateDeParution": "01/11/2000",
-        "status": "disponible",
-        "genre": "Fantastique",
-        "format": "Grand Format",
-        "prix": 14.5,
-        "pointDeVente": "Place Charles de Gaulle \u00e0 Chabeuil (Dr\u00f4me)",
-        "pointDeVenteName": " Librairie Ecriture",
-        "editeur": "Gallimard"
-    },
-    {
-        "ISBN": "2070556859",
-        "titre": "Harry Potter - Tome 5 : Harry potter et l'ordre du phenix ",
-        "auteur": "J. K. Rowling",
-        "description": "\u00c0 quinze ans, Harry entre en cinqui\u00e8me ann\u00e9e \u00e0 Poudlard, mais il n'a jamais \u00e9t\u00e9 si anxieux. L'adolescence, la perspective des examens et ces \u00e9tranges cauchemars... Car Celui-Dont-On-Ne-Doit-Pas-Prononcer-Le-Nom est de retour. Le minist\u00e8re de la Magie semble ne pas prendre cette menace au s\u00e9rieux, contrairement \u00e0 Dumbledore. La r\u00e9sistance s'organise alors autour de Harry qui va devoir compter sur le courage et la fid\u00e9lit\u00e9 de ses amis de toujours... ",
-        "note": 10.0,
-        "dateDeParution": "01/12/2003",
-        "status": "disponible",
-        "genre": "Fantastique",
-        "format": "Grand Format",
-        "prix": 12.99,
-        "pointDeVente": "Place Charles de Gaulle \u00e0 Chabeuil (Dr\u00f4me)",
-        "pointDeVenteName": " Librairie Ecriture",
-        "editeur": "Gallimard"
-    },
-    {
-        "ISBN": "2070572676",
-        "titre": "Harry Potter - Tome 6 : Harry potter et le prince de sang-mele ",
-        "auteur": "J. K. Rowling",
-        "description": "Harry, Ron et Hermione entrent en sixi\u00e8me ann\u00e9e \u00e0 Poudlard o\u00f9 ils vont vivre leur derni\u00e8re ann\u00e9e avant la majorit\u00e9 qui est fix\u00e9e, chez les sorciers, \u00e0 l'\u00e2ge de dix-sept ans. Des \u00e9v\u00e9nements particuli\u00e8rement marquants vont contribuer \u00e0 faire passer Harry du statut d'adolescent \u00e0 celui d'homme. Ce tome, sur fond de guerre contre un Voldemort plus puissant que jamais, se r\u00e9v\u00e8le plus sombre que les pr\u00e9c\u00e9dents. Secrets, alliances et trahisons conduisent aux \u00e9v\u00e9nements les plus dramatiques qu'Harry ait eu \u00e0 affronter. Mais, en... ",
-        "note": 10.0,
-        "dateDeParution": "01/10/2005",
-        "status": "disponible",
-        "genre": "Fantastique",
-        "format": "Grand Format",
-        "prix": 10.99,
-        "pointDeVente": "31 rue Madier de Montjau\n26000 Valence",
-        "pointDeVenteName": "L'\u00c9tincelle",
-        "editeur": "Gallimard"
-    },
-    {
-        "ISBN": "2070615367",
-        "titre": "Harry Potter - Tome 7 : Harry potter et les reliques de la mort",
-        "auteur": "J. K. Rowling",
-        "description": "\u00abEnvers et contre tout\u00bb est une caract\u00e9ristique-cl\u00e9 chez J.K. Rowling. Paradoxalement, c'est lorsqu'elle a continu\u00e9 \u00e0 \u00e9crire avec une \u00e9nergie, une passion, un engagement inentam\u00e9s, en particulier \u00e0 partir du tome 4 - alors qu'elle \u00e9tait devenue l'une des femmes les plus c\u00e9l\u00e8bres et riches au monde, et que chaque suite \u00e9tait attendue par des dizaines de millions de lecteurs du monde entier - , qu'elle force le plus l'admiration. Elle accomplit la mission qu'elle s'est donn\u00e9e sans faillir, sans jamais d\u00e9cevoir.\nL'ambition de... ",
-        "note": 10.0,
-        "dateDeParution": "27/10/2007",
-        "status": "emprunt\u00e9",
-        "genre": "Fantastique",
-        "format": "Grand Format",
-        "prix": 15.99,
-        "pointDeVente": "17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence\n\n",
-        "pointDeVenteName": "Fnac",
-        "editeur": "Gallimard"
-    },
-    {
-        "ISBN": "2070615367",
-        "titre": "Harry Potter - Tome 7 : Harry potter et les reliques de la mort",
-        "auteur": "J. K. Rowling",
-        "description": "\u00abEnvers et contre tout\u00bb est une caract\u00e9ristique-cl\u00e9 chez J.K. Rowling. Paradoxalement, c'est lorsqu'elle a continu\u00e9 \u00e0 \u00e9crire avec une \u00e9nergie, une passion, un engagement inentam\u00e9s, en particulier \u00e0 partir du tome 4 - alors qu'elle \u00e9tait devenue l'une des femmes les plus c\u00e9l\u00e8bres et riches au monde, et que chaque suite \u00e9tait attendue par des dizaines de millions de lecteurs du monde entier - , qu'elle force le plus l'admiration. Elle accomplit la mission qu'elle s'est donn\u00e9e sans faillir, sans jamais d\u00e9cevoir.\nL'ambition de... ",
-        "note": 10.0,
-        "dateDeParution": "27/10/2007",
-        "status": "emprunt\u00e9",
-        "genre": "Fantastique",
-        "format": "Grand Format",
-        "prix": 15.99,
-        "pointDeVente": "17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence\n\n",
-        "pointDeVenteName": "Fnac",
-        "editeur": "Gallimard"
-    },
-    {
-        "ISBN": "9782070518425",
-        "titre": "Harry Potter, tome 1 : Harry Potter \u00e0 l'\u00e9cole des sorciers\n",
-        "auteur": "J. K. Rowling",
-        "description": "Pour et Mrs Dursley, qui habitaient au 4, Privet Drive, avaient toujours affirm\u00e9 avec la plus grande fiert\u00e9 qu'ils \u00e9taient parfaitement nor\u00admaux, merci pour eux. Jamais quiconque n'aurait imagin\u00e9 qu'ils puissent se trouver impliqu\u00e9s dans quoi que ce soit d'\u00e9trange ou de myst\u00e9rieux. Ils n'avaient pas de temps \u00e0 perdre avec des sornettes.",
-        "note": 10.0,
-        "dateDeParution": "01/01/1998",
-        "status": "emprunt\u00e9",
-        "genre": "Fantastique",
-        "format": "Poche",
-        "prix": 10.99,
-        "pointDeVente": "12, place des clercs 26000 Valence",
-        "pointDeVenteName": "La Licorne",
-        "editeur": "Gallimard"
-    }
-]
+
+ La requête à échouée : SELECT * FROM `Livre` WHERE `ISBN` LIKE 2070624544;
+---, Erreur : Packet sequence number wrong - got 1 expected 17, ligne : 121
+Args :  ['2070624544']
+Nombre de placeholders : 1
+Nombre d'arguments : 1
+--------------------------------------------------
+ La requête à échouée : SELECT * FROM `Livre` WHERE `ISBN` LIKE 2070615367;
+---, Erreur : Packet sequence number wrong - got 101 expected 17, ligne : 121
+ La requête à échouée : SELECT * FROM `Livre` WHERE `ISBN` LIKE 2070572676;
+---, Erreur : (2013, 'Lost connection to MySQL server during query'), ligne : 121
+Args :  ['2070572676']
+Nombre de placeholders : 1
+ La requête à échouée : SELECT * FROM `Auteur` WHERE `ID` = 31;
+---, Erreur : Packet sequence number wrong - got 111 expected 17, ligne : 121Args :  ['2070615367']
+DATA ()
+192.168.1.28 - - [18/May/2024:15:29:15] "GET /getLivre?isbn=2070624544 HTTP/1.1" 200 33 "http://192.168.1.20:8080/account" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+
+Args :  [31]
+Nombre de placeholders : 1
+Nombre d'arguments : 1
+--------------------------------------------------
+Une erreur est survenue lors de la recherche de l'auteur :tuple index out of range, ligne : 38
+######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880> selectPointDeVenteByAdresse ('17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence\n\n',) SELECT Nom FROM `Point de vente` WHERE `Adresse` LIKE 17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence
+
+;######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880> selectAuteurByID (2,) SELECT * FROM `Auteur` WHERE `ID` = 2;
+######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880>
+ La requête à échouée : SELECT * FROM `Auteur` WHERE `ID` = 2;
+---, Erreur : (0, ''), ligne : 121Nombre de placeholders : 1
+Nombre d'arguments : 1
+--------------------------------------------------
+DATA []
+Nombre d'arguments : 1
+--------------------------------------------------
+DATA []
+
+Args :  [2]
+Nombre de placeholders : 1
+Nombre d'arguments : 1
+--------------------------------------------------
+######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880> selectPointDeVenteByAdresse ('31 rue Madier de Montjau\n26000 Valence',) SELECT Nom FROM `Point de vente` WHERE `Adresse` LIKE 31 rue Madier de Montjau
+26000 Valence;
+######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880>
+ La requête à échouée : SELECT Nom FROM `Point de vente` WHERE `Adresse` LIKE 17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence
+
+;
+---, Erreur : (0, ''), ligne : 121
+Args :  ['17, avenue Victor-Hugo Centre commercial Victor-Hugo - 26000  Valence\n\n']
+Nombre de placeholders : 1
+Nombre d'arguments : 1
+--------------------------------------------------
+
+######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880> selectLivreByISBN ('1041834365',) SELECT * FROM `Livre` WHERE `ISBN` LIKE 1041834365;
+######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880>
+ La requête à échouée : SELECT Nom FROM `Point de vente` WHERE `Adresse` LIKE 31 rue Madier de Montjau
+26000 Valence;
+---, Erreur : (0, ''), ligne : 121
+Args :  ['31 rue Madier de Montjau\n26000 Valence']
+Nombre de placeholders : 1
+Nombre d'arguments : 1
+--------------------------------------------------
+######### <class 'pymysql.cursors.Cursor'> <pymysql.cursors.Cursor object at 0x7fa5a17ad880>
+ La requête à échouée : SELECT * FROM `Livre` WHERE `ISBN` LIKE 1041834365;
+---, Erreur : (0, ''), ligne : 121
+Args :  ['1041834365']
+Nombre de placeholders : 1
+Nombre d'arguments : 1
+--------------------------------------------------
+DATA []
+192.168.1.28 - - [18/May/2024:15:29:15] "GET /getLivre?isbn=2070615367 HTTP/1.1" 200 33 "http://192.168.1.20:8080/account" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+192.168.1.28 - - [18/May/2024:15:29:15] "GET /getLivre?isbn=2070572676 HTTP/1.1" 200 33 "http://192.168.1.20:8080/account" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+192.168.1.28 - - [18/May/2024:15:29:15] "GET /getLivre?isbn=2017010090 HTTP/1.1" 200 1283 "http://192.168.1.20:8080/account" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+192.168.1.28 - - [18/May/2024:15:29:15] "GET /getLivre?isbn=2070615367 HTTP/1.1" 200 1272 "http://192.168.1.20:8080/account" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+192.168.1.28 - - [18/May/2024:15:29:15] "GET /getLivre?isbn=1041834365 HTTP/1.1" 200 33 "http://192.168.1.20:8080/account" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"

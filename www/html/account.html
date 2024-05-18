@@ -7,13 +7,23 @@
         <link rel="stylesheet" href="../css/account.css">
     </head>
     <body>
-        <div id="account" class="container">
+      <div class="container">
             <div class="row">
               <div class="col-md-8"> 
-                  <h1 class="logo" style="padding-top: 5vh;"><a id="logo" href="./">BookWorm</a></h1>
                   <h2  id="welcome" style="padding-top: 2vh;"></h2>
-                <h2 style="padding-top: 5vh">Mes réservations : </h2>
-              </div id="reservation">
-        </div>
-        <div id="error"></div>
+                  <h2 style="padding-top: 5vh">Mes informations : </h2>
+                  <ul id="infos" style="color: white; padding-top: 5vh; "></ul>
+                  <h2 style="padding-top: 5vh">Mes réservations : </h2>
+                  <ul id="emprunts" style="color: white; padding-top: 3vh; "></ul>
+              </div>
+              <div class="col-md-4">
+                <img src="../img/harryBook.svg" alt="harry book" class="img-fluid mx-auto" style="width: 50%; padding-top: 20vh;">
+              </div>
+      </div>
+      <a href="/index" class="d-flex justify-content-center align-items-center"><img src="../img/searchNewBook.svg" alt="search new book" class="img-fluid" style="width:40%; padding-top: 5vh;"></a>
+      <div id="error"></div>
+      <script src="../js/account.js"></script>
+      <script src="../frameworks/popper.min.js"></script>
+      <script src="../frameworks/bootstrap/js/bootstrap.min.js"></script>
+    </body>
 </html>

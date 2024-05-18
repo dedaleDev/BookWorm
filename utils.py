@@ -80,9 +80,7 @@ def formatAuteurToJson(data:list[tuple])->json:
 def formatPointDeVenteToJson(data:list[tuple])->json: 
     try :
         result = {}
-        print("DATA",data)
         for item in data:
-            print("TEST",item)
             if len(item) != 4:
                 item = item[:4]
             adresse, nom, url, tel = item
@@ -94,7 +92,7 @@ def formatPointDeVenteToJson(data:list[tuple])->json:
         json_result = json.dumps(result, indent=4)
         return json_result
     except Exception as e:
-        print("\033[31mErreur lors de la conversion en JSON : ",e, e.__traceback__.tb_lineno, "\033[0m")
+        print("\033[31mErreur lors de la conversion en JSON du Point de Vente : ",e, e.__traceback__.tb_lineno, data, "\033[0m")
         return None
     
 def formatEditeurToJson(data:list[tuple])->json:
@@ -162,6 +160,27 @@ def formatUserToJson(data:list[tuple])->json:
                 'adresse':adresse,
                 'tel':tel
             }
+        json_result = json.dumps(result, indent=4)
+        return json_result
+    except Exception as e:
+        print("\033[31mErreur lors de la conversion en JSON : ",e, e.__traceback__.tb_lineno, "\033[0m")
+        return None
+    
+
+def formatEmpruntsToJson(data:list[tuple])->json:
+    try :
+        result = {}
+        print("DATA",data)
+        for item in data:
+            if len(item) != 4:
+                item = item[:4]
+            ID, livre, date, utilsateur = item
+            result[ID] = {
+                'isbn':livre,
+                'Date':date.strftime("%d/%m/%Y"),
+                'Utilsateur':utilsateur
+            }
+        print("JSON",result)
         json_result = json.dumps(result, indent=4)
         return json_result
     except Exception as e:

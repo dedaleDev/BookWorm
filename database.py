@@ -1,5 +1,5 @@
 import pymysql
-import os, csv
+import os, csv, time
 
 class db():
     _requetes = {
@@ -15,7 +15,7 @@ class db():
     "selectAuteurByPrenom" : "SELECT * FROM `Auteur` WHERE `Prénom` LIKE %s ORDER BY `ID` ASC;",
     "selectAuteurByAlias" : "SELECT * FROM `Auteur` WHERE `Alias` LIKE %s ORDER BY `ID` ASC;",
     "selectPointDeVenteByNom" : "SELECT * FROM `Point de vente` WHERE `Nom` LIKE %s;",
-    "selectPointDeVenteByAdresse" : "SELECT Nom FROM `Point de vente` WHERE `Adresse` LIKE %s;",
+    "selectPointDeVenteByAdresse" : "SELECT * FROM `Point de vente` WHERE `Adresse` LIKE %s;",
     "selectLivreByISBN" : "SELECT * FROM `Livre` WHERE `ISBN` LIKE %s;",
     "selectLivreByTitre" : "SELECT * FROM `Livre` WHERE `Titre` LIKE %s;",
     "selectLivreByAuteurNom" : "SELECT * FROM Livre JOIN Auteur ON Livre.Auteur = Auteur.ID WHERE Auteur.Nom LIKE %s",
@@ -39,6 +39,7 @@ class db():
     "selectISBNAllLivres" : "SELECT ISBN FROM `Livre`;",
     "selectPointDeVenteNameByAdresse" : "SELECT Nom FROM `Point de vente` WHERE `Adresse` = %s;",
     "selectUserByEmail" : "SELECT * FROM `Utilisateur` WHERE `email` = %s;",
+    "selectEmpruntByUser" : "SELECT * FROM `Emprunt` WHERE `Utilisateur` = %s;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
@@ -105,7 +106,9 @@ class db():
             *args : tuple : the arguments to pass to the request
         """
         try :
-            # Convertir les arguments en chaînes de caractères, ajouter des guillemets autour des chaînes de caractères, et gérer les valeurs NULL
+            if request not in self._requetes.keys():
+                print(f"\033[31mErreur : La requête {request} n'existe pas dans la base de donnée !\033[0m")
+                return
             args = list(args)
             for i in range(len(args)):
                 if args[i] == "":
@@ -114,11 +117,40 @@ class db():
                 print(f"#{self._requetes[request] % tuple(args)}")
             self.cursor.execute(self._requetes[request], tuple(args))
         except Exception as e:
-            print(f" La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}")
-            print("Args : ", args)
-            print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
-            print(f"Nombre d'arguments : {len(args)}\n-------------------------------------------------- ")
-
+            if self.retryDatabaseConnection() == False:
+                print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}, {pymysql.MySQLError}---\033[0m")
+                print("Args : ", args)
+                print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
+                print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m")
+                print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
+                print(f"Database : {type(self.db)} Actif : {self.db!=None}")
+            else :
+                self.mkRequest(request, verbose, *args)
+            
+            
+    def retryDatabaseConnection(self) -> bool:
+        """This function retries to connect to the database."""
+        print("Connexion à la base de donnée perdu, tentative de reconnexion...")
+        try :
+            maxRetries = 3
+            retryDelay = 1 #secondes
+            for i in range(maxRetries):
+                try: 
+                    self.cursor.close()
+                    self.db.close()
+                    self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, port=self.port, db="BookWorm", init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
+                    self.cursor = self.db.cursor()
+                    print("Reconnexion à la base de donnée réussie !")
+                    return True
+                except : 
+                    time.sleep(retryDelay)
+                    pass
+            print("Erreur : Impossible de se reconnecter à la base de donnée !")
+            return False
+        except Exception as e:
+            print("Erreur : Impossible de se reconnecter à la base de donnée ! Une erreur est survenue : ",e)
+            exit(1)
+    
     def __str__(self) -> str:
         return f"Database host : {self.host}, user : {self.user}, password : {self.passwd}, port : {self.port}, debug : {self.debug}"
 

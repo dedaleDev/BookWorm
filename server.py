@@ -26,7 +26,6 @@ class Server(object):
             sort = "sortByAlpha"
         try : 
             searchResult = searchEngine.searchLivre(search,self.db)
-            #print("SEARCH RESULT", searchResult)
             if searchResult == None : return None
             searchResult= operationOnDataBase.sortLivre(searchResult,sort)
             if auteur != "Tous":
@@ -95,7 +94,6 @@ class Server(object):
         try : 
             self.db.mkRequest("selectUserByEmail", False, email)
             user = self.db.cursor.fetchall()
-            print("USER",user)
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
                     return self.makeResponse(content="success")
@@ -123,6 +121,28 @@ class Server(object):
                 return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
         except Exception as e:
             print("\033[31mErreur lors de la tentative de conneion : ",e, e.__traceback__.tb_lineno, user, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getEmprunt(self, email:str, password:str)->str:
+        try : 
+            #check password before 
+            self.db.mkRequest("selectUserByEmail", True, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    self.db.mkRequest("selectEmpruntByUser", True, email)
+                    emprunts = self.db.cursor.fetchall()
+                    if emprunts is not None and emprunts != () and emprunts != []:
+                        emprunts = utils.formatEmpruntsToJson(emprunts)
+                        return self.makeResponse(content=emprunts)
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Aucun emprunt trouvé")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des réservations : ",e, e.__traceback__.tb_lineno, emprunts, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
     
     @cherrypy.expose

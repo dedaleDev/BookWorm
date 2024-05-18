@@ -52,7 +52,7 @@ def getPointDeVenteNameByAddresse(db:database.db, addresse: str)->str:
         db.mkRequest("selectPointDeVenteByAdresse", False, addresse)
         result = db.cursor.fetchall()
         if result == None or result == []: return "Nom du point de vente inconnu"
-        return f"{result[0][0]}"
+        return f"{result[0][1]}"
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
 
@@ -114,6 +114,8 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
         recherche = recherche.strip().split()
         request = ["selectPointDeVenteByNom", "selectPointDeVenteByAdresse"]
         result = searchEngine(recherche, request, db)
+        
+        print(result)
         temp = []
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
