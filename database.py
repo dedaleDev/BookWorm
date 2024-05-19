@@ -40,6 +40,7 @@ class db():
     "selectPointDeVenteNameByAdresse" : "SELECT Nom FROM `Point de vente` WHERE `Adresse` = %s;",
     "selectUserByEmail" : "SELECT * FROM `Utilisateur` WHERE `email` = %s;",
     "selectEmpruntByUser" : "SELECT * FROM `Emprunt` WHERE `Utilisateur` = %s;",
+    "selectEmpruntByISBN" : "SELECT * FROM `Emprunt` WHERE `Livre` = %s;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
@@ -117,16 +118,18 @@ class db():
                 print(f"#{self._requetes[request] % tuple(args)}")
             self.cursor.execute(self._requetes[request], tuple(args))
         except Exception as e:
-            if self.retryDatabaseConnection() == False:
-                print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}, {pymysql.MySQLError}---\033[0m")
+            if ("Packet sequence" in str(e) and  self.retryDatabaseConnection() == False) or ("has no attribute 'read'" in str(e) and self.retryDatabaseConnection() == False):
+                print(' \033[31mPacket Error Sequence')
+                print(f"La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}, {pymysql.MySQLError}")
+                print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
+                print(f"Database : {type(self.db)} Actif : {self.db!=None}\033[0m")
+            elif "Packet sequence" in  str(e) or  "has no attribute 'read'" in str(e) :
+                self.mkRequest(request, verbose, *args)
+            else :
+                print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 print("Args : ", args)
                 print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
                 print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m")
-                print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
-                print(f"Database : {type(self.db)} Actif : {self.db!=None}")
-            else :
-                self.mkRequest(request, verbose, *args)
-            
             
     def retryDatabaseConnection(self) -> bool:
         """This function retries to connect to the database."""

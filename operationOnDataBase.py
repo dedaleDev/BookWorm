@@ -821,4 +821,24 @@ def searchEditeur(db:database.db):
         input("Appuyez sur entrée pour continuer...")
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche de l'éditeur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
+def  getStatus(isbn:str, db:database.db):
+    """ This function returns the status of a book
+    Args  : isbn (str): The ISBN of the book.
+            db (database.db): The database object.
+    Returns : str : The status of the book."""
+    try : 
+        db.mkRequest("selectEmpruntByISBN", False, isbn)
+        emprunt = db.cursor.fetchall()
+        db.mkRequest("selectLivreByISBN", True, isbn)
+        livre = db.cursor.fetchall()
+        print(emprunt,livre, isbn)
+        if livre != None:
+            dbStatus = livre[0][6]
+        if dbStatus == "hors stock": return "hors stock"
+        elif  emprunt == None or emprunt ==[] or emprunt == (): return "disponible"
+        else : return "emprunté"
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche du statut du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
+        return None
         

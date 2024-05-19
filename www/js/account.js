@@ -29,6 +29,11 @@ let emprunts = "";
 async function GetEmprunts() {
     const reponse = await fetch(`${API_URL}/getEmprunt?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
     const data = await reponse.json();
+    console.log("DATA",data);
+    if (data["status"] == "error") {
+        emprunts = {};
+        return;
+    }
     emprunts = JSON.parse(data["content"]);
 }
 
@@ -47,6 +52,9 @@ checkLoginAndGetUserInfo().then(() => {
     GetEmprunts().then(async () => {
         console.log("EMPRUNTS", emprunts);
         const divEmprunt = document.getElementById('emprunts');
+        if (Object.keys(emprunts).length === 0) {
+            divEmprunt.innerHTML = `<li><h5 style='color:white'> Vous n'avez pas d'emprunt en cours</h5></li>`;
+        }
         for (const id of Object.keys(emprunts)) {
             const titre = await GetLivreTitre(emprunts[id]["isbn"]);
             const dateStr = emprunts[id]["Date"]; // votre chaîne de caractères au format YYYY-MM-DD
@@ -69,3 +77,10 @@ checkLoginAndGetUserInfo().then(() => {
         `
     });
 });
+
+logout.addEventListener('click', () => {
+    document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    document.cookie = "password=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    console.log("deconnexion")
+    window.location.href = '/index'
+})

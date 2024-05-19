@@ -1,5 +1,5 @@
 import os
-import json, searchEngine, database, searchEngine
+import json, searchEngine, database, operationOnDataBase
 
 
 def cleanFileNameForLivre()->None :
@@ -36,7 +36,7 @@ def formatLivreToJsonOrdered(data:list[tuple], db:database.db)->json:
                 'description': description,
                 'note': note,
                 'dateDeParution': dateDeParution.strftime("%d/%m/%Y"),
-                'status': status,
+                'status': operationOnDataBase.getStatus(ISBN, db),
                 'genre': genre,
                 'format': format,
                 'prix': prix,
@@ -130,7 +130,7 @@ def formatLivreToJson(data:list[tuple], db:database.db)->json:
                 'description':description,
                 'note':note,
                 'dateDeParution':dateDeParution.strftime("%d/%m/%Y"),
-                'status':status,
+                'status':operationOnDataBase.getStatus(ISBN, db),
                 'genre':genre,
                 'format':format,
                 'prix':prix,
@@ -138,7 +138,6 @@ def formatLivreToJson(data:list[tuple], db:database.db)->json:
                 'pointDeVenteName':searchEngine.getPointDeVenteNameByAddresse(db, pointDeVente),
                 'editeur':editeur
             }
-        print("NOM PDV",searchEngine.getPointDeVenteNameByAddresse(db, pointDeVente))
         json_result = json.dumps(result, indent=4)
         return json_result
     except Exception as e:
