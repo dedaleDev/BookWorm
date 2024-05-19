@@ -107,6 +107,26 @@ class Server(object):
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    def isAdmin(self, email:str, password:str) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la tentative de conneion : ",e, e.__traceback__.tb_lineno, user, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
     def getUserInfo(self, email:str, password:str) -> str:
         try : 
             self.db.mkRequest("selectUserByEmail", False, email)
@@ -187,7 +207,37 @@ class Server(object):
             return self.makeResponse(content='ok')
         except Exception as e:
             print("Erreur lors de la mise à jour des livres de la page d'accueil", e, e.__traceback__.tb_lineno)
-        
+            
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def reserveLivre(self, email:str, password:str, isbn:str) -> str:
+        try : 
+            #check password before
+            self.db.mkRequest("selectUserByEmail", True, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    self.db.mkRequest("selectLivreByISBN", False, isbn)
+                    livre = self.db.cursor.fetchall()
+                    if livre is not None and livre != () and livre != []:
+                        self.db.mkRequest("selectEmpruntByUser", True, email)
+                        emprunts = self.db.cursor.fetchall()
+                        if emprunts is not None and emprunts != () and emprunts != []:
+                            for emprunt in emprunts:
+                                if emprunt[0] == isbn:
+                                    return self.makeResponse(is_error=True, error_message="Ce livre est déjà réservé")
+                        self.db.mkRequest("insertEmprunt", False, isbn,email)
+                        self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Livre introuvable")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la réservation : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
     
 def jsonify_error(status, message, traceback, version):
     try :

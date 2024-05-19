@@ -1,0 +1,26 @@
+body {
+    background-image: url("../img/background.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    padding:  0;
+    margin : 0;
+}
+h1,h2, label{
+    color : #ffffff;
+}
+
+#mascotte404{
+width: 50%;
+height: auto;
+margin-top: 10vh;
+}
+
+a{
+    color:white;
+    text-decoration: none;
+}
+#logo{
+    color: #ffffff;
+    text-decoration: none;
+}

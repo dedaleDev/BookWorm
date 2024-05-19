@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BookWorm : Espace Administrateur</title>
+        <meta charset="utf-8", lang="fr">
+        <link rel="stylesheet" href="../frameworks/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/config.css">
+    </head>
+    <body>
+        <h1 class="logo" style="padding-top: 5vh; padding-left: 5vh;"><a id="logo" href="./">BookWorm</a></h3>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1 class="logo" style="padding-top: 10vh;">Espace Administrateur</h1>
+                    <div class="d-flex justify-content-start" style="padding-left: 5vh; padding-top: 5vh;">
+                        <div class="dropdown" style="padding-right: 5vh;">
+                            <button id="selectTypeButton" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
+                                Parcourir
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a   class="dropdown-item" id="selectLivre">Livres</a></li>
+                                <li><a  class="dropdown-item" id="selectAuteur">Auteurs</a></li>
+                                <li><a  class="dropdown-item" id="selectPointDeVente">Points de ventes</a></li>
+                                <li><a  class="dropdown-item" id="selectEditeur">Editeurs</a></li>
+                                <li><a  class="dropdown-item" id="selectUtilisateur">Utilisateurs</a></li>
+                                <li><a  class="dropdown-item" id="selectUtilisateur">Emprunts</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/config.js"></script>
+        <script src="../frameworks/popper.min.js"></script>
+        <script src="../frameworks/bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>
