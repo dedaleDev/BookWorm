@@ -8,40 +8,43 @@
 </head>
 <body>
     <a id="logo" href="./"><h1 class="logo" style="padding-top: 5vh; padding-left: 2vh;">Espace Administrateur</h1></a>
-    <h1 style="padding-top: 2vh; padding-left: 2vh;">Ajouter un </h1>
-    <div class="container-fluid" style="padding-top: 2vh;">
+    <h1 style="padding-top: 2vh; padding-left: 5vh;">Ajouter un livre : </h1>
+    <div class="container" style="padding-top: 2vh;">
         <form>
             <div class="form-group" style="padding-top: 2vh;">
-              <label for="isbn">ISBN (attendu 10-13 chiffres) :</label>
+              <label for="isbn">ISBN :</label>
               <input type="text" class="form-control" id="isbn" name="isbn" required>
+              <div class="invalid-feedback">Veuillez entrer un numéro ISBN valide (10 ou 13 chiffres)</div>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="titre">Titre :</label>
               <input type="text" class="form-control" id="titre" name="titre" required>
+              <div class="invalid-feedback">Le titre ne peux pas dépasser 100 caractères</div>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="auteur">Auteur :</label>
               <select class="form-control" id="auteur" name="auteur" required>
                 <option value="">Sélectionner un auteur</option>
-                <!-- liste des auteurs -->
               </select>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="description">Description :</label>
               <textarea class="form-control" id="description" name="description" required></textarea>
+              <div class="invalid-feedback">La description ne peux pas dépasser 1000 caractères</div>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="note">Note (0-10) :</label>
               <input type="number" class="form-control" id="note" name="note" max="10" min="0"  required>
+              <div class="invalid-feedback">La note doit être comprise entre 0 et 10</div>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="date_parution">Date de parution :</label>
-              <input type="date" class="form-control" id="date_parution" name="date_parution" required>
+              <input type="date" value="" class="form-control" id="dateParution" name="date de parution" required>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
@@ -98,21 +101,33 @@
             <div class="form-group" style="padding-top: 2vh;">
               <label for="prix">Prix :</label>
               <input type="number" class="form-control" id="prix" name="prix" required>
+              <div class="invalid-feedback">Le prix doit être supérieur à 0</div>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="format">Point de vente :</label>
               <select class="form-control" id="pointDeVente" name="format" required>
+                <option value="">Sélectionner un point de vente</option>
               </select>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="editeur">Editeur :</label>
-              <select class="form-control" id="pointDeVente" name="format" required>
+              <select class="form-control" id="editeur" name="format" required>
+                <option value="">Sélectionner un éditeur</option>
               </select>
             </div>
-          
-            <button type="submit" class="btn btn-primary" style="background-color: #FF8C42;">Ajouter</button>
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="image">Couverture du livre :</label>
+              <div class="dropzone">
+                <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+                <div class="dz-message">
+                  <span>Glisser-déposer une image ou cliquer pour sélectionner</span>
+                </div>
+              </div>
+              <div class="dz-preview" id="image-preview"></div>
+            </div>
+            <div style="padding-top: 2vh; padding-bottom: 10vh;"><button type="submit" class="btn btn-primary" style="background-color: #FF8C42; " id="submit">Ajouter</button></div>
           </form>
     </div>
     <script src="../js/addLivre.js"></script>

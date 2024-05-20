@@ -21,10 +21,16 @@ async function checkLoginAndGetUserInfo() {
     if (data["content"] === 'success') {
       document.getElementById("account").src = "../img/account.svg"
       reponse = await fetch(`${API_URL}/isAdmin?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-        reponse = await reponse.json();
-        if ( (reponse.content === "success")) {
-            document.getElementById('config').innerHTML = `<img src="../img/smallConfig.svg"  class="img-fluid" style="width: 20%; position :relative; left: 40vh; top: 5vh;">`;
-        }
+      reponse = await reponse.json();
+      console.log(reponse);
+      if ( (reponse.content === "success")) {
+          document.getElementById('config').innerHTML = `<img src="../img/smallConfig.svg" alt="Config" class="img-fluid" style="width: 60%;">`;
+      } else {
+          document.getElementById('config').innerHTML = "";
+      }
+    } else {
+      document.getElementById('config').innerHTML = "";
+      document.getElementById("account").src = "../img/login.svg"
     }
 }
 checkLoginAndGetUserInfo()

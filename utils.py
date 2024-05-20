@@ -67,7 +67,7 @@ def formatAuteurToJson(data:list[tuple])->json:
                 'nom':nom,
                 'prenom':prenom,
                 'description':description,
-                'dateDeNaissance':dateDeNaissance.strftime("%d/%m/%Y"),
+                'dateDeNaissance': dateDeNaissance.strftime("%d/%m/%Y") if dateDeNaissance is not None and dateDeNaissance != "0000-00-00" else None,
                 'dateDeDeces': dateDeDécès.strftime("%d/%m/%Y") if dateDeDécès is not None and dateDeDécès != "0000-00-00" else None,
                 'alias':alias if alias != '' else None
             }

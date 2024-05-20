@@ -27,3 +27,42 @@ a{
 .container-fluid {
     width: 100% !important;
 }
+
+.dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .dropzone.dz-dragging {
+    border: 2px solid #337ab7;
+  }
+  
+  .dz-message {
+    font-size: 18px;
+    color: #999;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .dz-preview {
+    margin-top: 10px;
+    width: 300px;
+    height: auto;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .dz-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+  }

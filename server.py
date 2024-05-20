@@ -373,6 +373,94 @@ class Server(object):
             print("\033[31mErreur lors de la mise à jour des livres : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
     
+    #auteur : ID, Nom, Prénom,Alias (can be null), Biographie, Date de naissance, dateDeDeces (can be null)
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    def updateAuteurs(self) :
+        try : 
+            data = cherrypy.request.json
+            email = data.get("email")
+            password = data.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        auteurs = data.get("auteurs")
+                        if auteurs is not None and auteurs != {}:
+                            for auteur in auteurs:
+                                print("AUTEUR MODIFIED :",auteur)
+                                #self.db.mkRequest("updateAuteur", False, auteur["nom"], auteur["prénom"], auteur["alias"], auteur["biographie"], auteur["dateDeNaissance"], auteur["dateDeDeces"], auteur["id"])
+                                #self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la mise à jour des auteurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def newLivre(self, **params):
+        try:
+            email = params.get("email")
+            password = params.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user and user[0][1] == password:
+                if user[0][2] == "admin":
+                    isbn = params.get("isbn")
+                    titre = params.get("titre")
+                    auteur = params.get("auteur")
+                    description = params.get("description")
+                    dateDeParution = params.get("dateParution")
+                    note = params.get("note")
+                    statut = params.get("statut")
+                    genre = params.get("genre")
+                    format = params.get("format")
+                    prix = params.get("prix")
+                    pointDeVente = params.get("pointDeVente").strip()  # Remove leading/trailing whitespace
+                    editeur = params.get("editeur")
+                    image = params.get("image")
+                    
+                    # Check if all required fields are provided
+                    if all([isbn, titre, auteur, description, dateDeParution, statut, genre, format, prix, pointDeVente, editeur]):
+                        self.db.mkRequest("selectLivreByISBN", False, isbn)
+                        checkISBN = self.db.cursor.fetchall()
+                        if checkISBN:
+                            return self.makeResponse(is_error=True, error_message="Un livre avec cet ISBN existe déjà")
+                        print('.'+str(pointDeVente)+'.')
+                        pointDeVente = operationOnDataBase.convertPointDeVenteToAcceptablePointDeVente(pointDeVente, self.db)
+                        self.db.mkRequest("insertLivre", False, isbn, titre, auteur, description, note, dateDeParution, statut, genre, format, prix, pointDeVente, editeur)
+                        self.db.db.commit()
+                        try : 
+                            upload_filename = isbn+".jpg"
+                            upload_file_path = os.path.join("./www/img/livres", upload_filename)
+                            print("UPLOADING IMAGE", upload_file_path)
+                            #check if file exists if yes no upload security
+                            if os.path.exists(upload_file_path) != False:
+                                print("REFUSED UPLOAD, FILE EXISTS")
+                                return self.makeResponse(is_error=True, error_message="Une image avec ce nom existe déjà")
+                            with open(upload_file_path, 'wb') as out:
+                                while True:
+                                    data = image.file.read(8192)
+                                    if not data:
+                                        break
+                                    out.write(data)
+                        except Exception as e:
+                            print("\033[31mErreur lors de l'ajout de l'image : ", e, e.__traceback__.tb_lineno, "\033[0m")
+                        
+                        return self.makeResponse(content="success")
+                    return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+            else:
+                return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print(f"Erreur : {e}")
+            return self.makeResponse(is_error=True, error_message=str(e))
     
 def jsonify_error(status, message, traceback, version):
     try :

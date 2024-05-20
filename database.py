@@ -17,6 +17,7 @@ class db():
     "selectAuteurByAlias" : "SELECT * FROM `Auteur` WHERE `Alias` LIKE %s ORDER BY `ID` ASC;",
     "selectPointDeVenteByNom" : "SELECT * FROM `Point de vente` WHERE `Nom` LIKE %s;",
     "selectPointDeVenteByAdresse" : "SELECT * FROM `Point de vente` WHERE `Adresse` LIKE %s;",
+    "selectAllPointsDeVentes" : "SELECT * FROM `Point de vente`;",
     "selectLivreByISBN" : "SELECT * FROM `Livre` WHERE `ISBN` LIKE %s;",
     "selectLivreByTitre" : "SELECT * FROM `Livre` WHERE `Titre` LIKE %s;",
     "selectLivreByAuteurNom" : "SELECT * FROM Livre JOIN Auteur ON Livre.Auteur = Auteur.ID WHERE Auteur.Nom LIKE %s",
@@ -49,6 +50,7 @@ class db():
     "selectAllEditeur" : "SELECT * FROM `Editeur`;",
     "selectAuteurByNomPrenom" : "SELECT * FROM `Auteur` WHERE `Nom` LIKE %s AND `Prénom` LIKE %s;",
     "deleteEmpruntByISBN" : "DELETE FROM `Emprunt` WHERE `Livre` = %s;",
+    "selectAllISBN" : "SELECT ISBN FROM `Livre`;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:

@@ -163,7 +163,7 @@ def updateJS(conf: dict):
         conf : dict, configuration of the server cherrypy"""
     try :
         api_url = f"http://{conf['global']['server.socket_host']}:{conf['global']['server.socket_port']}"
-        files = ['www/js/index.js', 'www/js/search.js', 'www/js/livre.js', 'www/js/login.js','www/js/account.js','www/js/config.js']
+        files = ['www/js/index.js', 'www/js/search.js', 'www/js/livre.js', 'www/js/login.js','www/js/account.js','www/js/config.js','www/js/addLivre.js']
         for file in files :
             with open(file, 'r', encoding='utf-8') as f:
                 code = f.readlines()
@@ -191,6 +191,20 @@ if __name__ == '__main__':
     if debug : 
         print("Attention : le mode de débogage est activé, les résultats résultants pourraient être instables.")
     db = database.db(db_HOST,db_USER,db_PASSWD,db_PORT,debug)
+    if debug and not db.needRestart :
+        try : 
+            db.mkRequest("selectAllISBN", False)
+            isbn = db.cursor.fetchall()
+            ISBN = []
+            for i in isbn :
+                ISBN.append(i[0])
+            if ISBN != [] :
+                for i in os.listdir("www/img/livres"):
+                    if i.split('.')[0] not in ISBN and i.split('.')[1].endswith('jpg') :
+                        print(f"Suppression de {i}", f"www/img/livres/{i}")
+                        os.remove(f"www/img/livres/{i}")
+        except Exception as e:
+            print(f"\033[91mErreur : Impossible de supprimer les images inutiles. {e} ligne : {e.__traceback__.tb_lineno}\033[0m")
     
     if db.needRestart == True : 
         exit(0)

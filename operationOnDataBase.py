@@ -841,4 +841,19 @@ def  getStatus(isbn:str, db:database.db):
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche du statut du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
         return None
-        
+    
+def convertPointDeVenteToAcceptablePointDeVente(pointDeVente:str,db:database.db)->str:
+    """ This function converts a pointDeVente to an acceptable pointDeVente. Use this to avoid errors sql errors.
+    Args : pointDeVente (str): The point of sale.
+           db (database.db): The database object.
+    Returns : str : The acceptable point of sale."""
+    db.mkRequest("selectAllPointsDeVentes", False)
+    pointDeVente = pointDeVente.replace(" ", "").replace("\n", "").replace("\r", "")
+    pointsDeVentes = db.cursor.fetchall()
+    for i in range(len(pointsDeVentes)):
+        originPointDeVente = pointsDeVentes[i][0].replace(" ", "").replace("\n", "").replace("\r", "")
+        if pointDeVente == originPointDeVente:
+            print("point de vente trouvé", pointsDeVentes[i][0])
+            return pointsDeVentes[i][0]
+        else :
+            print("point de vente non trouvé", originPointDeVente +'!='+ pointDeVente)
