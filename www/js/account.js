@@ -20,6 +20,11 @@ async function checkLoginAndGetUserInfo() {
         let reponse = await fetch(`${API_URL}/getUserInfo?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
         reponse = await reponse.json();
         userInfo = JSON.parse(reponse["content"]);
+        reponse = await fetch(`${API_URL}/isAdmin?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        reponse = await reponse.json();
+        if ( (reponse.content === "success")) {
+            document.getElementById('config').innerHTML = `<img src="../img/bigConfig.svg"  class="img-fluid" style="width:40%; padding-top: 2vh;">`;
+        }
     } else {
         window.location.href = '/login';
     }

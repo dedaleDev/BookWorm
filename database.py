@@ -33,7 +33,7 @@ class db():
     "deleteEditeur" : "DELETE FROM `Editeur` WHERE `Nom` = %s;",
     "deleteLivreByEditeur" : "DELETE FROM `Livre` WHERE `Editeur` = %s;",
     "updateLivrePointDeVente" : "UPDATE `Livre` SET `Point de vente` = %s WHERE  `Point de vente`  = %s;",
-    "updateLivre" : "UPDATE `Livre` SET `Titre` = %s, `Auteur` = %s, `Description` = %s, `Note` = %s, `Date de parution` = %s, `Statut` = %s, `Genre` = %s, `Format` = %s, `Prix` = %s, `Point de vente` = %s, `Editeur` = %s WHERE `ISBN` = %s;",
+    "updateLivre" : "UPDATE `Livre` SET `Titre` = %s, `Auteur` = %s, `Description` = %s, `Date de parution` = %s, `Statut` = %s, `Genre` = %s, `Format` = %s, `Prix` = %s, `Point de vente` = %s, `Editeur` = %s WHERE `ISBN` = %s;",
     "updateAuteur" : "UPDATE `Auteur` SET `Nom` = %s, `Prénom` = %s, `Biographie` = %s, `Date de naissance` = %s, `Date de décès` = %s, `Alias` = %s WHERE `ID` = %s;",
     "updatePointDeVente" : "UPDATE `Point de vente` SET `Nom` = %s, `Site web` = %s, `Tel` = %s WHERE `Adresse` = %s;",
     "updateEditeur" : "UPDATE `Editeur` SET `Adresse` = %s WHERE `Nom` = %s;",
@@ -42,6 +42,13 @@ class db():
     "selectUserByEmail" : "SELECT * FROM `Utilisateur` WHERE `email` = %s;",
     "selectEmpruntByUser" : "SELECT * FROM `Emprunt` WHERE `Utilisateur` = %s;",
     "selectEmpruntByISBN" : "SELECT * FROM `Emprunt` WHERE `Livre` = %s;",
+    "selectAllLivre" : "SELECT * FROM `Livre`;",
+    "selectAllAuteur" : "SELECT * FROM `Auteur`;",
+    "selectAllNomAuteur" : "SELECT ID, Nom, Prénom, Alias FROM `Auteur`;",
+    "selectAllPointDeVente" : "SELECT * FROM `Point de vente`;",
+    "selectAllEditeur" : "SELECT * FROM `Editeur`;",
+    "selectAuteurByNomPrenom" : "SELECT * FROM `Auteur` WHERE `Nom` LIKE %s AND `Prénom` LIKE %s;",
+    "deleteEmpruntByISBN" : "DELETE FROM `Emprunt` WHERE `Livre` = %s;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
@@ -52,6 +59,7 @@ class db():
         self.port = port
         self.debug = debug
         self.needRestart = False
+        self.maxRetry = 5
         #-----initialisation de la base de donnée-----
         try :
             self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, port=self.port, db="BookWorm", init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
@@ -118,6 +126,7 @@ class db():
             if verbose :
                 print(f"#{self._requetes[request] % tuple(args)}")
             self.cursor.execute(self._requetes[request], tuple(args))
+            self.maxRetry = 5
         except Exception as e:
             if ("Packet sequence" in str(e) and  self.retryDatabaseConnection() == False) or ("has no attribute 'read'" in str(e) and self.retryDatabaseConnection() == False):
                 print(' \033[31mPacket Error Sequence')
@@ -125,7 +134,11 @@ class db():
                 print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
                 print(f"Database : {type(self.db)} Actif : {self.db!=None}\033[0m")
             elif "Packet sequence" in  str(e) or  "has no attribute 'read'" in str(e) :
-                self.mkRequest(request, verbose, *args)
+                if self.maxRetry > 0:
+                    self.maxRetry -= 1
+                    self.mkRequest(request, verbose, *args)
+                else : 
+                    print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
             else :
                 print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 print("Args : ", args)

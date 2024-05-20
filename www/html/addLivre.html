@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>BookWorm : Espace Administrateur</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../frameworks/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/addLivre.css">
+</head>
+<body>
+    <a id="logo" href="./"><h1 class="logo" style="padding-top: 5vh; padding-left: 2vh;">Espace Administrateur</h1></a>
+    <h1 style="padding-top: 2vh; padding-left: 2vh;">Ajouter un </h1>
+    <div class="container-fluid" style="padding-top: 2vh;">
+        <form>
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="isbn">ISBN (attendu 10-13 chiffres) :</label>
+              <input type="text" class="form-control" id="isbn" name="isbn" required>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="titre">Titre :</label>
+              <input type="text" class="form-control" id="titre" name="titre" required>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="auteur">Auteur :</label>
+              <select class="form-control" id="auteur" name="auteur" required>
+                <option value="">Sélectionner un auteur</option>
+                <!-- liste des auteurs -->
+              </select>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="description">Description :</label>
+              <textarea class="form-control" id="description" name="description" required></textarea>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="note">Note (0-10) :</label>
+              <input type="number" class="form-control" id="note" name="note" max="10" min="0"  required>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="date_parution">Date de parution :</label>
+              <input type="date" class="form-control" id="date_parution" name="date_parution" required>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="statut">Statut :</label>
+              <select class="form-control" id="statut" name="statut" required>
+                <option value="emprunté">Emprunté</option>
+                <option value="disponible">Disponible</option>
+                <option value="hors stock">Hors stock</option>
+              </select>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="genre">Genre :</label>
+              <select class="form-control" id="genre" name="genre" required>
+                <option value="Historique">Historique</option>
+                <option value="Romantique">Romantique</option>
+                <option value="Policier">Policier</option>
+                <option value="Science-fiction">Science-fiction</option>
+                <option value="Fantastique">Fantastique</option>
+                <option value="Aventure">Aventure</option>
+                <option value="Biographique">Biographique</option>
+                <option value="Autobiographique">Autobiographique</option>
+                <option value="Épistolaire">Épistolaire</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Tragédie">Tragédie</option>
+                <option value="Drame">Drame</option>
+                <option value="Absurde">Absurde</option>
+                <option value="Philosophique">Philosophique</option>
+                <option value="Politique">Politique</option>
+                <option value="Légendes & Mythes">Légendes & Mythes</option>
+                <option value="Lettres personnelles">Lettres personnelles</option>
+                <option value="Voyages">Voyages</option>
+                <option value="Journal intime">Journal intime</option>
+                <option value="Bandes dessinées">Bandes dessinées</option>
+                <option value="Documentaires">Documentaires</option>
+                <option value="Religieux">Religieux</option>
+              </select>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="format">Format :</label>
+              <select class="form-control" id="format" name="format" required>
+                <option value="Poche">Poche</option>
+                <option value="Grand Format">Grand Format</option>
+                <option value="E-book & numérique">E-book & numérique</option>
+                <option value="Manga">Manga</option>
+                <option value="Bande Dessinée">Bande Dessinée</option>  
+                <option value="Magazine">Magazine</option>
+                <option value="CD">CD</option>
+                <option value="DVD & Blu-ray">DVD & Blu-ray</option>
+              </select>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="prix">Prix :</label>
+              <input type="number" class="form-control" id="prix" name="prix" required>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="format">Point de vente :</label>
+              <select class="form-control" id="pointDeVente" name="format" required>
+              </select>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="editeur">Editeur :</label>
+              <select class="form-control" id="pointDeVente" name="format" required>
+              </select>
+            </div>
+          
+            <button type="submit" class="btn btn-primary" style="background-color: #FF8C42;">Ajouter</button>
+          </form>
+    </div>
+    <script src="../js/addLivre.js"></script>
+    <script src="../frameworks/popper.min.js"></script>
+    <script src="../frameworks/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

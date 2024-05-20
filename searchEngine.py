@@ -41,6 +41,37 @@ def getAuteurNameByID(db:database.db, id:int)->str:
     except Exception as e:
         print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
 
+def getAuteurAliasByID(db:database, id:int)->str:
+    """This function return the alias of the author by his ID
+    Args :
+        db : database object
+        id : int, the ID of the author
+    Return :
+        str : the alias of the author"""
+    try :
+        db.mkRequest("selectAuteurByID", False, id)
+        result = db.cursor.fetchall()
+        if result == None or result == []: return "Auteur inconnu"
+        return f"{result[0][6]}"
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+        
+def getAuteurIDByNomPrénom(db:database.db, nom:str, prenom:str)->int:
+    """This function return the ID of the author by his name and first name
+    Args :
+        db : database object
+        nom : str, the name of the author
+        prenom : str, the first name of the author
+    Return :
+        int : the ID of the author"""
+    try :
+        db.mkRequest("selectAuteurByNomPrenom", False, nom, prenom)
+        result = db.cursor.fetchall()
+        if result == None or result == []: return "Auteur inconnu"
+        return f"{result[0][0]}"
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+
 def getPointDeVenteNameByAddresse(db:database.db, addresse: str)->str:
     """This function return the name of the point of sale by his address
     Args :

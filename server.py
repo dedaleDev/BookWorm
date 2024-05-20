@@ -125,6 +125,7 @@ class Server(object):
             print("\033[31mErreur lors de la tentative de conneion : ",e, e.__traceback__.tb_lineno, user, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
 
+    
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def getUserInfo(self, email:str, password:str) -> str:
@@ -142,6 +143,30 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la tentative de conneion : ",e, e.__traceback__.tb_lineno, user, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def deleteLivre(self, email:str, password:str, isbn:str) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        self.db.mkRequest("deleteEmpruntByISBN", False, isbn)
+                        self.db.mkRequest("deleteLivre", False, isbn)
+                        self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la suppression du livre : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
     
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -184,6 +209,14 @@ class Server(object):
     @cherrypy.expose
     def account(self) -> str :
         return open('www/html/account.html', encoding="utf-8")
+    
+    @cherrypy.expose
+    def config(self) -> str :
+        return open('www/html/config.html', encoding="utf-8")
+    
+    @cherrypy.expose
+    def addLivre(self) -> str :
+        return open('www/html/addLivre.html', encoding="utf-8")
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -207,7 +240,82 @@ class Server(object):
             return self.makeResponse(content='ok')
         except Exception as e:
             print("Erreur lors de la mise à jour des livres de la page d'accueil", e, e.__traceback__.tb_lineno)
-            
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getAllLivre(self) -> str:
+        try : 
+            self.db.mkRequest("selectAllLivre")
+            livres = self.db.cursor.fetchall()
+            if livres is not None and livres != () and livres != []:
+                livres = utils.formatLivreToJson(livres, self.db)
+                return self.makeResponse(content=livres)
+            else:
+                return self.makeResponse(is_error=True, error_message="Aucun livre trouvé")
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des livres : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getAllAuteur(self) -> str:
+        try : 
+            self.db.mkRequest("selectAllAuteur")
+            auteurs = self.db.cursor.fetchall()
+            if auteurs is not None and auteurs != () and auteurs != []:
+                auteurs = utils.formatAuteurToJson(auteurs)
+                return self.makeResponse(content=auteurs)
+            else:
+                return self.makeResponse(is_error=True, error_message="Aucun auteur trouvé")
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des auteurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getAllNomAuteur(self) -> str:
+        try : 
+            self.db.mkRequest("selectAllNomAuteur")
+            auteurs = self.db.cursor.fetchall()
+            if auteurs is not None and auteurs != () and auteurs != []:
+                auteurs = utils.formatAuteurNomToJson(auteurs)
+                return self.makeResponse(content=auteurs)
+            else:
+                return None
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des auteurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return None
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getAllPointDeVentes(self)->str:
+        try : 
+            self.db.mkRequest("selectAllPointDeVente")
+            addresses = self.db.cursor.fetchall()
+            if addresses is not None and addresses != () and addresses != []:
+                addresses = utils.formatPointDeVenteToJson(addresses)
+                return self.makeResponse(content=addresses)
+            else:
+                return self.makeResponse(is_error=True, error_message="Aucun point de vente trouvé")
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des points de vente : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getAllEditeurs(self)->str:
+        try : 
+            self.db.mkRequest("selectAllEditeur")
+            editeurs = self.db.cursor.fetchall()
+            if editeurs is not None and editeurs != () and editeurs != []:
+                editeurs = utils.formatEditeurToJson(editeurs)
+                return self.makeResponse(content=editeurs)
+            else:
+                return self.makeResponse(is_error=True, error_message="Aucun éditeur trouvé")
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des éditeurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+        
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def reserveLivre(self, email:str, password:str, isbn:str) -> str:
@@ -238,6 +346,33 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la réservation : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    def updateLivres(self) :
+        try : 
+            data = cherrypy.request.json
+            email = data.get("email")
+            password = data.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        livres = data.get("livres")
+                        if livres is not None and livres != {}:
+                            for livre in livres:
+                                self.db.mkRequest("updateLivre", False, livre["titre"], livre["auteur"], livre["description"], livre["dateDeParution"], livre["status"], livre["genre"], livre["format"], livre["prix"], livre["pointDeVente"], livre["editeur"], livre["isbn"])
+                                self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la mise à jour des livres : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
+    
     
 def jsonify_error(status, message, traceback, version):
     try :

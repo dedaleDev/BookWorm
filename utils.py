@@ -127,6 +127,7 @@ def formatLivreToJson(data:list[tuple], db:database.db)->json:
             result[ISBN] = {
                 'titre':titre,
                 'auteur':searchEngine.getAuteurNameByID(db, auteur),
+                'auteurAlias': searchEngine.getAuteurAliasByID(db, auteur),
                 'description':description,
                 'note':note,
                 'dateDeParution':dateDeParution.strftime("%d/%m/%Y"),
@@ -180,6 +181,24 @@ def formatEmpruntsToJson(data:list[tuple])->json:
                 'Utilsateur':utilsateur
             }
         print("JSON",result)
+        json_result = json.dumps(result, indent=4)
+        return json_result
+    except Exception as e:
+        print("\033[31mErreur lors de la conversion en JSON : ",e, e.__traceback__.tb_lineno, "\033[0m")
+        return None
+    
+def formatAuteurNomToJson(data:list[tuple])->json:
+    try :
+        result = {}
+        for item in data:
+            if len(item) != 4:
+                item = item[:4]
+            ID, nom, prenom,alias = item
+            result[ID] = {
+                'nom':nom,
+                'prénom':prenom,
+                'alias':alias if alias != '' else None
+            }
         json_result = json.dumps(result, indent=4)
         return json_result
     except Exception as e:
