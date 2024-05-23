@@ -38,6 +38,7 @@ class db():
     "updateAuteur" : "UPDATE `Auteur` SET `Nom` = %s, `Prénom` = %s, `Biographie` = %s, `Date de naissance` = %s, `Date de décès` = %s, `Alias` = %s WHERE `ID` = %s;",
     "updatePointDeVente" : "UPDATE `Point de vente` SET `Nom` = %s, `Site web` = %s, `Tel` = %s WHERE `Adresse` = %s;",
     "updateEditeur" : "UPDATE `Editeur` SET `Adresse` = %s WHERE `Nom` = %s;",
+    "updateUtilisateur" : "UPDATE `Utilisateur` SET `mdp` = %s, `Grade` = %s, `Nom` = %s, `Prénom` = %s, `Adresse` = %s, `Tel` = %s WHERE `email` = %s;",
     "selectISBNAllLivres" : "SELECT ISBN FROM `Livre`;",
     "selectPointDeVenteNameByAdresse" : "SELECT Nom FROM `Point de vente` WHERE `Adresse` = %s;",
     "selectUserByEmail" : "SELECT * FROM `Utilisateur` WHERE `email` = %s;",
@@ -51,6 +52,8 @@ class db():
     "selectAuteurByNomPrenom" : "SELECT * FROM `Auteur` WHERE `Nom` LIKE %s AND `Prénom` LIKE %s;",
     "deleteEmpruntByISBN" : "DELETE FROM `Emprunt` WHERE `Livre` = %s;",
     "selectAllISBN" : "SELECT ISBN FROM `Livre`;",
+    "selectAllUser" : "SELECT * FROM `Utilisateur`;",
+    "selectAllEmprunt" : "SELECT * FROM `Emprunt`;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:

@@ -38,6 +38,25 @@ _templateEditeur = `<tr><td>{{ nom }}</td>
     <td><input type="text" class="form-control" value="{{ adresse }}" maxlength="120"></td>
     <td><button class="btn btn-danger" onclick="deleteEditeur('{{ nom }}')">Supprimer</button></td></tr>`
 
+_templateHeaderUser  = `<tr><th>Email</th><th>Mot de passe</th><th>Grade</th><th>Nom</th><th>Prénom</th><th>Adresse</th><th>Téléphone</th><th>Supprimer</th></tr>`
+_templateUser = `<tr><td>{{ email }}</td>
+    <td><input type="text" class="form-control" value="{{ mdp }}" maxlength="20"></td>
+    <td><select class="form-control" name="grade">{{ grade }}</select></td>
+    <td><input type="text" class="form-control" value="{{ nom }}" maxlength="20"></td>
+    <td><input type="text" class="form-control" value="{{ prénom }}" maxlength="20"></td>
+    <td><input type="text" class="form-control" value="{{ adresse }}" maxlength="120"></td>
+    <td><input type="number" class="form-control" value="{{ tel }}" maxlength="10"></td>
+    <td><button class="btn btn-danger" onclick="deleteUser('{{ email }}')">Supprimer</button></td></tr>`
+
+_templateHeaderEmprunt = `<tr><th>ID</th><th>Livre</th><th>Date</th><th>Utilisateur</th><th>Supprimer</th></tr>`
+_templateEmprunt = `<tr><td>{{ id }}</td>
+    <td><select class="form-control" name="livre">{{ livre }}</select></td>
+    <td><input type="date" class="form-control" value="{{ date }}"></td>
+    <td><select class="form-control" name="utilisateur">{{ utilisateur }}</select></td>
+    <td><button class="btn btn-danger" onclick="deleteEmprunt('{{ id }}')">Supprimer</button></td></tr>`
+
+//Emprunts = ID, Livre (isbn), Date, Utilisateur (email)
+
 async function deleteLivre(isbn) {
     try {
         if (confirm("Voulez-vous vraiment supprimer ce livre ?") === true) {
@@ -156,9 +175,9 @@ async function checkIfChangeAuteurs(originalAuteurs) {
                     if (!response.ok) {
                         alert("Erreur lors de la mise à jour des auteurs, veuillez réessayer.")
                         throw new Error('Failed to update auteurs');
+                    }{
+                        alert("Les modifications ont bien été prises en compte !")
                     }
-                    alert("Les modifications ont bien été prises en compte !")
-                    //window.location.href = "/config";
                 } catch (error) {
                     console.error('Error updating auteurs:', error);
                 }
@@ -202,9 +221,9 @@ async function checkifChangePointDeVentes(originalPointDeVentes) {
                     if (!response.ok) {
                         alert("Erreur lors de la mise à jour des points de ventes, veuillez réessayer.")
                         throw new Error('Failed to update points de ventes');
+                    } else {
+                        alert("Les modifications ont bien été prises en compte !")
                     }
-                    alert("Les modifications ont bien été prises en compte !")
-                    //window.location.href = "/config";
                 } catch (error) {
                     console.error('Error updating points de ventes:', error);
                 }
@@ -246,11 +265,107 @@ async function checkIfChangeEditeurs(originalEditeurs) {
                     if (!response.ok) {
                         alert("Erreur lors de la mise à jour des éditeurs, veuillez réessayer.")
                         throw new Error('Failed to update éditeurs');
+                    } else {
+                        alert("Les modifications ont bien été prises en compte !")
                     }
-                    alert("Les modifications ont bien été prises en compte !")
-                    //window.location.href = "/config";
                 } catch (error) {
                     console.error('Error updating éditeurs:', error);
+                }
+            } else {
+                alert("Vous êtes à jour !")
+            }
+        }
+    });
+}
+
+async function checkIfChangeUtilisateurs(originalUtilisateurs) {
+    document.getElementById('save').addEventListener('click', async () => {
+        if (browseType === "Utilisateurs") {
+            const modifiedUtilisateurs = [];
+            const contentRow = document.getElementById('contentRow');
+            const rows = contentRow.querySelectorAll('tr');
+            rows.forEach(row => {
+                const email = row.cells[0].innerText;
+                const mdp = row.cells[1].querySelector('input').value;
+                const grade = row.cells[2].querySelector('select').value;
+                const nom = row.cells[3].querySelector('input').value;
+                const prénom = row.cells[4].querySelector('input').value;
+                const adresse = row.cells[5].querySelector('input').value;
+                const tel = row.cells[6].querySelector('input').value;
+                const originalUtilisateur = originalUtilisateurs[email];
+                if (originalUtilisateur.mdp !== mdp || originalUtilisateur.grade !== grade || originalUtilisateur.nom !== nom || originalUtilisateur.prénom !== prénom || originalUtilisateur.adresse !== adresse || originalUtilisateur.tel !== tel) {
+                    modifiedUtilisateurs.push({email,mdp,grade,nom,prénom,adresse,tel});
+                }
+            });
+            if (modifiedUtilisateurs.length > 0) {
+                try {
+                    console.log("mise à jour en cours...", modifiedUtilisateurs)
+                    const response = await fetch(`${API_URL}/updateUtilisateurs`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            users: modifiedUtilisateurs,
+                            email: email,
+                            password: password
+                        })
+                    });
+                    console.log(response)
+                    if (!response.ok) {
+                        alert("Erreur lors de la mise à jour des utilisateurs, veuillez réessayer.")
+                        throw new Error('Failed to update utilisateurs');
+                    } else {
+                        alert("Les modifications ont bien été prises en compte !")
+                    }
+                } catch (error) {
+                    console.error('Error updating utilisateurs:', error);
+                }
+            } else {
+                alert("Vous êtes à jour !")
+            }
+        }
+    });
+}
+
+async function checkIfChangeEmprunts(originalEmprunts) {
+    document.getElementById('save').addEventListener('click', async () => {
+        if (browseType === "Emprunts") {
+            const modifiedEmprunts = [];
+            const contentRow = document.getElementById('contentRow');
+            const rows = contentRow.querySelectorAll('tr');
+            rows.forEach(row => {
+                const id = row.cells[0].innerText;
+                const livre = row.cells[1].querySelector('select').value;
+                const date = row.cells[2].querySelector('input').value;
+                const utilisateur = row.cells[3].querySelector('select').value;
+                const originalEmprunt = originalEmprunts[id];
+                if (originalEmprunt.livre !== livre || originalEmprunt.date !== date || originalEmprunt.utilisateur !== utilisateur) {
+                    modifiedEmprunts.push({id,livre,date,utilisateur});
+                }
+            });
+            if (modifiedEmprunts.length > 0) {
+                try {
+                    console.log("mise à jour en cours...", modifiedEmprunts)
+                    const response = await fetch(`${API_URL}/updateEmprunts`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            emprunts: modifiedEmprunts,
+                            email: email,
+                            password: password
+                        })
+                    });
+                    if (!response.ok) {
+                        alert("Erreur lors de la mise à jour des emprunts, veuillez réessayer.")
+                        throw new Error('Failed to update emprunts');
+                    } else {
+                        alert("Les modifications ont bien été prises en compte !")
+                    }
+                } catch (error) {
+                    console.error('Error updating emprunts:', error);
                 }
             } else {
                 alert("Vous êtes à jour !")
@@ -302,9 +417,9 @@ async function showLivreArray() {
                     format += _templateEltDropDown.replace("{{ elt }}",f).replace("{{ elt }}",f);
             });
             let pointDeVente = _templateEltDropDown.replace("{{ elt }}",livres[isbn]["pointDeVente"]).replace("{{ elt }}",livres[isbn]["pointDeVente"]);
-            Object.keys(pointDeVentes).forEach(addresse => {
-                if (addresse !== livres[isbn]["pointDeVente"])
-                    pointDeVente += _templateEltDropDown.replace("{{ elt }}",addresse).replace("{{ elt }}",addresse);
+            Object.keys(pointDeVentes).forEach(adresse => {
+                if (adresse !== livres[isbn]["pointDeVente"])
+                    pointDeVente += _templateEltDropDown.replace("{{ elt }}",adresse).replace("{{ elt }}",adresse);
             });
             let editeur = _templateEltDropDown.replace("{{ elt }}",livres[isbn]["editeur"]).replace("{{ elt }}",livres[isbn]["editeur"]);
             Object.keys(editeurs).forEach(nom => {
@@ -398,8 +513,6 @@ async function showPointDeVenteArray() {
     }
 }
 
-//Editeur = Nom, Adresse 
-
 async function showEditeurArray(){
     try {
         document.getElementById('title').innerHTML = "Tableau des éditeurs :"
@@ -417,11 +530,87 @@ async function showEditeurArray(){
                 .replace("{{ adresse }}", editeurs[nom]["adresse"]);
         });
         contentRow.innerHTML = rows;
+        checkIfChangeEditeurs(editeurs);
     } catch (error) {
         console.error('Error fetching or processing data:', error);
     }
 }
 
+async function showUtilisateurArray(){
+    try {
+        document.getElementById('title').innerHTML = "Tableau des utilisateurs :"
+        let response = await fetch(`${API_URL}/getAllUtilisateurs?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        console.log(response)
+        let data = await response.json();
+        const utilisateurs = JSON.parse(data["content"]);
+        const header = document.getElementById('templateHeader');
+        header.innerHTML = _templateHeaderUser;
+        const contentRow = document.getElementById('contentRow');
+        contentRow.innerHTML = '';
+        let rows = '';
+        Object.keys(utilisateurs).forEach(email => {
+            rows += _templateUser
+                .replace("{{ email }}",email)
+                .replace("{{ mdp }}", utilisateurs[email]["mdp"])
+                .replace("{{ nom }}", utilisateurs[email]["nom"])
+                .replace("{{ prénom }}", utilisateurs[email]["prénom"])
+                .replace("{{ adresse }}", utilisateurs[email]["adresse"])
+                .replace("{{ tel }}", utilisateurs[email]["tel"]);
+            let grade = _templateEltDropDown.replace("{{ elt }}",utilisateurs[email]["grade"]).replace("{{ elt }}",utilisateurs[email]["grade"]);
+            ["admin", "user"].forEach(g => {
+                if (g !== utilisateurs[email]["grade"])
+                    grade += _templateEltDropDown.replace("{{ elt }}",g).replace("{{ elt }}",g);
+            });
+            rows = rows.replace("{{ grade }}", grade);
+        }
+        );
+        contentRow.innerHTML = rows;
+        checkIfChangeUtilisateurs(utilisateurs);
+    } catch (error) {
+        console.error('Error fetching or processing data:', error);
+    }
+}
+
+async function showEmpruntArray(){
+    try {
+        document.getElementById('title').innerHTML = "Tableau des emprunts :"
+        let response = await fetch(`${API_URL}/getAllEmprunts?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        let data = await response.json();
+        const emprunts = JSON.parse(data["content"]);
+        response = await fetch(`${API_URL}/getAllLivre`);
+        data = await response.json();
+        const livres = JSON.parse(data["content"]);
+        response = await fetch(`${API_URL}/getAllUtilisateurs`);
+        data = await response.json();
+        const utilisateurs = JSON.parse(data["content"]);
+        const header = document.getElementById('templateHeader');
+        header.innerHTML = _templateHeaderEmprunt;
+        const contentRow = document.getElementById('contentRow');
+        contentRow.innerHTML = '';
+        let rows = '';
+        Object.keys(emprunts).forEach(id => {
+            let livre = _templateEltDropDown.replace("{{ elt }}",emprunts[id]["livre"]).replace("{{ elt }}",emprunts[id]["livre"]);
+            Object.keys(livres).forEach(isbn => {
+                if (isbn !== emprunts[id]["livre"])
+                    livre += _templateEltDropDown.replace("{{ elt }}",isbn).replace("{{ elt }}",isbn);
+            });
+            let utilisateur = _templateEltDropDown.replace("{{ elt }}",emprunts[id]["utilisateur"]).replace("{{ elt }}",emprunts[id]["utilisateur"]);
+            Object.keys(utilisateurs).forEach(email => {
+                if (email !== emprunts[id]["utilisateur"])
+                    utilisateur += _templateEltDropDown.replace("{{ elt }}",email).replace("{{ elt }}",email);
+            });
+            rows += _templateEmprunt
+                .replace("{{ id }}",id)
+                .replace("{{ livre }}", livre)
+                .replace("{{ date }}", emprunts[id]["date"])
+                .replace("{{ utilisateur }}", utilisateur);
+        });
+        contentRow.innerHTML = rows;
+        checkIfChangeEmprunts(emprunts);
+    } catch (error) {
+        console.error('Error fetching or processing data:', error);
+    }
+}
 
 let decodedCookie = decodeURIComponent(document.cookie).split(';');
 let email = '', password = '';
@@ -458,6 +647,12 @@ fetch(`${API_URL}/isAdmin?email=${encodeURIComponent(email)}&password=${encodeUR
                         if (browseType === "Editeurs") {
                             showEditeurArray();
                         }
+                        if (browseType === "Utilisateurs") {
+                            showUtilisateurArray();
+                        }
+                        if (browseType === "Emprunts") {
+                            showEmpruntArray()
+                        }
                     } 
                });
             });
@@ -479,7 +674,7 @@ addButton.addEventListener('click', async () => {
     else if (browseType === "Points de ventes")
         window.location.href = "/addPointDeVente";
     else if (browseType === "Utilisateurs")
-        window.location.href = "/addUtilisateur";
+        window.location.href = "/createAccount";
     else if (browseType === "Emprunts")
         window.location.href = "/addEmprunt";
 });

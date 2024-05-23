@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>BookWorm : Création de compte</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../frameworks/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/addLivre.css">
+</head>
+<body>
+    <a id="logo" href="./"><h1 class="logo" style="padding-top: 5vh; padding-left: 2vh;">BookWorm</h1></a>
+    <h1 style="padding-top: 2vh; padding-left: 5vh;">Créer un compte BookWorm : </h1>
+    <div class="container" style="padding-top: 2vh;">
+        <form>
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="nom">Nom :</label>
+              <input type="text" maxlength="20" class="form-control" id="nom" name="nom" required>
+              <div class="invalid-feedback">Vous devez remplir ce champs pour continuer. Le nom ne peux pas dépasser 20 caractères</div>
+            </div>
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="prenom">Prénom :</label>
+                <input type="text" maxlength="20" class="form-control" id="prenom" name="prenom" required>
+                <div class="invalid-feedback">Vous devez remplir ce champs pour continuer. Le prénom ne peux pas dépasser 20 caractères</div>
+            </div>
+
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="email">Email :</label>
+                <input type="email" maxlength="50" class="form-control" id="email" name="email" required>
+                <div class="invalid-feedback">Veuillez entrez une adresse email valide.</div>
+            </div>
+
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="adresse">Adresse :</label>
+                <input type="text" maxlength="120" class="form-control" id="adresse" name="adresse" required>
+                <div class="invalid-feedback">Vous devez remplir ce champs pour continuer. L'adresse ne peux pas dépasser 120 caractères</div>
+            </div>
+            
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="tel">Téléphone :</label>
+                <input type="number"  minlength="1" pattern="[0-9*]" maxlength="10" class="form-control" id="tel" name="tel">
+                <div class="invalid-feedback">Le numéro de télephone ne peux pas dépasser 10 chiffres.</div>
+            </div>
+
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="mdp">Mot de passe :</label>
+                <input type="password" maxlength="200" class="form-control" id="mdp" name="mdp" required>
+                <div class="invalid-feedback">Vous devez remplir ce champs pour continuer. Le mot de passe ne peux pas dépasser 200 caractères</div>
+            </div>
+
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="mdp2">Confirmer le mot de passe :</label>
+                <input type="password" maxlength="200" class="form-control" id="mdp2" name="mdp2" required>
+            <div class="invalid-feedback">Le mot de passe ne correspond pas.</div>
+            <div style="padding-top: 2vh; padding-bottom: 10vh;"><button type="submit" class="btn btn-primary" style="background-color: #FF8C42; " id="submit">Créer le compte</button></div>
+          </form>
+    </div>
+    <script src="../js/createAccount.js"></script>
+    <script src="../frameworks/popper.min.js"></script>
+    <script src="../frameworks/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 const API_URL = 'http://192.168.1.20:8080'
-//Editeur : Nom address
+//Editeur : Nom adresse
 
 let decodedCookie = decodeURIComponent(document.cookie).split(';');
 let email = '', password = '';
@@ -24,14 +24,14 @@ nomInput.addEventListener("blur", function() {
     }
 });
 
-const addressInput = document.getElementById("address");
-addressInput.addEventListener("blur", function() {
-    const address = addressInput.value;
-    if (address.length < 1 || address.length > 120) {
-        addressInput.classList.add("is-invalid");
+const adresseInput = document.getElementById("adresse");
+adresseInput.addEventListener("blur", function() {
+    const adresse = adresseInput.value;
+    if (adresse.length < 1 || adresse.length > 120) {
+        adresseInput.classList.add("is-invalid");
     }
     else {
-        addressInput.classList.remove("is-invalid");
+        adresseInput.classList.remove("is-invalid");
     }
 }
 );
@@ -40,9 +40,9 @@ function validateForm() {
     //return true if all fields are valid, false otherwise
     try {
         const nom = document.getElementById('nom').value;
-        const address = document.getElementById('address').value;
+        const adresse = document.getElementById('adresse').value;
         if (nom.length === 1 || nom.length > 20) return false;
-        if (address.length === 1 || address.length > 120) return false;
+        if (adresse.length === 1 || adresse.length > 120) return false;
         return true;
     } catch (e) {
         console.error(e);
@@ -56,10 +56,10 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         if (validateForm()) {
             const nom = document.getElementById('nom').value;
-            const address = document.getElementById('address').value;
+            const adresse = document.getElementById('adresse').value;
             const formData = new FormData();
             formData.append('nom', nom);
-            formData.append('address', address);
+            formData.append('adresse', adresse);
             formData.append('email', email);
             formData.append('password', password);
             const response = await fetch(`${API_URL}/newEditeur`, {
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
             if (data["content"] === 'success') {
                 alert('L\'éditeur a bien été ajouté');
-                //window.location.href = '/config';
+                window.location.href = '/config';
             } else {
                 alert('Erreur lors de l\'ajout de l\'éditeur' + data["message"]);
             }

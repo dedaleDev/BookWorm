@@ -133,7 +133,7 @@ class Server(object):
             self.db.mkRequest("selectUserByEmail", False, email)
             user = self.db.cursor.fetchall()
             if user is not None and user != () and user != []:
-                if user[0][1] == password:
+                if user[0][1] == password :
                     user = utils.formatUserToJson(user)
                     return self.makeResponse(content=user)
                 else:
@@ -229,6 +229,10 @@ class Server(object):
     @cherrypy.expose
     def addEditeur(self) -> str :
         return open('www/html/addEditeur.html', encoding="utf-8")
+    
+    @cherrypy.expose
+    def createAccount(self) -> str :
+        return open('www/html/createAccount.html', encoding="utf-8")
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -303,10 +307,10 @@ class Server(object):
     def getAllPointDeVentes(self)->str:
         try : 
             self.db.mkRequest("selectAllPointDeVente")
-            addresses = self.db.cursor.fetchall()
-            if addresses is not None and addresses != () and addresses != []:
-                addresses = utils.formatPointDeVenteToJson(addresses)
-                return self.makeResponse(content=addresses)
+            adresses = self.db.cursor.fetchall()
+            if adresses is not None and adresses != () and adresses != []:
+                adresses = utils.formatPointDeVenteToJson(adresses)
+                return self.makeResponse(content=adresses)
             else:
                 return self.makeResponse(is_error=True, error_message="Aucun point de vente trouvé")
         except Exception as e:
@@ -326,6 +330,59 @@ class Server(object):
                 return self.makeResponse(is_error=True, error_message="Aucun éditeur trouvé")
         except Exception as e:
             print("\033[31mErreur lors de la récupération des éditeurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
+    #Emprunts = ID, Livre (isbn), Date, Utilisateur (email)
+      
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getAllEmprunts(self, email:str, password:str) -> str:
+        try : 
+            #check password before
+            self.db.mkRequest("selectUserByEmail", True, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        self.db.mkRequest("selectAllEmprunt")
+                        emprunts = self.db.cursor.fetchall()
+                        if emprunts is not None and emprunts != () and emprunts != []:
+                            emprunts = utils.formatEmpruntsToJson(emprunts)
+                            return self.makeResponse(content=emprunts)
+                        else:
+                            return self.makeResponse(is_error=True, error_message="Aucun emprunt trouvé")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des réservations : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getAllUtilisateurs(self, email:str, password:str) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        self.db.mkRequest("selectAllUser")
+                        users = self.db.cursor.fetchall()
+                        if users is not None and users != () and users != []:
+                            users = utils.formatUserToJson(users)
+                            return self.makeResponse(content=users)
+                        else:
+                            return self.makeResponse(is_error=True, error_message="Aucun utilisateur trouvé")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la récupération des utilisateurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
         
     @cherrypy.expose
@@ -453,6 +510,61 @@ class Server(object):
             print("\033[31mErreur lors de la mise à jour des auteurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
     
+    #Editeur : nom (can be changed), addres: 
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    def updateEditeurs(self) :
+        try :
+            data = cherrypy.request.json
+            email = data.get("email")
+            password = data.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        editeurs = data.get("editeurs")
+                        if editeurs is not None and editeurs != {}:
+                            for editeur in editeurs:
+                                self.db.mkRequest("updateEditeur", False, editeur["adresse"], editeur["nom"])
+                                self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la mise à jour des editeurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    def updateUtilisateurs(self) :
+        print("REQUEST UPDATE USER RECEIVED")
+        try :
+            data = cherrypy.request.json
+            email = data.get("email")
+            password = data.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        print("ADMIN CONNECTED")
+                        users = data.get("users")
+                        if users is not None and users != {}:
+                            for user in users:
+                                self.db.mkRequest("updateUtilisateur", False, user["mdp"], user["grade"], user["nom"], user["prénom"], user["adresse"], user["tel"], user["email"])
+                                self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la mise à jour des utilisateurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
         
         
     @cherrypy.expose
@@ -561,7 +673,7 @@ class Server(object):
             if user and user[0][1] == password:
                 if user[0][2] == "admin":
                     nom = params.get("nom")
-                    adresse = params.get("address")
+                    adresse = params.get("adresse")
                     url = params.get("url")
                     tel = params.get("tel")
                     if all([nom, adresse]):
@@ -588,9 +700,9 @@ class Server(object):
             if user and user[0][1] == password:
                 if user[0][2] == "admin":
                     nom = params.get("nom")
-                    address = params.get("address")
+                    adresse = params.get("adresse")
                     if nom:
-                        self.db.mkRequest("insertEditeur", False, nom, address)
+                        self.db.mkRequest("insertEditeur", False, nom, adresse)
                         self.db.db.commit()
                         return self.makeResponse(content="success")
                     return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
@@ -598,6 +710,27 @@ class Server(object):
                     return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
             else:
                 return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print(f"Erreur : {e}")
+            return self.makeResponse(is_error=True, error_message=str(e))
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def newUser(self, **params):
+        try :
+            email = params.get("email")
+            mdp = params.get("mdp")
+            nom = params.get("nom")
+            prenom = params.get("prenom")
+            adresse = params.get("adresse")
+            tel = params.get("tel")
+            print("REQUEST RECEIVED", email, mdp, nom, prenom, adresse, tel)
+            if all([mdp, nom, prenom, adresse, email, tel]):
+                print("INSERTING USER")
+                self.db.mkRequest("insertUtilisateur", False, email, mdp, "user", nom, prenom, adresse, tel)
+                self.db.db.commit()
+                return self.makeResponse(content="success")
+            return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
         except Exception as e:
             print(f"Erreur : {e}")
             return self.makeResponse(is_error=True, error_message=str(e))

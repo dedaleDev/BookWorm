@@ -47,7 +47,7 @@ telInput.addEventListener("blur", function() {
 function validateForm() {
     //return true if all fields are valid, false otherwise
     try {
-        const adresse = document.getElementById('address').value;
+        const adresse = document.getElementById('adresse').value;
         const nom = document.getElementById('nom').value;
         const url = document.getElementById('url').value;
         const tel = document.getElementById('tel').value || null;
@@ -66,12 +66,12 @@ document.addEventListener("DOMContentLoaded", function() {
     addButton.addEventListener('click', async (e) => {
         e.preventDefault();
         if (validateForm()) {
-            const adresse = document.getElementById('address').value;
+            const adresse = document.getElementById('adresse').value;
             const nom = document.getElementById('nom').value;
             const url = document.getElementById('url').value;
             const tel = document.getElementById('tel').value || null;
             const formData = new FormData();
-            formData.append('address', adresse);
+            formData.append('adresse', adresse);
             formData.append('nom', nom);
             formData.append('url', url);
             formData.append('tel', tel);
