@@ -33,6 +33,11 @@ _templatePointDeVente = `<tr><td>{{ adresse }}</td>
 
 _templateEltDropDown = `<option value="{{ elt }}">{{ elt }}</option>`
 
+_templateHeaderEditeur = `<tr><th>Nom</th><th>Adresse</th><th>Supprimer</th></tr>`
+_templateEditeur = `<tr><td>{{ nom }}</td>
+    <td><input type="text" class="form-control" value="{{ adresse }}" maxlength="120"></td>
+    <td><button class="btn btn-danger" onclick="deleteEditeur('{{ nom }}')">Supprimer</button></td></tr>`
+
 async function deleteLivre(isbn) {
     try {
         if (confirm("Voulez-vous vraiment supprimer ce livre ?") === true) {
@@ -210,6 +215,50 @@ async function checkifChangePointDeVentes(originalPointDeVentes) {
     });
 }
 
+async function checkIfChangeEditeurs(originalEditeurs) {
+    document.getElementById('save').addEventListener('click', async () => {
+        if (browseType === "Editeurs") {
+            const modifiedEditeurs = [];
+            const contentRow = document.getElementById('contentRow');
+            const rows = contentRow.querySelectorAll('tr');
+            rows.forEach(row => {
+                const nom = row.cells[0].innerText;
+                const adresse = row.cells[1].querySelector('input').value;
+                const originalEditeur = originalEditeurs[nom];
+                if (originalEditeur.adresse !== adresse) {
+                    modifiedEditeurs.push({nom,adresse});
+                }
+            });
+            if (modifiedEditeurs.length > 0) {
+                try {
+                    console.log("mise à jour en cours...", modifiedEditeurs)
+                    const response = await fetch(`${API_URL}/updateEditeurs`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            editeurs: modifiedEditeurs,
+                            email: email,
+                            password: password
+                        })
+                    });
+                    if (!response.ok) {
+                        alert("Erreur lors de la mise à jour des éditeurs, veuillez réessayer.")
+                        throw new Error('Failed to update éditeurs');
+                    }
+                    alert("Les modifications ont bien été prises en compte !")
+                    //window.location.href = "/config";
+                } catch (error) {
+                    console.error('Error updating éditeurs:', error);
+                }
+            } else {
+                alert("Vous êtes à jour !")
+            }
+        }
+    });
+}
+
 async function showLivreArray() {
     try {
         document.getElementById('title').innerHTML = "Tableau des livres :"
@@ -283,8 +332,6 @@ async function showLivreArray() {
     }
 }
 
-//Auteur Row = ID, Nom, Prénom,Alias (can be null), Biographie, Date de naissance, dateDeDeces (can be null)
-
 async function showAuteurArray() {
     try {
         document.getElementById('title').innerHTML = "Tableau des auteurs :"
@@ -326,8 +373,6 @@ async function showAuteurArray() {
     }
 }
 
-//Adresse Nom Site web	varchar(50)	Tel (can be null)
-
 async function showPointDeVenteArray() {
     try {
         document.getElementById('title').innerHTML = "Tableau des points de vente :"
@@ -353,6 +398,29 @@ async function showPointDeVenteArray() {
     }
 }
 
+//Editeur = Nom, Adresse 
+
+async function showEditeurArray(){
+    try {
+        document.getElementById('title').innerHTML = "Tableau des éditeurs :"
+        let response = await fetch(`${API_URL}/getAllEditeurs`);
+        let data = await response.json();
+        const editeurs = JSON.parse(data["content"]);
+        const header = document.getElementById('templateHeader');
+        header.innerHTML = _templateHeaderEditeur;
+        const contentRow = document.getElementById('contentRow');
+        contentRow.innerHTML = '';
+        let rows = '';
+        Object.keys(editeurs).forEach(nom => {
+            rows += _templateEditeur
+                .replace("{{ nom }}",nom)
+                .replace("{{ adresse }}", editeurs[nom]["adresse"]);
+        });
+        contentRow.innerHTML = rows;
+    } catch (error) {
+        console.error('Error fetching or processing data:', error);
+    }
+}
 
 
 let decodedCookie = decodeURIComponent(document.cookie).split(';');
@@ -386,6 +454,9 @@ fetch(`${API_URL}/isAdmin?email=${encodeURIComponent(email)}&password=${encodeUR
                         }
                         if (browseType === "Points de ventes") {
                             showPointDeVenteArray();
+                        }
+                        if (browseType === "Editeurs") {
+                            showEditeurArray();
                         }
                     } 
                });

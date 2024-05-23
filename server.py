@@ -225,6 +225,10 @@ class Server(object):
     @cherrypy.expose
     def addPointDeVente(self) -> str :
         return open('www/html/addPointDeVente.html', encoding="utf-8")
+    
+    @cherrypy.expose
+    def addEditeur(self) -> str :
+        return open('www/html/addEditeur.html', encoding="utf-8")
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -549,7 +553,6 @@ class Server(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def newPointDeVente(self, **params):
-        print("NEW POINT DE VENTE; ", params)
         try:
             email = params.get("email")
             password = params.get("password")
@@ -563,6 +566,31 @@ class Server(object):
                     tel = params.get("tel")
                     if all([nom, adresse]):
                         self.db.mkRequest("insertPointDeVente", False, adresse, nom, url, tel)
+                        self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+            else:
+                return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print(f"Erreur : {e}")
+            return self.makeResponse(is_error=True, error_message=str(e))
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def newEditeur(self, **params):
+        try:
+            email = params.get("email")
+            password = params.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user and user[0][1] == password:
+                if user[0][2] == "admin":
+                    nom = params.get("nom")
+                    address = params.get("address")
+                    if nom:
+                        self.db.mkRequest("insertEditeur", False, nom, address)
                         self.db.db.commit()
                         return self.makeResponse(content="success")
                     return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")

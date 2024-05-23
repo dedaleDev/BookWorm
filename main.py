@@ -163,7 +163,7 @@ def updateJS(conf: dict):
         conf : dict, configuration of the server cherrypy"""
     try :
         api_url = f"http://{conf['global']['server.socket_host']}:{conf['global']['server.socket_port']}"
-        files = ['www/js/index.js', 'www/js/search.js', 'www/js/livre.js', 'www/js/login.js','www/js/account.js','www/js/config.js','www/js/addLivre.js', 'www/js/addAuteur.js','www/js/addPointDeVente.js']
+        files = ['www/js/index.js', 'www/js/search.js', 'www/js/livre.js', 'www/js/login.js','www/js/account.js','www/js/config.js','www/js/addLivre.js', 'www/js/addAuteur.js','www/js/addPointDeVente.js', 'www/js/addEditeur.js']
         for file in files :
             with open(file, 'r', encoding='utf-8') as f:
                 code = f.readlines()

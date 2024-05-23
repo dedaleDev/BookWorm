@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const data = await response.json();
         if (data["content"] === 'success') {
           alert('L\'auteur a bien été ajouté');
-          //window.location.href = '/config';
+          window.location.href = '/config';
         } else {
           alert('Erreur lors de l\'ajout de l\'auteur' + data["message"]);
         }
