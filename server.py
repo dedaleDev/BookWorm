@@ -217,6 +217,14 @@ class Server(object):
     @cherrypy.expose
     def addLivre(self) -> str :
         return open('www/html/addLivre.html', encoding="utf-8")
+    
+    @cherrypy.expose
+    def addAuteur(self) -> str :
+        return open('www/html/addAuteur.html', encoding="utf-8")
+
+    @cherrypy.expose
+    def addPointDeVente(self) -> str :
+        return open('www/html/addPointDeVente.html', encoding="utf-8")
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -373,11 +381,10 @@ class Server(object):
             print("\033[31mErreur lors de la mise à jour des livres : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
     
-    #auteur : ID, Nom, Prénom,Alias (can be null), Biographie, Date de naissance, dateDeDeces (can be null)
     @cherrypy.expose
     @cherrypy.tools.json_in()
     def updateAuteurs(self) :
-        try : 
+        try :
             data = cherrypy.request.json
             email = data.get("email")
             password = data.get("password")
@@ -390,8 +397,20 @@ class Server(object):
                         if auteurs is not None and auteurs != {}:
                             for auteur in auteurs:
                                 print("AUTEUR MODIFIED :",auteur)
-                                #self.db.mkRequest("updateAuteur", False, auteur["nom"], auteur["prénom"], auteur["alias"], auteur["biographie"], auteur["dateDeNaissance"], auteur["dateDeDeces"], auteur["id"])
-                                #self.db.db.commit()
+                                if auteur["dateDeNaissance"] == "":
+                                    auteur["dateDeNaissance"] = None
+                                if auteur["dateDeDeces"] == "":
+                                    auteur["dateDeDeces"] = None
+                                if auteur["dateDeNaissance"] != None:
+                                    auteur["dateDeNaissance"] = auteur["dateDeNaissance"].split("/")
+                                    auteur["dateDeNaissance"] = auteur["dateDeNaissance"][2]+"-"+auteur["dateDeNaissance"][1]+"-"+auteur["dateDeNaissance"][0]
+                                if auteur["dateDeDeces"] != None:
+                                    auteur["dateDeDeces"] = auteur["dateDeDeces"].split("/")
+                                    auteur["dateDeDeces"] = auteur["dateDeDeces"][2]+"-"+auteur["dateDeDeces"][1]+"-"+auteur["dateDeDeces"][0]
+                                if auteur["alias"] == "":
+                                    auteur["alias"] = None
+                                self.db.mkRequest("updateAuteur", False, auteur["nom"], auteur["prénom"], auteur["biographie"], auteur["dateDeNaissance"], auteur["dateDeDeces"],auteur["alias"], auteur["id"])
+                                self.db.db.commit()
                         return self.makeResponse(content="success")
                     else:
                         return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
@@ -400,6 +419,37 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la mise à jour des auteurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
+    
+    #adress, nom, url, tel (can be null)
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    def updatePointDeVentes(self) :
+        try :
+            data = cherrypy.request.json
+            email = data.get("email")
+            password = data.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        pointDeVentes = data.get("pointDeVentes")
+                        if pointDeVentes is not None and pointDeVentes != {}:
+                            for pointDeVente in pointDeVentes:
+                                if pointDeVente["tel"] == "":
+                                    pointDeVente["tel"] = None
+                                self.db.mkRequest("updatePointDeVente", False, pointDeVente["nom"], pointDeVente["url"], pointDeVente["tel"],  pointDeVente["adresse"])
+                                self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la mise à jour des auteurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
+    
+        
         
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -452,6 +502,68 @@ class Server(object):
                         except Exception as e:
                             print("\033[31mErreur lors de l'ajout de l'image : ", e, e.__traceback__.tb_lineno, "\033[0m")
                         
+                        return self.makeResponse(content="success")
+                    return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+            else:
+                return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print(f"Erreur : {e}")
+            return self.makeResponse(is_error=True, error_message=str(e))
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def newAuteur(self, **params):
+        try:
+            email = params.get("email")
+            password = params.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user and user[0][1] == password:
+                if user[0][2] == "admin":
+                    print('New auteurs, connected')
+                    nom = params.get("nom")
+                    prenom = params.get("prenom")
+                    alias = params.get("alias")
+                    biographie = params.get("biographie")
+                    dateDeNaissance = params.get("dateNaissance")
+                    dateDeDeces = params.get("dateDeces")
+                    if dateDeDeces == "":
+                        dateDeDeces = None
+                    if alias == "":
+                        alias = None
+                    if all([nom, prenom, biographie, dateDeNaissance]):
+                        self.db.mkRequest("insertAuteur", False, nom, prenom, biographie, dateDeNaissance, dateDeDeces, alias)
+                        self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+            else:
+                return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print(f"Erreur : {e}")
+            return self.makeResponse(is_error=True, error_message=str(e))
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def newPointDeVente(self, **params):
+        print("NEW POINT DE VENTE; ", params)
+        try:
+            email = params.get("email")
+            password = params.get("password")
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user and user[0][1] == password:
+                if user[0][2] == "admin":
+                    nom = params.get("nom")
+                    adresse = params.get("address")
+                    url = params.get("url")
+                    tel = params.get("tel")
+                    if all([nom, adresse]):
+                        self.db.mkRequest("insertPointDeVente", False, adresse, nom, url, tel)
+                        self.db.db.commit()
                         return self.makeResponse(content="success")
                     return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
                 else:

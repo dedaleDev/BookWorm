@@ -1,7 +1,7 @@
 const API_URL = 'http://192.168.1.20:8080'
 
-_templateHeaderLivre = `<tr><th>ISBN</th><th>Titre</th><th>Auteur</th><th>Description</th><th>Date de parution</th><th>Status</th><th>Genre</th><th>Format</th><th>Prix</th><th>Point de vente</th><th>Editeur</th><th>Supprimer</th></tr>`
-_templateLivre = `<tr><td>{{ isbn }}</td>
+_templateHeaderLivre = `<tr><th>ISBN</th><th>Titre</th><th>Auteur</th><th>Description</th><th>Date de parution</th><th>Statut</th><th>Genre</th><th>Format</th><th>Prix (€)</th><th>Point de vente</th><th>Editeur</th><th>Supprimer</th></tr>`
+_templateLivre = `<tr><td><p style="font-size: 15px;">{{ isbn }}<p></td>
     <td><textarea maxlength="100" class="form-control">{{ titre }}</textarea></td>
     <td><select class="form-control" name="auteur">{{ allAuteur }}</select></td>
     <td><textarea maxlength="1000" class="form-control">{{ description }}</textarea></td>
@@ -9,20 +9,27 @@ _templateLivre = `<tr><td>{{ isbn }}</td>
     <td><select class="form-control" name="status">{{ status }}</select></td>
     <td><select class="form-control"  name="genre">{{ genre }}</select></td>
     <td><select class="form-control"  name="format">{{ format }}"</select></td>
-    <td><input type="number" class="form-control" value="{{ prix }}" min="0" max="500" ></td>
-    <td><select class="form-control"  name="pointDeVente">{{ pointDeVente }}</select></td>
+    <td  style="width: 6%"><input type="number" pattern="[0-9*]" class="form-control" value="{{ prix }}" min="0" max="500" ></td>
+    <td style="width: 7%"><select class="form-control" name="pointDeVente">{{ pointDeVente }}</select></td>
     <td><select class="form-control"  name="editeur">{{ editeur }}</select></td>
     <td><button class="btn btn-danger" onclick="deleteLivre('{{ isbn }}')">Supprimer</button></td></tr>`
 
 _templateHeaderAuteur = `<tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Alias</th><th>Biographie</th><th>Date de naissance</th><th>Date de décès</th><th>Supprimer</th></tr>`
 _templateAuteur = `<tr><td>{{ id }}</td>
-    <td><input type="text" class="form-control" value="{{ nom }}" maxlength="50"></td>
-    <td><input type="text" class="form-control" value="{{ prénom }}" maxlength="50"></td>
-    <td><input type="text" class="form-control" value="{{ alias }}" maxlength="50"></td>
+    <td><input type="text" class="form-control" value="{{ nom }}" maxlength="20"></td>
+    <td><input type="text" class="form-control" value="{{ prénom }}" maxlength="20"></td>
+    <td><input type="text" class="form-control" value="{{ alias }}" maxlength="20"></td>
     <td><textarea maxlength="1000" class="form-control">{{ biographie }}</textarea></td>
     <td><input type="date" class="form-control" value="{{ dateDeNaissance }}"></td>
     <td><input type="date" class="form-control" value="{{ dateDeDécès }}"></td>
     <td><button class="btn btn-danger" onclick="deleteAuteur('{{ id }}')">Supprimer</button></td></tr>`
+
+_templateHeaderPointDeVente = `<tr><th>Adresse</th><th>Nom</th><th>Site web</th><th>Téléphone</th><th>Supprimer</th></tr>`
+_templatePointDeVente = `<tr><td>{{ adresse }}</td>
+    <td><input type="text" class="form-control" value="{{ nom }}" maxlength="20"></td>
+    <td><input type="text" class="form-control" value="{{ url }}" maxlength="50"></td>
+    <td><input type="number"  pattern="[0-9*]class="form-control" value="{{ tel }}" maxlength="10"></td>
+    <td><button class="btn btn-danger" onclick="deletePointDeVente('{{ adresse }}')">Supprimer</button></td></tr>`
 
 _templateEltDropDown = `<option value="{{ elt }}">{{ elt }}</option>`
 
@@ -31,12 +38,11 @@ async function deleteLivre(isbn) {
         if (confirm("Voulez-vous vraiment supprimer ce livre ?") === true) {
             const response = await await fetch(`${API_URL}/deleteLivre?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&isbn=${isbn}`);
             let data = await response.json();
-            console.log(data)
             if (data.content !== 'success') {
                 alert("Erreur lors de la suppression du livre, veuillez réessayer.")
                 throw new Error('Failed to delete livre');
             }
-            alert("Le livre a bien été supprimé !")
+            alert("Le livra a bien été supprimé !")
             window.location.href = "/config";
             showLivreArray();
         }
@@ -51,7 +57,6 @@ async function checkIfChangeLivres(originalLivres, auteurs) {
             const modifiedLivres = [];
             const contentRow = document.getElementById('contentRow');
             const rows = contentRow.querySelectorAll('tr');
-            console.log(originalLivres)
             rows.forEach(row => {
                 const isbn = row.cells[0].innerText;
                 const titre = row.cells[1].querySelector('textarea').value;
@@ -66,7 +71,6 @@ async function checkIfChangeLivres(originalLivres, auteurs) {
                 const editeur = row.cells[10].querySelector('select').value;
                 const originalLivre = originalLivres[isbn];
                 if (originalLivre.titre !== titre || originalLivre.auteur !== auteur || originalLivre.description !== description || originalLivre.dateDeParution !== dateDeParution.split('-').reverse().join('/') || originalLivre.status !== status || originalLivre.genre !== genre || originalLivre.format !== format || originalLivre.prix !== prix || originalLivre.pointDeVente !== pointDeVente || originalLivre.editeur !== editeur) {
-                    console.log(originalLivre.auteur, "==", auteur)
                     Object.keys(auteurs).forEach(id => {
                         if (auteurs[id]["prénom"] +" " + auteurs[id]["nom"] === auteur || auteurs[id]["alias"] === auteur)
                             auteur = id;
@@ -117,12 +121,17 @@ async function checkIfChangeAuteurs(originalAuteurs) {
                 const prénom = row.cells[2].querySelector('input').value;
                 const alias = row.cells[3].querySelector('input').value === "" ? null : row.cells[3].querySelector('input').value;
                 const biographie = row.cells[4].querySelector('textarea').value;
-                const dateDeNaissance = row.cells[5].querySelector('input').value === "" ? null : row.cells[5].querySelector('input').value;
-                const dateDeDeces = row.cells[6].querySelector('input').value === "" ? null : row.cells[6].querySelector('input').value;
+                let  dateDeNaissance = row.cells[5].querySelector('input').value === "" ? null : row.cells[5].querySelector('input').value;
+                let dateDeDeces = row.cells[6].querySelector('input').value === "" ? null : row.cells[6].querySelector('input').value;
                 const originalAuteur = originalAuteurs[id];
-                if ((originalAuteur.nom !== nom) || (originalAuteur.prénom !== prénom) || (originalAuteur.alias !== alias) || (originalAuteur.biographie !== biographie) || (originalAuteur.dateDeNaissance !== (dateDeNaissance ? dateDeNaissance.replace(/\-/g, '/') : null)) ||  (originalAuteur.dateDeDeces !== (dateDeDeces ? dateDeDeces.replace(/\-/g, '/') : null))) {
+                if (dateDeNaissance !== null) {
+                    dateDeNaissance = dateDeNaissance.split('-').reverse().join('/');
+                } 
+                if (dateDeDeces !== null) {
+                    dateDeDeces = dateDeDeces.split('-').reverse().join('/');
+                }
+                if ((originalAuteur.nom !== nom) || (originalAuteur.prenom !== prénom) || (originalAuteur.alias !== alias) || (originalAuteur.description !== biographie) || (originalAuteur.dateDeNaissance !== dateDeNaissance) ||  (originalAuteur.dateDeDeces !== dateDeDeces)) {
                     modifiedAuteurs.push({id,nom,prénom,alias,biographie,dateDeNaissance,dateDeDeces});
-                    console.log("Modified ", id,nom,prénom,alias,biographie,dateDeNaissance,dateDeDeces)
                 }
             });
             if (modifiedAuteurs.length > 0) {
@@ -155,8 +164,55 @@ async function checkIfChangeAuteurs(originalAuteurs) {
     });
 }
 
+async function checkifChangePointDeVentes(originalPointDeVentes) {
+    document.getElementById('save').addEventListener('click', async () => {
+        if (browseType === "Points de ventes") {
+            const modifiedPointDeVentes = [];
+            const contentRow = document.getElementById('contentRow');
+            const rows = contentRow.querySelectorAll('tr');
+            Object.keys(originalPointDeVentes).forEach((adresse,index) => {
+                        row = rows[index];
+                        const nom = row.cells[1].querySelector('input').value;
+                        const url = row.cells[2].querySelector('input').value;
+                        const tel = row.cells[3].querySelector('input').value;
+                        if (originalPointDeVentes[adresse].nom !== nom || originalPointDeVentes[adresse].url !== url || originalPointDeVentes[adresse].tel !== tel) {
+                            modifiedPointDeVentes.push({adresse,nom,url,tel});
+                            console.log("Modified ", adresse,nom,url,tel)
+                        }
+            });
+            if (modifiedPointDeVentes.length > 0) {
+                try {
+                    console.log("mise à jour en cours...", modifiedPointDeVentes)
+                    const response = await fetch(`${API_URL}/updatePointDeVentes`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            pointDeVentes: modifiedPointDeVentes,
+                            email: email,
+                            password: password
+                        })
+                    });
+                    if (!response.ok) {
+                        alert("Erreur lors de la mise à jour des points de ventes, veuillez réessayer.")
+                        throw new Error('Failed to update points de ventes');
+                    }
+                    alert("Les modifications ont bien été prises en compte !")
+                    //window.location.href = "/config";
+                } catch (error) {
+                    console.error('Error updating points de ventes:', error);
+                }
+            } else {
+                alert("Vous êtes à jour !")
+            }
+        }
+    });
+}
+
 async function showLivreArray() {
     try {
+        document.getElementById('title').innerHTML = "Tableau des livres :"
         let response = await fetch(`${API_URL}/getAllLivre`);
         let data = await response.json();
         const livres = JSON.parse(data["content"]);
@@ -231,6 +287,7 @@ async function showLivreArray() {
 
 async function showAuteurArray() {
     try {
+        document.getElementById('title').innerHTML = "Tableau des auteurs :"
         let response = await fetch(`${API_URL}/getAllAuteur`);
         let data = await response.json();
         const auteurs = JSON.parse(data["content"]);
@@ -241,7 +298,6 @@ async function showAuteurArray() {
         let rows = '';
         let dateDeNaissance;
         let dateDeDeces;
-        console.log(auteurs)
         Object.keys(auteurs).forEach(id => {
             if (auteurs[id]["dateDeNaissance"] != null) {
                 dateDeNaissance = `${auteurs[id]["dateDeNaissance"].split('/')[2]}-${auteurs[id]["dateDeNaissance"].split('/')[1]}-${auteurs[id]["dateDeNaissance"].split('/')[0]}`;
@@ -253,7 +309,6 @@ async function showAuteurArray() {
             } else {
                 dateDeDeces = ''
             }
-            console.log(dateDeNaissance, dateDeDeces)
             rows += _templateAuteur
                 .replace("{{ id }}",id)
                 .replace("{{ nom }}", auteurs[id]["nom"])
@@ -271,6 +326,32 @@ async function showAuteurArray() {
     }
 }
 
+//Adresse Nom Site web	varchar(50)	Tel (can be null)
+
+async function showPointDeVenteArray() {
+    try {
+        document.getElementById('title').innerHTML = "Tableau des points de vente :"
+        let response = await fetch(`${API_URL}/getAllPointDeVentes`);
+        let data = await response.json();
+        const pointDeVentes = JSON.parse(data["content"]);
+        const header = document.getElementById('templateHeader');
+        header.innerHTML = _templateHeaderPointDeVente;
+        const contentRow = document.getElementById('contentRow');
+        contentRow.innerHTML = '';
+        let rows = '';
+        Object.keys(pointDeVentes).forEach(adresse => {
+            rows += _templatePointDeVente
+                .replace("{{ adresse }}",adresse)
+                .replace("{{ nom }}", pointDeVentes[adresse]["nom"])
+                .replace("{{ url }}", pointDeVentes[adresse]["url"])
+                .replace("{{ tel }}", pointDeVentes[adresse]["tel"] === null ? "" : pointDeVentes[adresse]["tel"]);
+        });
+        contentRow.innerHTML = rows;
+        checkifChangePointDeVentes(pointDeVentes);
+    } catch (error) {
+        console.error('Error fetching or processing data:', error);
+    }
+}
 
 
 
@@ -302,6 +383,9 @@ fetch(`${API_URL}/isAdmin?email=${encodeURIComponent(email)}&password=${encodeUR
                         }
                         if (browseType === "Auteurs") {
                             showAuteurArray();
+                        }
+                        if (browseType === "Points de ventes") {
+                            showPointDeVenteArray();
                         }
                     } 
                });

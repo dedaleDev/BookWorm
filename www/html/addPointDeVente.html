@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>BookWorm : Espace Administrateur</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../frameworks/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/addLivre.css">
+</head>
+<body>
+    <a id="logo" href="./"><h1 class="logo" style="padding-top: 5vh; padding-left: 2vh;">Espace Administrateur</h1></a>
+    <h1 style="padding-top: 2vh; padding-left: 5vh;">Ajouter un point de vente : </h1>
+    <div class="container" style="padding-top: 2vh;">
+        <form>
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="address">Adresse :</label>
+              <input type="text" maxlength="120" class="form-control" id="address" name="address" required>
+              <div class="invalid-feedback">Le nom ne peux pas dépasser 120 caractères</div>
+            </div>
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="nom">Nom :</label>
+                <input type="text" maxlength="20" class="form-control" id="nom" name="nom" required>
+                <div class="invalid-feedback">Le nom ne peux pas dépasser 20 caractères</div>
+            </div>
+            
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="url">Site web :</label>
+                <input type="text" maxlength="50" class="form-control" id="url" name="url" required>
+                <div class="invalid-feedback">L'url ne peux pas dépasser 50 caractères</div>
+            </div>
+
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="tel">Téléphone :</label>
+                <input type="number"  pattern="[0-9*]" maxlength="10" class="form-control" id="tel" name="tel">
+                <div class="invalid-feedback">Le numéro de télephone ne peux pas dépasser 10 chiffres.</div>
+            </div>
+            <div style="padding-top: 2vh; padding-bottom: 10vh;"><button type="submit" class="btn btn-primary" style="background-color: #FF8C42; " id="submit">Ajouter</button></div>
+          </form>
+    </div>
+    <script src="../js/addPointDeVente.js"></script>
+    <script src="../frameworks/popper.min.js"></script>
+    <script src="../frameworks/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

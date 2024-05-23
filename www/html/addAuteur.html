@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>BookWorm : Espace Administrateur</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../frameworks/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/addLivre.css">
+</head>
+<body>
+    <a id="logo" href="./"><h1 class="logo" style="padding-top: 5vh; padding-left: 2vh;">Espace Administrateur</h1></a>
+    <h1 style="padding-top: 2vh; padding-left: 5vh;">Ajouter un auteur : </h1>
+    <div class="container" style="padding-top: 2vh;">
+        <form>
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="nom">Nom :</label>
+              <input type="text" maxlength="20" class="form-control" id="nom" name="nom" required>
+              <div class="invalid-feedback">Le nom ne peux pas dépasser 20 caractères</div>
+            </div>
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="prenom">Prénom :</label>
+                <input type="text" maxlength="20" class="form-control" id="prenom" name="prenom" required>
+                <div class="invalid-feedback">Le prénom ne peux pas dépasser 20 caractères</div>
+            </div>
+            
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="alias">Alias (facultatif) :</label>
+                <input type="text" maxlength="20" class="form-control" id="alias" name="alias" required>
+                <div class="invalid-feedback">L'alias ne peux pas dépasser 20 caractères</div>
+            </div>
+
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="biographie">Biographie :</label>
+                <textarea type="text" maxlength="1000" class="form-control" id="biographie" name="biographie" required></textarea>
+                <div class="invalid-feedback">La biographie ne peux pas dépasser 1000 caractères</div>
+            </div>
+          
+            <div class="form-group" style="padding-top: 2vh;">
+              <label for="dateNaissance">Date de naissance :</label>
+              <input type="date" value="" class="form-control" id="dateNaissance" name="date de naissance" required>
+            </div>
+
+            <div class="form-group" style="padding-top: 2vh;">
+                <label for="date_parution">Date de décès (facultative) :</label>
+                <input type="date" value="" class="form-control" id="dateDeces" name="date de décès">
+            </div>
+            <div style="padding-top: 2vh; padding-bottom: 10vh;"><button type="submit" class="btn btn-primary" style="background-color: #FF8C42; " id="submit">Ajouter</button></div>
+          </form>
+    </div>
+    <script src="../js/addAuteur.js"></script>
+    <script src="../frameworks/popper.min.js"></script>
+    <script src="../frameworks/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

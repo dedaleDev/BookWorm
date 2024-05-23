@@ -13,13 +13,13 @@
         <form>
             <div class="form-group" style="padding-top: 2vh;">
               <label for="isbn">ISBN :</label>
-              <input type="text" class="form-control" id="isbn" name="isbn" required>
+              <input type="text" maxlength="13" minlength="10" class="form-control" id="isbn" name="isbn" required>
               <div class="invalid-feedback">Veuillez entrer un numéro ISBN valide (10 ou 13 chiffres)</div>
             </div>
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="titre">Titre :</label>
-              <input type="text" class="form-control" id="titre" name="titre" required>
+              <input type="text" maxlength="100" class="form-control" id="titre" name="titre" required>
               <div class="invalid-feedback">Le titre ne peux pas dépasser 100 caractères</div>
             </div>
           
@@ -32,7 +32,7 @@
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="description">Description :</label>
-              <textarea class="form-control" id="description" name="description" required></textarea>
+              <textarea class="form-control" maxlength="1000" id="description" name="description" required></textarea>
               <div class="invalid-feedback">La description ne peux pas dépasser 1000 caractères</div>
             </div>
           
@@ -100,7 +100,7 @@
           
             <div class="form-group" style="padding-top: 2vh;">
               <label for="prix">Prix :</label>
-              <input type="number" class="form-control" id="prix" name="prix" required>
+              <input type="number" pattern="[0-9*]" class="form-control" id="prix" name="prix" required>
               <div class="invalid-feedback">Le prix doit être supérieur à 0</div>
             </div>
           

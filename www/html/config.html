@@ -8,9 +8,10 @@
 </head>
 <body>
     <a id="logo" href="./"><h1 class="logo" style="padding-top: 5vh; padding-left: 2vh;">Espace Administrateur</h1></a>
-    <div class="dropdown" style="padding-left: 5vh; padding-top: 2vh;">
-        <button id="browse" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
-            Parcourir
+    <h1 id="title" style="padding-top: 2vh; padding-left: 2vh;">Tableau des livres : </h1>
+    <div class="d-flex align-items-center" style="padding-top: 2vh; padding-left: 5vh;">
+        <button id="browse" class="btn btn-primary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
+                Parcourir
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" id="selectLivre">Livres</a></li>
@@ -20,11 +21,12 @@
             <li><a class="dropdown-item" id="selectUtilisateur">Utilisateurs</a></li>
             <li><a class="dropdown-item" id="selectUtilisateur">Emprunts</a></li>
         </ul>
-    </div>
-    <h1 style="padding-top: 2vh; padding-left: 2vh;">Tableau des livres : </h1>
-    <div  style ="padding-top: 2vh; padding-left: 5vh;">
-        <button id="save" class="btn btn-primary" style="background-color: #FF8C42;">Sauvegarder</button>
-        <button id="add" class="btn btn-primary" style="background-color: #FF8C42;">Nouveau</button>
+        <div style="padding-left: 2vh;">
+            <button id="save" class="btn btn-primary" style="background-color: #FF8C42; padding-left: 2vh;">Sauvegarder</button>
+        </div>
+        <div style="padding-left: 2vh;">
+            <button id="add" class="btn btn-primary" style="background-color: #FF8C42; padding-left: 2v;">Nouveau</button>
+        </div>  
     </div>
     <div class="container-fluid" style="padding-top: 2vh;">
         <table class="table table-bordered table-striped">
