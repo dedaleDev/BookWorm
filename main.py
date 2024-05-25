@@ -50,6 +50,10 @@ serverConf = {
             ('Access-Control-Allow-Methods', 'POST, GET'),
             ('Access-Control-Allow-Headers', 'Content-Type'),
         ],
+    },
+    '/favicon.ico': {
+        'tools.staticfile.on': True,
+        'tools.staticfile.filename': os.path.join(www_dir, 'img/favicon.ico')
     }
 }
 
@@ -191,21 +195,6 @@ if __name__ == '__main__':
     if debug : 
         print("Attention : le mode de débogage est activé, les résultats résultants pourraient être instables.")
     db = database.db(db_HOST,db_USER,db_PASSWD,db_PORT,debug)
-    if debug and not db.needRestart :
-        try : 
-            db.mkRequest("selectAllISBN", False)
-            isbn = db.cursor.fetchall()
-            ISBN = []
-            for i in isbn :
-                ISBN.append(i[0])
-            if ISBN != [] :
-                for i in os.listdir("www/img/livres"):
-                    if i.split('.')[0] not in ISBN and i.split('.')[1].endswith('jpg') :
-                        print(f"Suppression de {i}", f"www/img/livres/{i}")
-                        os.remove(f"www/img/livres/{i}")
-        except Exception as e:
-            print(f"\033[91mErreur : Impossible de supprimer les images inutiles. {e} ligne : {e.__traceback__.tb_lineno}\033[0m")
-    
     if db.needRestart == True : 
         exit(0)
     print("Connexion à la base de donnée réussie !")

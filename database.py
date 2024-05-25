@@ -33,6 +33,9 @@ class db():
     "deletePointDeVente" : "DELETE FROM `Point de vente` WHERE `Adresse` = %s;",
     "deleteEditeur" : "DELETE FROM `Editeur` WHERE `Nom` = %s;",
     "deleteLivreByEditeur" : "DELETE FROM `Livre` WHERE `Editeur` = %s;",
+    "deleteEmpruntByUser" : "DELETE FROM `Emprunt` WHERE `Utilisateur` = %s;",
+    "deleteEmprunt" : "DELETE FROM `Emprunt` WHERE `ID` = %s;",
+    "deleteUser" : "DELETE FROM `Utilisateur` WHERE `email` = %s;",
     "updateLivrePointDeVente" : "UPDATE `Livre` SET `Point de vente` = %s WHERE  `Point de vente`  = %s;",
     "updateLivre" : "UPDATE `Livre` SET `Titre` = %s, `Auteur` = %s, `Description` = %s, `Date de parution` = %s, `Statut` = %s, `Genre` = %s, `Format` = %s, `Prix` = %s, `Point de vente` = %s, `Editeur` = %s WHERE `ISBN` = %s;",
     "updateAuteur" : "UPDATE `Auteur` SET `Nom` = %s, `Prénom` = %s, `Biographie` = %s, `Date de naissance` = %s, `Date de décès` = %s, `Alias` = %s WHERE `ID` = %s;",
@@ -74,6 +77,11 @@ class db():
                 self.cursor = self.db.cursor()
                 self.cursor.execute("DROP DATABASE IF EXISTS BookWorm")
                 self.db.commit()
+                try : 
+                    for i in os.listdir("www/img/livres"):
+                        os.remove(f"www/img/livres/{i}")
+                except :
+                    pass
                 print("Conformément au mode debug, la base de donnée à été effacé au démarrage. Veuillez relancer le programme.")
                 self.needRestart = True
                 return
@@ -211,6 +219,13 @@ class db():
             0 : if the data is loaded successfully
             1 : if an error occurs
         """
+        try :
+            print("Importations des images de références...")
+            for i in os.listdir("data/livres"):
+                os.system(f"cp data/livres/{i} www/img/livres/{i}")
+        except Exception as e:
+            print("Erreur : Impossible d'importer les images de références ! Une erreur est survenue : ",e)
+        
         self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, port=self.port, db="BookWorm",init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
         data= ["data/Auteur.csv","data/Editeur.csv","data/PointDeVente.csv","data/Livre.csv","data/Utilisateur.csv","data/Note.csv","data/Emprunt.csv"]
         for file in data:

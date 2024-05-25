@@ -155,21 +155,7 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
             return None
         result = list(temp[0])
         if onlyOne and len(result) > 1:
-            print(f"\nRésultat de la recherche pour {' '.join(recherche)}:\n")
-            for i in range(len(result)) : 
-                temp = result[i][0].split('\n')
-                print(f"{i+1} : {temp},  {result[i][1]}")
-            while True :
-                try :
-                    saisie = input("Veuillez saisir le numéro du point de vente que vous souhaitez sélectionner : ")
-                    if saisie.isdigit() and int(saisie) >= 1 and int(saisie) <= len(result):
-                        return result[int(saisie)-1]
-                    else:
-                        print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-                except KeyboardInterrupt:
-                    return None
-                except :
-                    print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
+            return result[0]
         if result == []:
             return None
         return result

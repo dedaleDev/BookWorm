@@ -17,6 +17,22 @@ class Server(object):
                 return {"status":"error", "message":error_message}
         except Exception as e:
             print("Erreur lors de la création de la réponse : ",e, e.__traceback__.tb_lineno, content, error_message)
+            
+    def cleanImageLivres(self) :
+        """This function deletes all images who don't have a corresponding book in the database."""
+        try : 
+            self.db.mkRequest("selectAllISBN", False)
+            isbn = self.db.cursor.fetchall()
+            ISBN = []
+            for i in isbn :
+                ISBN.append(i[0])
+            if ISBN != [] :
+                for i in os.listdir("www/img/livres"):
+                    if i.split('.')[0] not in ISBN and i.split('.')[1].endswith('jpg') :
+                        print(f"Suppression de {i}", f"www/img/livres/{i}")
+                        os.remove(f"www/img/livres/{i}")
+        except Exception as e:
+            print("\033[31mErreur lors de la suppression des images : ",e, e.__traceback__.tb_lineno, "\033[0m")
     
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -156,6 +172,10 @@ class Server(object):
                         self.db.mkRequest("deleteEmpruntByISBN", False, isbn)
                         self.db.mkRequest("deleteLivre", False, isbn)
                         self.db.db.commit()
+                        try : 
+                            os.remove(f"www/img/livres/{isbn}.jpg")
+                        except Exception as e:
+                            print("\033[31mErreur lors de la suppression de l'image : ",e, e.__traceback__.tb_lineno, "\033[0m")
                         return self.makeResponse(content="success")
                     else:
                         return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
@@ -176,12 +196,11 @@ class Server(object):
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
                     if user[0][2] == "admin":
-                        print("ID DELECTION READY",id)
                         self.db.mkRequest("deleteEmpruntByAuteurID", False, id)
                         self.db.mkRequest("deleteLivreByAuteur", False, id)#delete all books from this author first
                         self.db.mkRequest("deleteAuteur", False, id)
-                        print("OK")
                         self.db.db.commit()
+                        self.cleanImageLivres()
                         return self.makeResponse(content="success")
                     else:
                         return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
@@ -193,6 +212,117 @@ class Server(object):
             print("\033[31mErreur lors de la suppression de l'auteur : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
     
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getPointDeVenteReplacement(self, replacementName):
+        try : 
+            replacementPointDeVente = searchEngine.searchPointDeVente(replacementName, self.db, onlyOne=True)
+            if replacementPointDeVente == None: 
+                return self.makeResponse(is_error=True, error_message="Point de vente de remplacement introuvable")
+            print("POINT DE VENTE REMPLACEMENT",replacementPointDeVente)
+            return self.makeResponse(content=replacementPointDeVente[0][0])
+        except Exception as e:
+            print("\033[31mErreur lors de la recherche du point de vente de remplacement : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def deletePointDeVente(self, email:str, password:str, adresse:str, adresseReplacement: str) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        print("ADRESSE REPLACEMENT",adresseReplacement)
+                        print("ADRESSE",adresse)
+                        self.db.mkRequest("updateLivrePointDeVente", False, operationOnDataBase.convertPointDeVenteToAcceptablePointDeVente(adresseReplacement,self.db), operationOnDataBase.convertPointDeVenteToAcceptablePointDeVente(adresse,self.db))
+                        self.db.mkRequest("deletePointDeVente", False, operationOnDataBase.convertPointDeVenteToAcceptablePointDeVente(adresse,self.db))
+                        self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la suppression du point de vente : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def deleteEditeur(self, email:str, password:str, nom:str) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        self.db.mkRequest("deleteLivreByEditeur", False, nom)#delete all books from this editor first
+                        self.db.mkRequest("deleteEditeur", False, nom)
+                        self.db.db.commit()
+                        self.cleanImageLivres()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la suppression de l'éditeur : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def deleteUser(self, email:str, password:str, emailToDelete:str) -> str:
+        print("EMAIL",email, "PASSWORD",password, "EMAIL TO DELETE",emailToDelete)
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        #check if the user to delete is admin, if so, refuse
+                        self.db.mkRequest("selectUserByEmail", False, emailToDelete)
+                        userToDelete = self.db.cursor.fetchall()
+                        if userToDelete is not None and userToDelete != () and userToDelete != []:
+                            if userToDelete[0][2] == "admin":
+                                return self.makeResponse(is_error=True, error_message="Vous ne pouvez pas supprimer un administrateur")
+                        self.db.mkRequest("deleteEmpruntByUser", False, emailToDelete)
+                        self.db.mkRequest("deleteUser", False, emailToDelete)
+                        self.db.db.commit()
+                        print("OK")
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la suppression de l'utilisateur : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def deleteEmprunt(self, email:str, password:str, id:int) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    self.db.mkRequest("deleteEmprunt", False, id)
+                    self.db.db.commit()
+                    return self.makeResponse(content="success")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la suppression de l'emprunt : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
     
     @cherrypy.expose
     @cherrypy.tools.json_out()

@@ -93,19 +93,93 @@ async function deleteAuteur(id) {
 }
 
 async function deletePointDeVente(adresse) {
+    console.log(adresse)
     try {
-        if (confirm("Voulez-vous vraiment supprimer ce point de vente ?") === true) {
-            const response = await fetch(`${API_URL}/deletePointDeVente?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&adresse=${adresse}`);
-            let data = await response.json();
-            if (data.content !== 'success') {
-                alert("Erreur lors de la suppression du point de vente, veuillez réessayer.");
-                throw new Error('Failed to delete point de vente');
+        let adresseReplacement = prompt("Veuillez entrer le nom du point de vente de remplacement :");
+        if (adresseReplacement != undefined && adresseReplacement != null && adresseReplacement != "") {
+            adresseReplacement = await fetch(`${API_URL}/getPointDeVenteReplacement?replacementName=${adresseReplacement}`);
+            let data = await adresseReplacement.json();
+            if (data.content === 'error') {
+                alert("Erreur lors du remplacement du point de vente, veuillez réessayer avec un nom correct.");
+                return;
             }
-            alert("Le point de vente a bien été supprimé !");
-            showPointDeVenteArray();
+            adresseReplacement = data.content;
+            if (adresseReplacement === undefined || adresseReplacement === null || adresseReplacement === "") {
+                alert("Erreur lors du remplacement du point de vente, veuillez réessayer avec un nom correct.");
+                return;
+            }
+            if (confirm(`Voulez-vous vraiment supprimer le point de vente et le remplacer par ${adresseReplacement} ?`) === true) {
+                const response = await fetch(`${API_URL}/deletePointDeVente?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&adresse=${encodeURIComponent(adresse)}&adresseReplacement=${encodeURIComponent(adresseReplacement)}`);
+                let data = await response.json();
+                if (data.content !== 'success') {
+                    alert("Erreur lors de la suppression du point de vente, veuillez réessayer.");
+                    throw new Error('Failed to delete point de vente');
+                }
+                alert("Le point de vente a bien été supprimé !");
+                showPointDeVenteArray();
+            }
         }
     } catch (error) {
         console.error('Error deleting point de vente:', error);
+    }
+}
+
+async function deleteEditeur(nom) {
+    try {
+        if (confirm("Voulez-vous vraiment supprimer cet éditeur ? Cela supprimera l'ensemble des livres publié par cet éditeur.") === true) {
+            const response = await fetch(`${API_URL}/deleteEditeur?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&nom=${nom}`);
+            let data = await response.json();
+            if (data.content !== 'success') {
+                alert("Erreur lors de la suppression de l'éditeur, veuillez réessayer.");
+                throw new Error('Failed to delete editeur');
+            }
+            alert("L'éditeur a bien été supprimé !");
+            showEditeurArray();
+        }
+    } catch (error) {
+        console.error('Error deleting editeur:', error);
+    }
+}
+
+async function deleteUser(emailToDelete) {
+    try {
+        if (confirm("Voulez-vous vraiment supprimer cet utilisateur ? Cela supprimera l'ensemble des emprunts associés.") === true) {
+            const response = await fetch(`${API_URL}/deleteUser?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&emailToDelete=${emailToDelete}`);
+            let data = await response.json();
+            if (data.message === 'Vous ne pouvez pas supprimer un administrateur'){
+                alert("Vous ne pouvez pas supprimer un administrateur.");
+                return;
+            }
+            else if (data.content !== 'success') {
+                alert("Erreur lors de la suppression de l'utilisateur, veuillez réessayer.", data.message);
+                console.error( data);
+                throw new Error('Failed to delete utilisateur');
+            } else {
+                alert("L'utilisateur a bien été supprimé !");
+            }
+            showUtilisateurArray();
+        }
+    }
+    catch (error) {
+        console.error('Error deleting utilisateur:', error);
+    }
+}
+
+async function deleteEmprunt(id) {
+    try {
+        if (confirm("Voulez-vous vraiment supprimer cet emprunt ? Celui-ci sera immédiatement considéré comme remis.") === true) {
+            const response = await fetch(`${API_URL}/deleteEmprunt?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&id=${id}`);
+            let data = await response.json();
+            if (data.content !== 'success') {
+                alert("Erreur lors de la suppression de l'emprunt, veuillez réessayer.");
+                throw new Error('Failed to delete emprunt');
+            }
+            alert("L'emprunt a bien été supprimé !");
+            showEmpruntArray();
+        }
+    }
+    catch (error) {
+        console.error('Error deleting emprunt:', error);
     }
 }
 
@@ -540,8 +614,10 @@ async function showPointDeVenteArray() {
         contentRow.innerHTML = '';
         let rows = '';
         Object.keys(pointDeVentes).forEach(adresse => {
+            adresseReplacement = adresse.replace(/\n/g, ' ');
             rows += _templatePointDeVente
                 .replace("{{ adresse }}",adresse)
+                .replace("{{ adresse }}",adresseReplacement)
                 .replace("{{ nom }}", pointDeVentes[adresse]["nom"])
                 .replace("{{ url }}", pointDeVentes[adresse]["url"])
                 .replace("{{ tel }}", pointDeVentes[adresse]["tel"] === null ? "" : pointDeVentes[adresse]["tel"]);
@@ -567,6 +643,7 @@ async function showEditeurArray(){
         Object.keys(editeurs).forEach(nom => {
             rows += _templateEditeur
                 .replace("{{ nom }}",nom)
+                .replace("{{ nom }}",nom)
                 .replace("{{ adresse }}", editeurs[nom]["adresse"]);
         });
         contentRow.innerHTML = rows;
@@ -589,6 +666,7 @@ async function showUtilisateurArray(){
         let rows = '';
         Object.keys(utilisateurs).forEach(email => {
             rows += _templateUser
+                .replace("{{ email }}",email)
                 .replace("{{ email }}",email)
                 .replace("{{ mdp }}", utilisateurs[email]["mdp"])
                 .replace("{{ nom }}", utilisateurs[email]["nom"])
@@ -617,7 +695,7 @@ async function showEmpruntArray(){
         let data = await response.json();
         if (data.message === "Aucun emprunt trouvé"){
             alert("Aucun n'emprunt n'a été effectué.")
-            return;
+            window.location.href = "/config";
         }
         const emprunts = JSON.parse(data["content"]);
         response = await fetch(`${API_URL}/getAllLivre`);
@@ -660,6 +738,7 @@ async function showEmpruntArray(){
             }
             rows += _templateEmprunt
                 .replace("{{ id }}",id)
+                .replace("{{ id }}", id)
                 .replace("{{ statut }}", statut)
                 .replace("{{ livre }}", livre)
                 .replace("{{ date }}", emprunts[id]["Date"].split('/').reverse().join("-"))
