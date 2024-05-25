@@ -48,8 +48,9 @@ _templateUser = `<tr><td>{{ email }}</td>
     <td><input type="number" class="form-control" value="{{ tel }}" maxlength="10"></td>
     <td><button class="btn btn-danger" onclick="deleteUser('{{ email }}')">Supprimer</button></td></tr>`
 
-_templateHeaderEmprunt = `<tr><th>ID</th><th>Livre</th><th>Date</th><th>Utilisateur</th><th>Supprimer</th></tr>`
+_templateHeaderEmprunt = `<tr><th>ID</th><th>Statut<th>Livre</th><th>Date</th><th>Utilisateur</th><th>Supprimer</th></tr>`
 _templateEmprunt = `<tr><td>{{ id }}</td>
+    <td>{{ statut }}</td>
     <td><select class="form-control" name="livre">{{ livre }}</select></td>
     <td><input type="date" class="form-control" value="{{ date }}"></td>
     <td><select class="form-control" name="utilisateur">{{ utilisateur }}</select></td>
@@ -67,11 +68,44 @@ async function deleteLivre(isbn) {
                 throw new Error('Failed to delete livre');
             }
             alert("Le livra a bien été supprimé !")
-            window.location.href = "/config";
             showLivreArray();
         }
     } catch (error) {
             console.error('Error deleting livre:', error);
+    }
+}
+
+async function deleteAuteur(id) {
+    try {
+        if (confirm("Voulez-vous vraiment supprimer cet auteur ? Cela supprimera l'ensemble des oeuvres et emprunts assoicées !") === true) {
+            const response = await fetch(`${API_URL}/deleteAuteur?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&id=${id}`);
+            let data = await response.json();
+            if (data.content !== 'success') {
+                alert("Erreur lors de la suppression de l'auteur, veuillez réessayer.");
+                throw new Error('Failed to delete auteur');
+            }
+            alert("L'auteur a bien été supprimé !");
+            showAuteurArray();
+        }
+    } catch (error) {
+        console.error('Error deleting auteur:', error);
+    }
+}
+
+async function deletePointDeVente(adresse) {
+    try {
+        if (confirm("Voulez-vous vraiment supprimer ce point de vente ?") === true) {
+            const response = await fetch(`${API_URL}/deletePointDeVente?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&adresse=${adresse}`);
+            let data = await response.json();
+            if (data.content !== 'success') {
+                alert("Erreur lors de la suppression du point de vente, veuillez réessayer.");
+                throw new Error('Failed to delete point de vente');
+            }
+            alert("Le point de vente a bien été supprimé !");
+            showPointDeVenteArray();
+        }
+    } catch (error) {
+        console.error('Error deleting point de vente:', error);
     }
 }
 
@@ -336,11 +370,16 @@ async function checkIfChangeEmprunts(originalEmprunts) {
             const rows = contentRow.querySelectorAll('tr');
             rows.forEach(row => {
                 const id = row.cells[0].innerText;
-                const livre = row.cells[1].querySelector('select').value;
-                const date = row.cells[2].querySelector('input').value;
-                const utilisateur = row.cells[3].querySelector('select').value;
+                const livre = row.cells[2].querySelector('select').value;
+                let date = row.cells[3].querySelector('input').value;
+                const utilisateur = row.cells[4].querySelector('select').value;
                 const originalEmprunt = originalEmprunts[id];
-                if (originalEmprunt.livre !== livre || originalEmprunt.date !== date || originalEmprunt.utilisateur !== utilisateur) {
+                if (date !== null) {
+                    date = date.split('-').reverse().join('/');
+                }
+
+                if (originalEmprunt.isbn !== livre || originalEmprunt.Date !== date || originalEmprunt.Utilsateur !== utilisateur) {
+                    console.log("UDPATED DATE", date, "ORIGINAL DATE", originalEmprunt.Date)
                     modifiedEmprunts.push({id,livre,date,utilisateur});
                 }
             });
@@ -473,6 +512,7 @@ async function showAuteurArray() {
             }
             rows += _templateAuteur
                 .replace("{{ id }}",id)
+                .replace("{{ id }}",id)
                 .replace("{{ nom }}", auteurs[id]["nom"])
                 .replace("{{ prénom }}", auteurs[id]["prenom"])
                 .replace("{{ alias }}", auteurs[id]["alias"] === null ? "" : auteurs[id]["alias"])
@@ -540,7 +580,6 @@ async function showUtilisateurArray(){
     try {
         document.getElementById('title').innerHTML = "Tableau des utilisateurs :"
         let response = await fetch(`${API_URL}/getAllUtilisateurs?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-        console.log(response)
         let data = await response.json();
         const utilisateurs = JSON.parse(data["content"]);
         const header = document.getElementById('templateHeader');
@@ -576,11 +615,15 @@ async function showEmpruntArray(){
         document.getElementById('title').innerHTML = "Tableau des emprunts :"
         let response = await fetch(`${API_URL}/getAllEmprunts?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
         let data = await response.json();
+        if (data.message === "Aucun emprunt trouvé"){
+            alert("Aucun n'emprunt n'a été effectué.")
+            return;
+        }
         const emprunts = JSON.parse(data["content"]);
         response = await fetch(`${API_URL}/getAllLivre`);
         data = await response.json();
         const livres = JSON.parse(data["content"]);
-        response = await fetch(`${API_URL}/getAllUtilisateurs`);
+        response = await fetch(`${API_URL}/getAllUtilisateurs?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
         data = await response.json();
         const utilisateurs = JSON.parse(data["content"]);
         const header = document.getElementById('templateHeader');
@@ -588,21 +631,38 @@ async function showEmpruntArray(){
         const contentRow = document.getElementById('contentRow');
         contentRow.innerHTML = '';
         let rows = '';
+        console.log("EMPRUNTS : ", emprunts, "UTIliSATEUR", utilisateurs)
         Object.keys(emprunts).forEach(id => {
-            let livre = _templateEltDropDown.replace("{{ elt }}",emprunts[id]["livre"]).replace("{{ elt }}",emprunts[id]["livre"]);
+            let livre = _templateEltDropDown.replace("{{ elt }}",emprunts[id]["isbn"]).replace("{{ elt }}",livres[emprunts[id]["isbn"]]["titre"]);
             Object.keys(livres).forEach(isbn => {
                 if (isbn !== emprunts[id]["livre"])
-                    livre += _templateEltDropDown.replace("{{ elt }}",isbn).replace("{{ elt }}",isbn);
+                    livre += _templateEltDropDown.replace("{{ elt }}",isbn).replace("{{ elt }}",livres[isbn]["titre"]);
             });
-            let utilisateur = _templateEltDropDown.replace("{{ elt }}",emprunts[id]["utilisateur"]).replace("{{ elt }}",emprunts[id]["utilisateur"]);
+            let utilisateur = _templateEltDropDown.replace("{{ elt }}",emprunts[id]["Utilsateur"]).replace("{{ elt }}",utilisateurs[emprunts[id]["Utilsateur"]]["nom"] + " " + utilisateurs[emprunts[id]["Utilsateur"]]["prénom"]);
             Object.keys(utilisateurs).forEach(email => {
-                if (email !== emprunts[id]["utilisateur"])
-                    utilisateur += _templateEltDropDown.replace("{{ elt }}",email).replace("{{ elt }}",email);
+                if (email !== emprunts[id]["Utilsateur"])
+                    utilisateur += _templateEltDropDown.replace("{{ elt }}",email).replace("{{ elt }}",utilisateurs[email]["nom"] + " " + utilisateurs[email]["prénom"]);
             });
+            // the statut will be defined to in late or not if the emprunt is late of 30 days
+            let statut;
+            console.log(emprunts)
+            const [day, month, year] = emprunts[id]["Date"].split('/');
+            console.log(`${year}-${month}-${day}`)
+            const today = new Date();
+            const date = new Date(`${year}-${month}-${day}`);
+            console.log("DATE", date)
+            const diffInMilliseconds = Math.abs(today - date);
+            const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 3600 * 24));
+            if (30-diffInDays < 0) {
+                statut ="En retard"
+            } else {
+                statut = "OK"
+            }
             rows += _templateEmprunt
                 .replace("{{ id }}",id)
+                .replace("{{ statut }}", statut)
                 .replace("{{ livre }}", livre)
-                .replace("{{ date }}", emprunts[id]["date"])
+                .replace("{{ date }}", emprunts[id]["Date"].split('/').reverse().join("-"))
                 .replace("{{ utilisateur }}", utilisateur);
         });
         contentRow.innerHTML = rows;
@@ -676,5 +736,5 @@ addButton.addEventListener('click', async () => {
     else if (browseType === "Utilisateurs")
         window.location.href = "/createAccount";
     else if (browseType === "Emprunts")
-        window.location.href = "/addEmprunt";
+        window.location.href = "/index";
 });

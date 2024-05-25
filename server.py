@@ -166,6 +166,32 @@ class Server(object):
         except Exception as e:
             print("\033[31mErreur lors de la suppression du livre : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def deleteAuteur(self, email:str, password:str, id:int) -> str:
+        try : 
+            self.db.mkRequest("selectUserByEmail", False, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        print("ID DELECTION READY",id)
+                        self.db.mkRequest("deleteEmpruntByAuteurID", False, id)
+                        self.db.mkRequest("deleteLivreByAuteur", False, id)#delete all books from this author first
+                        self.db.mkRequest("deleteAuteur", False, id)
+                        print("OK")
+                        self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de la suppression de l'auteur : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
     
     
     @cherrypy.expose
@@ -338,7 +364,6 @@ class Server(object):
     @cherrypy.tools.json_out()
     def getAllEmprunts(self, email:str, password:str) -> str:
         try : 
-            #check password before
             self.db.mkRequest("selectUserByEmail", True, email)
             user = self.db.cursor.fetchall()
             if user is not None and user != () and user != []:
@@ -346,6 +371,7 @@ class Server(object):
                     if user[0][2] == "admin":
                         self.db.mkRequest("selectAllEmprunt")
                         emprunts = self.db.cursor.fetchall()
+                        print("EMPRUNTS",emprunts)
                         if emprunts is not None and emprunts != () and emprunts != []:
                             emprunts = utils.formatEmpruntsToJson(emprunts)
                             return self.makeResponse(content=emprunts)
@@ -564,6 +590,34 @@ class Server(object):
                     return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
         except Exception as e:
             print("\033[31mErreur lors de la mise à jour des utilisateurs : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    def updateEmprunts(self) :
+        try :
+            data = cherrypy.request.json
+            email = data.get("email")
+            password = data.get("password")
+            self.db.mkRequest("selectUserByEmail", True, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if user[0][2] == "admin":
+                        emprunts = data.get("emprunts")
+                        if emprunts is not None and emprunts != {}:
+                            for emprunt in emprunts:
+                                date = emprunt["date"].split("/")
+                                date = date[2]+"-"+date[1]+"-"+date[0]
+                                self.db.mkRequest("updateEmprunt", False, emprunt["livre"], date, emprunt["utilisateur"], emprunt["id"])
+                                self.db.db.commit()
+                        return self.makeResponse(content="success")
+                    else:
+                        return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+        except Exception as e:
+            print("\033[31mErreur lors de la mise à jour des réservations : ",e, e.__traceback__.tb_lineno, "\033[0m")
             return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez vérifier les données envoyées")
         
         

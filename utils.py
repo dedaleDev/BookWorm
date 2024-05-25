@@ -177,7 +177,7 @@ def formatEmpruntsToJson(data:list[tuple])->json:
             ID, livre, date, utilsateur = item
             result[ID] = {
                 'isbn':livre,
-                'Date':date.strftime("%d/%m/%Y"),
+                'Date':date.strftime("%d/%m/%Y") if date is not None and date != "0000-00-00" else None,
                 'Utilsateur':utilsateur
             }
         print("JSON",result)
