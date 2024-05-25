@@ -29,6 +29,7 @@ def formatLivreToJsonOrdered(data:list[tuple], db:database.db)->json:
             if len(item) != 12:
                 item = item[:12]
             ISBN, titre, auteur, description, note, dateDeParution, status, genre, format, prix, pointDeVente, editeur = item
+            note = operationOnDataBase.getRealNote(ISBN, db)
             result.append({
                 'ISBN': ISBN,
                 'titre': titre,
@@ -124,6 +125,7 @@ def formatLivreToJson(data:list[tuple], db:database.db)->json:
             if len(item) != 12:
                 item = item[:12]
             ISBN, titre, auteur, description, note, dateDeParution, status, genre, format, prix, pointDeVente, editeur = item
+            note = operationOnDataBase.getRealNote(ISBN, db)
             result[ISBN] = {
                 'titre':titre,
                 'auteur':searchEngine.getAuteurNameByID(db, auteur),

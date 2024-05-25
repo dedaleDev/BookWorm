@@ -7,7 +7,7 @@ db_USER = "root"
 db_PASSWD = "1234"
 db_PORT = 3306
 
-debug = False #Ne pas utiliser en usage normal, cela supprime l'ensemble des données au démarrage. En cas de problème, essayez d'activer ce mode.
+debug = False #Rénitialise l'ensemble des données au démarrage. En cas de problème, essayez d'activer ce mode.
 
 www_dir = os.path.abspath('./www')
 print(os.path.join(www_dir, 'css'))

@@ -113,5 +113,42 @@ loadLivre(isbn).then(livreData => {
                 })
             });
         }
+        const noteInput = document.getElementById("inputNote");
+        const noteButton = document.getElementById("buttonNote");
+        noteButton.addEventListener("click", function () {
+            let decodedCookie = decodeURIComponent(document.cookie).split(';');
+            let email = '', password = '';
+            decodedCookie.forEach(c => {
+                let cookie = c.trim();
+                if (cookie.startsWith('email=')) {
+                    email = cookie.substring('email='.length);
+                }
+                if (cookie.startsWith('password=')) {
+                    password = cookie.substring('password='.length);
+                }
+            });
+            fetch(`${API_URL}/checkLogin?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.content === "success") {
+                    console.log("note: ", noteInput.value, isbn);
+                    fetch(`${API_URL}/addNote?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&isbn=${isbn}&note=${noteInput.value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("data: ", data)
+                        if (data.message === "Vous avez déjà noté ce livre !"){
+                            alert("Vous avez déjà noté ce livre !");
+                        } else if (data.content === "success") {
+                            alert("Note ajoutée avec succès");
+                            window.location.reload();
+                        } else {
+                            alert("Erreur lors de l'ajout de la note");
+                        }
+                    });
+                } else {
+                    window.location.href = "/login";
+                }
+            })
+        });
     }
 })

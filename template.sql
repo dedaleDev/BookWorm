@@ -89,7 +89,7 @@ CREATE TABLE `Livre` (
 
 CREATE TABLE `Note` (
   `ID` int(11) NOT NULL,
-  `Note` int(10) NOT NULL,
+  `Note` float(10) NOT NULL,
   `Utilisateur` varchar(50) NOT NULL,
   `Livre` varchar(13) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -193,6 +193,12 @@ ALTER TABLE `Auteur`
 --
 ALTER TABLE `Emprunt`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT pour la table `Note`
+--
+ALTER TABLE `Note`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Contraintes pour les tables déchargées

@@ -857,3 +857,27 @@ def convertPointDeVenteToAcceptablePointDeVente(pointDeVente:str,db:database.db)
             return pointsDeVentes[i][0]
         else :
             print("point de vente non trouvé", originPointDeVente +'!='+ pointDeVente)
+            
+def getRealNote(isbn:str,db:database.db) -> float : 
+    """ This function returns the real note of a book.
+    Args : isbn (str): The ISBN of the book.
+    Returns : float : The real note of the book."""
+    try :
+        db.mkRequest("selectNoteByISBN", False, isbn)
+        notes = db.cursor.fetchall()
+        moy = 0
+        nbNotes = 0
+        for note in notes : 
+            print(note[3], isbn)
+            if note[3] ==isbn: 
+                moy += note[1]
+                nbNotes+=1
+        if nbNotes != 0:
+            return moy/nbNotes
+        else : 
+            db.mkRequest("selectLivreByISBN", True, isbn)
+            result = db.cursor.fetchall()
+            return result[0][4]
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la recherche de la note réelle du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
+        return 0

@@ -919,6 +919,41 @@ class Server(object):
             print(f"Erreur : {e}")
             return self.makeResponse(is_error=True, error_message=str(e))
     
+    #Note = ID, Note (0-10), Utilisateur (email), Livre (isbn)
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def addNote(self, email:str, password:str, isbn:str, note:str) -> str:
+        try : 
+            print("REQUEST RECEIVED", email, password, isbn, note)
+            self.db.mkRequest("selectUserByEmail", True, email)
+            user = self.db.cursor.fetchall()
+            if user is not None and user != () and user != []:
+                if user[0][1] == password:
+                    if isbn.isdigit() and float(note) >= 0 and float(note) <= 10:
+                        self.db.mkRequest("selectLivreByISBN", False, isbn)
+                        livre = self.db.cursor.fetchall()
+                        if livre is not None and livre != () and livre != []:
+                            self.db.mkRequest("selectNoteByUserAndLivre", False, email, isbn)
+                            tmp = self.db.cursor.fetchall()
+                            print("TMP",tmp)
+                            if tmp == ():
+                                self.db.mkRequest("addNote", False, note, email, isbn)
+                                self.db.db.commit()
+                                return self.makeResponse(content="success")
+                            else : 
+                                return self.makeResponse(is_error=True, error_message="Vous avez déjà noté ce livre !")
+                        else:
+                            return self.makeResponse(is_error=True, error_message="Livre introuvable")
+                    else :
+                        return self.makeResponse(is_error=True, error_message="Les données envoyées sont incorrectes")
+                else:
+                    return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
+            else:
+                return self.makeResponse(is_error=True, error_message="Utilisateur introuvable")
+        except Exception as e:
+            print("\033[31mErreur lors de l'ajout de la note : ",e, e.__traceback__.tb_lineno, "\033[0m")
+            return self.makeResponse(is_error=True, error_message="Oups, une erreur est survenue, veuillez réessayer ultérieurement")
+    
 def jsonify_error(status, message, traceback, version):
     try :
         response = cherrypy.response
