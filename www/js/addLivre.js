@@ -191,7 +191,6 @@ async function form() {
       e.preventDefault();
       console.log("CLICKED")
       if (validateForm()) {
-        // verifier que toutes les cases du formulatire sont valides puis récuperer ISBN, Titre,Auteur (enum),Description varchar(1000),Note,Date de parution,Statut,Genre,Format,Prix,Point de vente,Editeur,Image
         const isbn = document.getElementById('isbn').value;
         const titre = document.getElementById('titre').value;
         const auteur = document.getElementById('auteur').value;

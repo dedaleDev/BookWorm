@@ -285,6 +285,7 @@ async function checkIfChangeAuteurs(originalAuteurs) {
                         throw new Error('Failed to update auteurs');
                     }{
                         alert("Les modifications ont bien été prises en compte !")
+                        showAuteurArray();
                     }
                 } catch (error) {
                     console.error('Error updating auteurs:', error);
@@ -337,6 +338,7 @@ async function checkifChangePointDeVentes(originalPointDeVentes) {
                 }
             } else {
                 alert("Vous êtes à jour !")
+                showPointDeVenteArray();
             }
         }
     });
@@ -375,6 +377,7 @@ async function checkIfChangeEditeurs(originalEditeurs) {
                         throw new Error('Failed to update éditeurs');
                     } else {
                         alert("Les modifications ont bien été prises en compte !")
+                        showEditeurArray();
                     }
                 } catch (error) {
                     console.error('Error updating éditeurs:', error);
@@ -425,6 +428,7 @@ async function checkIfChangeUtilisateurs(originalUtilisateurs) {
                         throw new Error('Failed to update utilisateurs');
                     } else {
                         alert("Les modifications ont bien été prises en compte !")
+                        showUtilisateurArray();
                     }
                 } catch (error) {
                     console.error('Error updating utilisateurs:', error);
@@ -476,6 +480,7 @@ async function checkIfChangeEmprunts(originalEmprunts) {
                         throw new Error('Failed to update emprunts');
                     } else {
                         alert("Les modifications ont bien été prises en compte !")
+                        showEmpruntArray();
                     }
                 } catch (error) {
                     console.error('Error updating emprunts:', error);

@@ -11,7 +11,7 @@ def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
     """
     try : 
         result = []
-        blacklistword = ["le", "la", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
+        blacklistword = ["le", "la", "tome", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
         if len(recherche) > 30:#tronque la recherche si elle est trop longue pour éviter max recursion depth
             recherche = recherche[:30]
         for i in range(len(recherche)):
@@ -181,6 +181,17 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
         result = searchEngine(recherche, request, db)
         result = [livre for elt in result for livre in elt]
         temp = []
+        sortOrder = []
+        #tri par ordre de pertinene : plus les elements sont duppliqués, plus ils sont pertinents
+        for i in result:
+            max = 0
+            for j in result : 
+                if j[0] == i[0]:
+                    max += 1
+            sortOrder.append((i,max))
+        sortOrder.sort(key=lambda x: x[1], reverse=True)
+        result = [i[0] for i in sortOrder]
+        print("RESULT SEARCH", result)
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
                 doublon = False

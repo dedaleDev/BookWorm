@@ -1,4 +1,47 @@
 const API_URL = 'http://192.168.1.20:8080'
+
+
+let email, password;
+
+async function getCookieValue(name) {
+    const cookieString = decodeURIComponent(document.cookie);
+    const cookies = cookieString.split(';');
+    for (let cookie of cookies) {
+        let [key, value] = cookie.trim().split('=');
+        if (key === name) {
+            return value;
+        }
+    }
+    return null;
+}
+
+async function checkLoginAndGetUserInfo() {
+    try {
+        email = await getCookieValue('email');
+        password = await getCookieValue('password');
+        const response = await fetch(`${API_URL}/checkLogin?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        const data = await response.json();
+        if (data.content === 'success') {
+            document.getElementById("account").src = "../img/account.svg";
+            const adminResponse = await fetch(`${API_URL}/isAdmin?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+            const adminData = await adminResponse.json();
+            if (adminData.content === "success") {
+                document.getElementById('config').innerHTML = `<img src="../img/smallConfig.svg" alt="Config" class="img-fluid" style="width: 60%;">`;
+            } else {
+                document.getElementById('config').innerHTML = "";
+            }
+        } else {
+            document.getElementById('config').innerHTML = "";
+            document.getElementById("account").src = "../img/login.svg";
+        }
+    } catch (error) {
+        console.error('Error checking login and fetching user info:', error);
+        document.getElementById('config').innerHTML = "";
+        document.getElementById("account").src = "../img/login.svg";
+    }
+}
+checkLoginAndGetUserInfo();
+
 const urlParams = new URLSearchParams(window.location.search);
 const searchValue = urlParams.get('search');
 let typeSearch = urlParams.get('type');
@@ -6,17 +49,17 @@ let sort = ""
 if (typeSearch == "Livre"){
     sort= urlParams.get('sort');
     if (sort == null){
-        sort = "sortByAlpha";
+        sort = "sortByPertinence";
     }
     filterAuteur = urlParams.get('auteur');
     if (filterAuteur == null){
-        filterAuteur = "Tous";
+        filterAuteur = "all";
     }
 }
 
 document.getElementById("selectTypeButton").textContent = "Type de recherche ("+typeSearch+")";
-//création d'un dictionnaire pour la correspondance entre les id des boutons et les noms des boutons
 let sortButton = {
+    "sortByPertinence": "pertinence✦",
     "sortByAlpha": "ordre alphabétique",
     "sortByNote": "note",
     "sortByDate": "date de parution",
@@ -175,7 +218,7 @@ async function showLivre(searchData, isbnArray) {
             filterAuteur.innerHTML = _templateFilter.replace("{{ auteur }}", searchData[id]["auteur"]);
             filter.appendChild(filterAuteur);
         }
-        if (filterAuteur != "Tous" && searchData[id]["auteur"] != filterAuteur) {
+        if (filterAuteur != "all" && searchData[id]["auteur"] != filterAuteur) {
             livre.style.display = "none";
         }
     });
@@ -251,7 +294,7 @@ dropdownItems.forEach(item => {
         if (["Livre", "Auteur", "Editeur", "Point de vente"].includes(selectedValue)) {
             typeSearch = selectedValue;
             window.location.href = `search?search=${searchValue}&type=${typeSearch}`;
-        } else if ([ "Ordre alphabétique", "Note", "Date de parution", "Prix"].includes(selectedValue)) {
+        } else if ([ "Pertinence✦","Ordre alphabétique", "Note", "Date de parution", "Prix"].includes(selectedValue)) {
             sort = this.id;
             console.log("sort: ", sort);
             window.location.href = `search?search=${searchValue}&type=${typeSearch}&sort=${sort}&auteur=${filterAuteur}`;

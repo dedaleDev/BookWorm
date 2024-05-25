@@ -8,7 +8,25 @@
         <link rel="stylesheet" href="../css/search.css">
     </head>
     <body>
-        <h1 class="logo" style="padding-top: 5vh; padding-left: 5vh;"><a id="logo" href="./">BookWorm</a></h3>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="padding-top: 5vh;">
+            <h1 class="logo" style="padding-left: 5vh;"><a id="logo" href="./">BookWorm</a></h3>
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse justify-content-end">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a  id="config" class="nav-link" href="/config">
+                                <img src="../img/smallConfig.svg" alt="Config" class="img-fluid" style="width: 60%;">
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login" style="margin-left: -110px;">
+                                <img id="account" src="../img/account.svg" alt="Account" class="img-fluid" style="width: 60%;">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
         <form class="form-horizontal">
             <div class="input-group" style="padding: 5vh; padding-bottom: 2vh;  padding-top: 1vh;">
                 <input id="searchInput" type="text" class="form-control" placeholder="Rechercher" value="">
@@ -35,6 +53,7 @@
                         Trier par...
                     </button>
                     <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" id="sortByPertinence">Pertinence✦</a></li></li>
                         <li><a class="dropdown-item" id="sortByAlpha">Ordre alphabétique</a></li>
                         <li><a class="dropdown-item" id="sortByNote">Note</a></li>
                         <li><a class="dropdown-item" id="sortByDate">Date de parution</a></li>

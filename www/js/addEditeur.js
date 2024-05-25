@@ -1,5 +1,4 @@
 const API_URL = 'http://192.168.1.20:8080'
-//Editeur : Nom adresse
 
 let decodedCookie = decodeURIComponent(document.cookie).split(';');
 let email = '', password = '';

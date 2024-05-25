@@ -29,6 +29,7 @@ class db():
     "selectEditeurByAdresse" : "SELECT * FROM `Editeur` WHERE `Adresse` LIKE %s;",
     "deleteLivre" : "DELETE FROM `Livre` WHERE `ISBN` = %s;",
     "deleteLivreByAuteur" : "DELETE FROM `Livre` WHERE `Auteur` = %s;",
+    "deleteNoteByISBN" : "DELETE FROM `Note` WHERE `Livre` = %s;",
     "deleteAuteur" : "DELETE FROM `Auteur` WHERE `ID` = %s;",
     "deletePointDeVente" : "DELETE FROM `Point de vente` WHERE `Adresse` = %s;",
     "deleteEditeur" : "DELETE FROM `Editeur` WHERE `Nom` = %s;",
@@ -96,7 +97,7 @@ class db():
                 else :
                     exit(1)
             except :
-                print("Création de la base de donnée échouée ! Veuillez vérifier vos paramètres de connexion (en haut du fichier main.py). Si cela ne résout pas le problème, essayez de relancer Apache et MariaDB.")
+                print("\033[31mCréation de la base de donnée échouée ! Veuillez vérifier vos paramètres de connexion (en haut du fichier main.py). Si cela ne résout pas le problème, essayez de relancer Apache et MariaDB.\033[0m")
                 exit(1)
         self.cursor = self.db.cursor()
         #test si les tables existent
@@ -112,7 +113,7 @@ class db():
             else :
                 exit(1)
         if tablesLoad != self.list_tables:#verification des tables
-            print("Erreur : Base de donnée corrompue ! Les tables ne correspondent pas avec le modèle UML attendu, veuillez vérifier vos tables.")
+            print("\033[31mErreur : Base de donnée corrompue ! Les tables ne correspondent pas avec le modèle UML attendu, veuillez vérifier vos tables.\033[0m")
             print("Tables attendues : ",self.list_tables)
             print("Tables trouvées : ",tablesLoad)
             if input("Voulez-vous réinitialiser la base de donnée ? (Y/N) : ") == "Y":
@@ -164,7 +165,7 @@ class db():
                 print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m")
             
     def retryDatabaseConnection(self) -> bool:
-        """This function retries to connect to the database."""
+        """This function retries to connect to the database if an error occured."""
         print("Connexion à la base de donnée perdu, tentative de reconnexion...")
         try :
             maxRetries = 3
@@ -206,14 +207,14 @@ class db():
                             print("Données ajoutées avec succès !")
                             return 0
                         else :
-                            print("Erreur : Impossible d'ajouter le jeu de donnée.")
+                            print("\033[31mErreur : Impossible d'ajouter le jeu de donnée. Veuillez vérifier vos fichiers .csv dans le dossier data. Il est possible que le format ne corresponde pas.\033[0m")
                     return 0
                 else :
-                    print("Erreur : Impossible de créer les tables.")
+                    print("\033[31mErreur : Impossible de créer les tables.\033[0m")
             else :
-                    print("Erreur : Impossible de créer la base de donnée.")
+                    print("\033[31mErreur : Impossible de créer la base de donnée.\033[0m")
         except Exception as e: 
-            print("Erreur : Impossible de créer la base de donnée ! Une erreur est survenue : ",e)
+            print("\033[31mErreur : Impossible de créer la base de donnée ! Une erreur est survenue : ",e,"\033[0m")
         return 1
         
     def loadData(self) -> int:
@@ -227,7 +228,7 @@ class db():
             for i in os.listdir("data/livres"):
                 os.system(f"cp data/livres/{i} www/img/livres/{i}")
         except Exception as e:
-            print("Erreur : Impossible d'importer les images de références ! Une erreur est survenue : ",e)
+            print("\033[31mErreur : Impossible d'importer les images de références ! Une erreur est survenue : ",e,"\033[0m")
         
         self.db = pymysql.connect(host=self.host, charset="utf8mb4", user=self.user, passwd=self.passwd, port=self.port, db="BookWorm",init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
         data= ["data/Auteur.csv","data/Editeur.csv","data/PointDeVente.csv","data/Livre.csv","data/Utilisateur.csv","data/Note.csv","data/Emprunt.csv"]
@@ -243,15 +244,13 @@ class db():
                             continue
                         if file in idTable:
                             row.pop(0)
-                        #if  ',' in row[-1]: #desativé pour le moment car inutile à priori à voir dans le temps #danger 
-                            #row[-1] = row[-1].split(',')[0]
                         self.mkRequest("insert"+file.split("/")[-1].split(".")[0], False, *row)
                     self.db.commit()
             except FileNotFoundError or PermissionError as e:
-                print(f"Erreur : Impossible de trouver le fichier {file}  dans le repertoire data ! Le fichier n'existe pas ou vous n'avez pas les droits pour le lire.",e)
+                print(f"\033[31mErreur : Impossible de trouver le fichier {file}  dans le repertoire data ! Le fichier n'existe pas ou vous n'avez pas les droits pour le lire.",e,"\033[0m")
                 return 1
             except Exception as e:
-                print(f"Erreur : Impossible de lire le fichier {file} ! Une erreur est survenue : ",e, "ligne : ", e.__traceback__.tb_lineno)
+                print(f"\033[31mErreur : Impossible de lire le fichier {file} ! Une erreur est survenue : ",e, "ligne : ", e.__traceback__.tb_lineno,"\033[0m")
                 return 1
         return 0
     

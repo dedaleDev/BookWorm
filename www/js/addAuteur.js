@@ -12,8 +12,6 @@ decodedCookie.forEach(c => {
     }
 });
 
-//Auteur Row = ID, Nom, Prénom,Alias (can be null), Biographie, Date de naissance, dateDeDeces (can be null)
-
 const nomInput = document.getElementById("nom");
 nomInput.addEventListener("blur", function() {
   const nom = nomInput.value;
