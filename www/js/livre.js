@@ -155,6 +155,15 @@ loadLivre(isbn).then(livreData => {
         }
         const noteInput = document.getElementById("inputNote");
         const noteButton = document.getElementById("buttonNote");
+        const noteForm = document.getElementById('noteForm');
+
+        noteForm.addEventListener('keydown', function(event) {//check if the enter key is pressed
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                buttonNote.click();
+            }
+        });
+
         noteButton.addEventListener("click", function () {
             let decodedCookie = decodeURIComponent(document.cookie).split(';');
             let email = '', password = '';
@@ -171,7 +180,6 @@ loadLivre(isbn).then(livreData => {
             .then(response => response.json())
             .then(data => {
                 if (data.content === "success") {
-                    console.log("note: ", noteInput.value, isbn);
                     fetch(`${API_URL}/addNote?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&isbn=${isbn}&note=${noteInput.value}`)
                     .then(response => response.json())
                     .then(data => {

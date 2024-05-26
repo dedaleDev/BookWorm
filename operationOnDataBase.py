@@ -23,13 +23,15 @@ def filterLivreByAuteur(livres:list[tuple], auteur:str,db:database.db)-> list:
         db (database.db): The database object.
     Returns:
         list: The filtered list of books."""
-    result = []
-    
-    for i in range(len(livres)):
-        if searchEngine.getAuteurNameByID(db,livres[i][2]) == auteur:
-            result.append(livres[i])
-    print(f"Résultat du filtrage par auteur : '{auteur}'", result)
-    return result
+    try : 
+        result = []
+        for i in range(len(livres)):
+            if searchEngine.getAuteurNameByID(db,livres[i][2]) == auteur:
+                result.append(livres[i])
+        return result
+    except Exception as e:
+        print(f"\033[31m Une erreur est survenue lors du filtrage des livres par auteur :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
+        return livres
 
 def sortLivre(livres:list, operation:str)-> list:
     """ This function sorts the books.
@@ -43,13 +45,10 @@ def sortLivre(livres:list, operation:str)-> list:
         if operation == "sortByPertinence" :
             return livres
         if operation == "sortByNote":
-            print("Tri par note")
             livres.sort(key=lambda x: x[4], reverse=True)
         elif operation == "sortByAlpha":
-            print("Tri par ordre alphabétique")
             livres.sort(key=lambda x: x[1])
         elif operation == "sortByDate":
-            print("Tri par date de parution")
             try :
                 for i in range(len(livres)):
                     for j in range(i+1, len(livres)):
@@ -63,17 +62,15 @@ def sortLivre(livres:list, operation:str)-> list:
                                     livres[i], livres[j] = livres[j], livres[i]
                 livres = livres[::-1]#on inverse la liste pour avoir le tri dans l'ordre croissant
             except ValueError as e:
-                print(e, e.__traceback__.tb_lineno)
+                print(f"\033[31m Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 pass
             except Exception as e:
-                print(f"Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno}")
-            print('Résultat du tri par date de parution :')
+                print(f"\033[31m Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
         elif operation == "sortByPrix":
-            print("Tri par prix")
             livres.sort(key=lambda x: x[9])
         return livres
     except Exception as e:
-        print(f"Une erreur est survenue lors du tri des livres :{e}, ligne : {e.__traceback__.tb_lineno}")
+        print(f"\033[31m Une erreur est survenue lors du tri des livres :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
 
 
 def  getStatus(isbn:str, db:database.db):
@@ -86,14 +83,13 @@ def  getStatus(isbn:str, db:database.db):
         emprunt = db.cursor.fetchall()
         db.mkRequest("selectLivreByISBN", True, isbn)
         livre = db.cursor.fetchall()
-        print(emprunt,livre, isbn)
         if livre != None:
             dbStatus = livre[0][6]
         if dbStatus == "hors stock": return "hors stock"
         elif  emprunt == None or emprunt ==[] or emprunt == (): return "disponible"
         else : return "emprunté"
     except Exception as e:
-        print(f"Une erreur est survenue lors de la recherche du statut du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
+        print(f"\033[31m Une erreur est survenue lors de la recherche du status du livre :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
         return None
     
 def convertPointDeVenteToAcceptablePointDeVente(pointDeVente:str,db:database.db)->str:
@@ -101,16 +97,16 @@ def convertPointDeVenteToAcceptablePointDeVente(pointDeVente:str,db:database.db)
     Args : pointDeVente (str): The point of sale.
            db (database.db): The database object.
     Returns : str : The acceptable point of sale."""
-    db.mkRequest("selectAllPointsDeVentes", False)
-    pointDeVente = pointDeVente.replace(" ", "").replace("\n", "").replace("\r", "")
-    pointsDeVentes = db.cursor.fetchall()
-    for i in range(len(pointsDeVentes)):
-        originPointDeVente = pointsDeVentes[i][0].replace(" ", "").replace("\n", "").replace("\r", "")
-        if pointDeVente == originPointDeVente:
-            print("point de vente trouvé", pointsDeVentes[i][0])
-            return pointsDeVentes[i][0]
-        else :
-            print("point de vente non trouvé", originPointDeVente +'!='+ pointDeVente)
+    try : 
+        db.mkRequest("selectAllPointsDeVentes", False)
+        pointDeVente = pointDeVente.replace(" ", "").replace("\n", "").replace("\r", "")
+        pointsDeVentes = db.cursor.fetchall()
+        for i in range(len(pointsDeVentes)):
+            originPointDeVente = pointsDeVentes[i][0].replace(" ", "").replace("\n", "").replace("\r", "")
+            if pointDeVente == originPointDeVente:
+                return pointsDeVentes[i][0]
+    except Exception as e:
+        print(f"\033[31m Une erreur est survenue lors de la conversion du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
             
 def getRealNote(isbn:str,db:database.db) -> float : 
     """ This function returns the real note of a book.
@@ -133,5 +129,5 @@ def getRealNote(isbn:str,db:database.db) -> float :
             result = db.cursor.fetchall()
             return result[0][4]
     except Exception as e:
-        print(f"Une erreur est survenue lors de la recherche de la note réelle du livre :{e}, ligne : {e.__traceback__.tb_lineno}")
+        print(f"\033[31m Une erreur est survenue lors de la recherche de la note réelle du livre :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
         return 0

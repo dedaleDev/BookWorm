@@ -11,7 +11,7 @@ def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
     """
     try : 
         result = []
-        blacklistword = ["le", "la", "tome", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
+        blacklistword = ["le", "la", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
         if len(recherche) > 30:#tronque la recherche si elle est trop longue pour éviter max recursion depth
             recherche = recherche[:30]
         for i in range(len(recherche)):
@@ -22,7 +22,7 @@ def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
                 result.append(db.cursor.fetchall())
         return result
     except Exception as e :
-        print("Le moteur de recherche à rencontré une erreur : ",e ,e.__traceback__.tb_lineno)
+        print("\033[31mLe moteur de recherche à rencontré une erreur : ",e ,e.__traceback__.tb_lineno,"\033[0m")
 
 def getAuteurNameByID(db:database.db, id:int)->str:
     """This function return the name of the author by his ID
@@ -54,7 +54,7 @@ def getAuteurAliasByID(db:database, id:int)->str:
         if result == None or result == []: return "Auteur inconnu"
         return f"{result[0][6]}"
     except Exception as e:
-        print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+        print(f"\033[31mUne erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
         
 def getAuteurIDByNomPrénom(db:database.db, nom:str, prenom:str)->int:
     """This function return the ID of the author by his name and first name
@@ -70,7 +70,7 @@ def getAuteurIDByNomPrénom(db:database.db, nom:str, prenom:str)->int:
         if result == None or result == []: return "Auteur inconnu"
         return f"{result[0][0]}"
     except Exception as e:
-        print(f"Une erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}")
+        print(f"\033[31mUne erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
 
 def getPointDeVenteNameByAddresse(db:database.db, adresse: str)->str:
     """This function return the name of the point of sale by his adresse
@@ -85,10 +85,10 @@ def getPointDeVenteNameByAddresse(db:database.db, adresse: str)->str:
         if result == None or result == []: return "Nom du point de vente inconnu"
         return f"{result[0][1]}"
     except Exception as e:
-        print(f"Une erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}")
+        print(f"\033[31mUne erreur est survenue lors de la recherche du point de vente :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
 
 
-def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
+def searchAuteur(recherche:str, db:database.db)->list:
     """This function search an author in the database
     Args :
         recherche : str, the name of the author
@@ -108,29 +108,11 @@ def searchAuteur(recherche:str, db:database.db, onlyOne:bool = False)->list:
         if temp == []:
             return None
         result = temp
-        if onlyOne and len(result) > 1:
-            print(f"Résultat de la recherche pour {' '.join(recherche)}:\n")
-            for i in range(len(result)) : 
-                if result[i][6] != None:
-                    print(f"{i+1} : {result[i][2]} {result[i][1]},   {result[i][6]}")
-                else :
-                    print(f"{i+1} : {result[i][2]} {result[i][1]}")
-            while True :
-                try :
-                    saisie = input("Veuillez saisir le numéro de l'auteur que vous souhaitez sélectionner : ")
-                    if saisie.isdigit() and int(saisie) >= 1 and int(saisie) <= len(request):
-                        return result[int(saisie)-1]
-                    else:
-                        print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-                except KeyboardInterrupt:
-                    return None
-                except :
-                    print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
         if result == []:
             return None
         return result
     except Exception as e :
-        print("Une erreur est survenue lors de la recherche d'auteur : ",e ,e.__traceback__.tb_lineno)
+        print("\033[31mUne erreur est survenue lors de la recherche d'auteur : ",e ,e.__traceback__.tb_lineno,"\033[0m")
 
 def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->list:
     """This function search a point of sale in the database
@@ -145,8 +127,6 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
         recherche = recherche.strip().split()
         request = ["selectPointDeVenteByNom", "selectPointDeVenteByAdresse"]
         result = searchEngine(recherche, request, db)
-        
-        print(result)
         temp = []
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
@@ -160,9 +140,9 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
             return None
         return result
     except Exception as e :
-        print("Une erreur est survenue lors de la recherche du point de vente : ",e ,e.__traceback__.tb_lineno)
+        print("\033[31mUne erreur est survenue lors de la recherche du point de vente : ",e ,e.__traceback__.tb_lineno,"\033[0m")
 
-def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
+def searchLivre(recherche:str, db:database.db)->list:
     """This function search a book in the database
     Args :
         recherche : str, the name of the book
@@ -176,13 +156,12 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
         request = ["selectLivreByTitre", "selectLivreByDescription","selectLivreByAuteurPrénom","selectLivreByAuteurNom","selectLivreByAuteurAlias","selectLivreByGenre"]
         for i in recherche: #evite les recherches de type ISBN si la recherche ne contient pas suffisament de chiffres
             if len(i) > 4 and i.isdigit():
-                print("Recherche d'un code ISBN")
                 request.insert(0, "selectLivreByISBN")
         result = searchEngine(recherche, request, db)
         result = [livre for elt in result for livre in elt]
         temp = []
         sortOrder = []
-        #tri par ordre de pertinene : plus les elements sont duppliqués, plus ils sont pertinents
+        #tri par ordre de pertinence : plus les elements sont duppliqués, plus ils sont pertinents
         for i in result:
             max = 0
             for j in result : 
@@ -191,7 +170,6 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
             sortOrder.append((i,max))
         sortOrder.sort(key=lambda x: x[1], reverse=True)
         result = [i[0] for i in sortOrder]
-        print("RESULT SEARCH", result)
         for i in result:#enlève les doublons
             if i not in temp and i != None and i != ( ):
                 doublon = False
@@ -201,28 +179,12 @@ def searchLivre(recherche:str, db:database.db, onlyOne:bool = False)->list:
                         break
                 if not doublon:
                     temp.append(i)
-                        
         if temp == []:
             return None
         result = temp
-        if onlyOne and len(result) > 1:#à enlever eventuellement si inutile
-            print(f"\nRésultat de la recherche pour {' '.join(recherche)}:\n")
-            for i in range(len(result)) : 
-                print(f"{i+1} : {result[i][0]},  {result[i][1]},  {getAuteurNameByID(db,result[i][2])}")
-            while True :
-                try :
-                    saisie = input("Veuillez saisir le numéro du livre que vous souhaitez sélectionner : ")
-                    if saisie.isdigit() and int(saisie) >= 1 and int(saisie) <= len(result):
-                        return result[int(saisie)-1]
-                    else:
-                        print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-                except KeyboardInterrupt:
-                    return None
-                except :
-                    print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
         return result
     except Exception as e :
-        print("Une erreur est survenue lors de la recherche du livre (searchLivre): ",e ,e.__traceback__.tb_lineno)
+        print("\033[31mUne erreur est survenue lors de la recherche du livre (searchLivre): ",e ,e.__traceback__.tb_lineno,"\033[0m")
 
 def searchEditeur(recherche:str, db:database.db, onlyOne:bool = False)->list:
     """This function search a publisher in the database
@@ -242,25 +204,8 @@ def searchEditeur(recherche:str, db:database.db, onlyOne:bool = False)->list:
             if i not in temp:
                 temp.append(i)
         result = temp
-        if onlyOne and len(result) > 1:
-            print(f"\nRésultat de la recherche pour {' '.join(recherche)}:\n")
-            for i in range(len(result)) : 
-                print(f"{i+1} :{result[i][0]},  {result[i][1]}")
-            while True :
-                try :
-                    saisie = input("Veuillez saisir le numéro de l'editeur que vous souhaitez sélectionner : ")
-                    if saisie.isdigit() and int(saisie) >= 1 and int(saisie) <= len(request):
-                        return result[int(saisie)-1]
-                    else:
-                        print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
-                except KeyboardInterrupt:
-                    return None
-                except :
-                    print("Désolé, le format de la réponse est incorrect. Veuillez réessayer.")
         if result == []:
             return None
         return result
     except Exception as e :
-        print("Une erreur est survenue lors de la recherche d'editeur : ",e ,e.__traceback__.tb_lineno)
-
-
+        print("\033[31mUne erreur est survenue lors de la recherche d'editeur : ",e ,e.__traceback__.tb_lineno,"\033[0m")

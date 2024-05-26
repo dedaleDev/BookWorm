@@ -36,7 +36,6 @@ class Server(object):
             if ISBN != [] :
                 for i in os.listdir("www/img/livres"):
                     if i.split('.')[0] not in ISBN and i.split('.')[1].endswith('jpg') :
-                        print(f"Suppression de {i}", f"www/img/livres/{i}")
                         os.remove(f"www/img/livres/{i}")
         except PermissionError as e:
             print("\033[31mErreur lors de la suppression des images vous n'avez pas les droits nécessaires.",e, e.__traceback__.tb_lineno, "\033[0m")
@@ -292,7 +291,6 @@ class Server(object):
             replacementPointDeVente = searchEngine.searchPointDeVente(replacementName, self.db, onlyOne=True)
             if replacementPointDeVente == None: 
                 return self.makeResponse(is_error=True, error_message="Point de vente de remplacement introuvable")
-            print("POINT DE VENTE REMPLACEMENT",replacementPointDeVente)
             return self.makeResponse(content=replacementPointDeVente[0][0])
         except Exception as e:
             print("\033[31mErreur lors de la recherche du point de vente de remplacement : ",e, e.__traceback__.tb_lineno, "\033[0m")
@@ -315,8 +313,6 @@ class Server(object):
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
                     if user[0][2] == "admin":
-                        print("ADRESSE REPLACEMENT",adresseReplacement)
-                        print("ADRESSE",adresse)
                         self.db.mkRequest("updateLivrePointDeVente", False, operationOnDataBase.convertPointDeVenteToAcceptablePointDeVente(adresseReplacement,self.db), operationOnDataBase.convertPointDeVenteToAcceptablePointDeVente(adresse,self.db))
                         self.db.mkRequest("deletePointDeVente", False, operationOnDataBase.convertPointDeVenteToAcceptablePointDeVente(adresse,self.db))
                         self.db.db.commit()
@@ -387,7 +383,6 @@ class Server(object):
                         self.db.mkRequest("deleteEmpruntByUser", False, emailToDelete)
                         self.db.mkRequest("deleteUser", False, emailToDelete)
                         self.db.db.commit()
-                        print("OK")
                         return self.makeResponse(content="success")
                     else:
                         return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
@@ -1066,7 +1061,6 @@ class Server(object):
     @cherrypy.tools.json_out()
     def addNote(self, email:str, password:str, isbn:str, note:str) -> str:
         try : 
-            print("REQUEST RECEIVED", email, password, isbn, note)
             self.db.mkRequest("selectUserByEmail", True, email)
             user = self.db.cursor.fetchall()
             if user is not None and user != () and user != []:
@@ -1077,13 +1071,13 @@ class Server(object):
                         if livre is not None and livre != () and livre != []:
                             self.db.mkRequest("selectNoteByUserAndLivre", False, email, isbn)
                             tmp = self.db.cursor.fetchall()
-                            print("TMP",tmp)
                             if tmp == ():
                                 self.db.mkRequest("addNote", False, note, email, isbn)
                                 self.db.db.commit()
                                 return self.makeResponse(content="success")
                             else : 
-                                return self.makeResponse(is_error=True, error_message="Vous avez déjà noté ce livre !")
+                                self.db.mkRequest("updateNote", False, note, email, isbn)
+                                return self.makeResponse(content="success")
                         else:
                             return self.makeResponse(is_error=True, error_message="Livre introuvable")
                     else :

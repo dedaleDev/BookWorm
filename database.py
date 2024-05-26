@@ -63,6 +63,7 @@ class db():
     "addNote" : "INSERT INTO `Note` (`Note`, `Utilisateur`, `Livre`) VALUES (%s,%s,%s);",
     "selectNoteByISBN" : "SELECT * FROM `Note` WHERE `Livre` = %s;",
     "selectNoteByUserAndLivre" : "SELECT * FROM `Note` WHERE `Utilisateur` = %s AND `Livre` = %s;",
+    "updateNote" : "UPDATE `Note` SET `Note` = %s WHERE `Utilisateur` = %s AND `Livre` = %s;",
     }
 
     def __init__(self, host:str ="localhost", user:str="root", passwd:str="1234", port:int=3306, debug:bool=False) -> None:
@@ -168,7 +169,7 @@ class db():
         """This function retries to connect to the database if an error occured."""
         print("Connexion à la base de donnée perdu, tentative de reconnexion...")
         try :
-            maxRetries = 3
+            maxRetries = 5
             retryDelay = 1 #secondes
             for i in range(maxRetries):
                 try: 
