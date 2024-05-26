@@ -54,7 +54,7 @@ _templateEmprunt = `<tr><td>{{ id }}</td>
     <td><select class="form-control" name="livre">{{ livre }}</select></td>
     <td><input type="date" class="form-control" value="{{ date }}"></td>
     <td><select class="form-control" name="utilisateur">{{ utilisateur }}</select></td>
-    <td><button class="btn btn-danger" onclick="deleteEmprunt('{{ id }}')">Supprimer</button></td></tr>`
+    <td><button class="btn btn-danger" onclick="deleteEmprunt('{{ id }}')">Remis</button></td></tr>`
 
 //Emprunts = ID, Livre (isbn), Date, Utilisateur (email)
 
