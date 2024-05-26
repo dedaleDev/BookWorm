@@ -148,21 +148,17 @@ class db():
             self.cursor.execute(self._requetes[request], tuple(args))
             self.maxRetry = 5
         except Exception as e:
-            errorPackSequece = ["Packet sequence","has no attribute 'read'","Lost connection","Cursor closed", "read"]
-            if any(x in str(e) for x in errorPackSequece):
-                reload = self.retryDatabaseConnection()
-                if reload:
-                    if self.maxRetry > 0:
-                        self.maxRetry -= 1
-                        self.mkRequest(request, verbose, *args)
-                    else :
-                        print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
-                else :
-                    print(' \033[31mErreur CRITIQUE : Packet Error Sequence')
-                    print(f"La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}, {pymysql.MySQLError}")
-                    print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
-                    print(f"Database : {type(self.db)} Actif : {self.db!=None}\033[0m")
-                    print("Veuillez redémarrer le serveur.")
+            if ("Packet sequence" in str(e) and  self.retryDatabaseConnection() == False) or ("has no attribute 'read'" in str(e) and self.retryDatabaseConnection() == False):
+                print(' \033[31mPacket Error Sequence')
+                print(f"La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}, {pymysql.MySQLError}")
+                print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
+                print(f"Database : {type(self.db)} Actif : {self.db!=None}\033[0m")
+            elif "Packet sequence" in  str(e) or  "has no attribute 'read'" in str(e) :
+                if self.maxRetry > 0:
+                    self.maxRetry -= 1
+                    self.mkRequest(request, verbose, *args)
+                else : 
+                    print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
             else :
                 print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 print("Args : ", args)
@@ -177,8 +173,13 @@ class db():
             retryDelay = 0.2 #secondes
             for i in range(maxRetries):
                 try: 
-                    self.cursor.close()
-                    self.db.close()
+                    try :
+                        self.cursor.close()
+                    except :
+                        pass
+                    try : 
+                        self.db.close()
+                    except : pass
                     self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, port=self.port, db="BookWorm", init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
                     self.cursor = self.db.cursor()
                     print("Reconnexion à la base de donnée réussie !")
