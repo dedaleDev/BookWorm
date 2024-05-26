@@ -148,7 +148,7 @@ class db():
             self.cursor.execute(self._requetes[request], tuple(args))
             self.maxRetry = 5
         except Exception as e:
-            errorPackSequece = ["packet sequence","has no attribute 'read'","lost connection","cursor closed", "read","EOF", "protocol error","settimeout","execute","bad file descriptor","unpack", "out of range"]
+            errorPackSequece = ["packet sequence","has no attribute 'read'","lost connection","cursor closed", "read","EOF", "protocol error","settimeout","execute","bad file descriptor","unpack", "out of range","invalid literal"]
             if any(x in str(e).lower() for x in errorPackSequece):
                 reload = self.retryDatabaseConnection()
                 if reload:
