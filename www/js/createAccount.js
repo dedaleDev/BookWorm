@@ -112,13 +112,14 @@ function validateForm() {
         const prenom = document.getElementById('prenom').value;
         const adresse = document.getElementById('adresse').value;
         const tel = document.getElementById('tel').value;
-        if (email.length === 0 || email.length > 100 || !email.includes('@') || !email.includes('.')) return false;
-        if (password.length === 0 || password.length > 100) return false;
+        console.log(email, mdp, confPassword, nom, prenom, adresse, tel);
+        if (email.length <= 0 || email.length > 100 || !email.includes('@') || !email.includes('.')) return false;
+        if (mdp.length <= 0 || mdp.length > 100) return false;
         if (confPassword !== mdp) return false;
-        if (nom.length === 1 || nom.length > 20) return false;
-        if (prenom.length === 1 || prenom.length > 100) return false;
-        if (adresse.length === 1 || adresse.length > 120) return false;
-        if (tel.length === 0 || tel.length > 10) return false;
+        if (nom.length <= 0 || nom.length > 20) return false;
+        if (prenom.length <= 0 || prenom.length > 100) return false;
+        if (adresse.length <= 0 || adresse.length > 120) return false;
+        if (tel.length <= 0 || tel.length > 10) return false;
         return true;
     } catch (e) {
         console.error(e);
@@ -145,11 +146,13 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append('prenom', prenom);
             formData.append('adresse', adresse);
             formData.append('tel', tel);
+            console.log("READY TO SEND")
             const response = await fetch(`${API_URL}/newUser`, {
                 method: 'POST',
                 body: formData
             });
             const data = await response.json();
+            console.log(data);
             if (data["content"] === 'success') {
                 alert('Le compte a bien été créé. Bienvenue sur BookWorm ! ');
                 if (!isAdmin)
