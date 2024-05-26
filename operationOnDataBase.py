@@ -62,7 +62,7 @@ def sortLivre(livres:list, operation:str)-> list:
                                     livres[i], livres[j] = livres[j], livres[i]
                 livres = livres[::-1]#on inverse la liste pour avoir le tri dans l'ordre croissant
             except ValueError as e:
-                print(f"\033[31m Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
+                print(f"\033[31m Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno} avec la topo : {livres[i],livres[j]}\033[0m")
                 pass
             except Exception as e:
                 print(f"\033[31m Une erreur est survenue lors du tri par date de parution :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
@@ -81,7 +81,7 @@ def  getStatus(isbn:str, db:database.db):
     try : 
         db.mkRequest("selectEmpruntByISBN", False, isbn)
         emprunt = db.cursor.fetchall()
-        db.mkRequest("selectLivreByISBN", True, isbn)
+        db.mkRequest("selectLivreByISBN", False, isbn)
         livre = db.cursor.fetchall()
         if livre != None:
             dbStatus = livre[0][6]
@@ -118,14 +118,13 @@ def getRealNote(isbn:str,db:database.db) -> float :
         moy = 0
         nbNotes = 0
         for note in notes : 
-            print(note[3], isbn)
             if note[3] ==isbn: 
                 moy += note[1]
                 nbNotes+=1
         if nbNotes != 0:
             return moy/nbNotes
         else : 
-            db.mkRequest("selectLivreByISBN", True, isbn)
+            db.mkRequest("selectLivreByISBN", False, isbn)
             result = db.cursor.fetchall()
             return result[0][4]
     except Exception as e:

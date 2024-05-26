@@ -172,7 +172,6 @@ def formatUserToJson(data:list[tuple])->json:
 def formatEmpruntsToJson(data:list[tuple])->json:
     try :
         result = {}
-        print("DATA",data)
         for item in data:
             if len(item) != 4:
                 item = item[:4]
@@ -182,7 +181,6 @@ def formatEmpruntsToJson(data:list[tuple])->json:
                 'Date':date.strftime("%d/%m/%Y") if date is not None and date != "0000-00-00" else None,
                 'Utilsateur':utilsateur
             }
-        print("JSON",result)
         json_result = json.dumps(result, indent=4)
         return json_result
     except Exception as e:

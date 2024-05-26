@@ -125,7 +125,7 @@ class db():
                     else :
                         exit(1)
                 except :
-                    print("Erreur : Impossible de supprimer la base de donnée !")
+                    print("\033[31mErreur : Impossible de supprimer la base de donnée !\033[0m")
                     exit(1)
 
     def mkRequest(self, request:str, verbose=False, *args) -> None:
@@ -148,8 +148,8 @@ class db():
             self.cursor.execute(self._requetes[request], tuple(args))
             self.maxRetry = 5
         except Exception as e:
-            errorPackSequece = ["Packet sequence","has no attribute 'read'","Lost connection","Cursor closed", "read"]
-            if any(x in str(e) for x in errorPackSequece):
+            errorPackSequece = ["packet sequence","has no attribute 'read'","lost connection","cursor closed", "read","EOF", "protocol error","settimeout","execute","bad file descriptor","unpack", "out of range"]
+            if any(x in str(e).lower() for x in errorPackSequece):
                 reload = self.retryDatabaseConnection()
                 if reload:
                     if self.maxRetry > 0:
@@ -161,8 +161,8 @@ class db():
                     print(' \033[31mErreur CRITIQUE : Packet Error Sequence')
                     print(f"La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}, {pymysql.MySQLError}")
                     print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
-                    print(f"Database : {type(self.db)} Actif : {self.db!=None}\033[0m")
-                    print("Veuillez redémarrer le serveur.")
+                    print(f"Database : {type(self.db)} Actif : {self.db!=None}")
+                    print("Veuillez redémarrer le serveur.\033[0m")
             else :
                 print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 print("Args : ", args)
@@ -171,7 +171,6 @@ class db():
             
     def retryDatabaseConnection(self) -> bool:
         """This function retries to connect to the database if an error occured."""
-        print("Connexion à la base de donnée perdu, tentative de reconnexion...")
         try :
             maxRetries = 5
             retryDelay = 0.2 #secondes
@@ -181,7 +180,6 @@ class db():
                     self.db.close()
                     self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, port=self.port, db="BookWorm", init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
                     self.cursor = self.db.cursor()
-                    print("Reconnexion à la base de donnée réussie !")
                     return True
                 except : 
                     time.sleep(retryDelay * (2 ** i))

@@ -430,11 +430,11 @@ class Server(object):
         Returns :
             str, JSON response"""
         try : 
-            self.db.mkRequest("selectUserByEmail", True, email)
+            self.db.mkRequest("selectUserByEmail", False, email)
             user = self.db.cursor.fetchall()
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
-                    self.db.mkRequest("selectEmpruntByUser", True, email)
+                    self.db.mkRequest("selectEmpruntByUser", False, email)
                     emprunts = self.db.cursor.fetchall()
                     if emprunts is not None and emprunts != () and emprunts != []:
                         emprunts = utils.formatEmpruntsToJson(emprunts)
@@ -615,7 +615,7 @@ class Server(object):
         Returns :
             str, JSON response"""
         try : 
-            self.db.mkRequest("selectUserByEmail", True, email)
+            self.db.mkRequest("selectUserByEmail", False, email)
             user = self.db.cursor.fetchall()
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
@@ -678,14 +678,14 @@ class Server(object):
         Returns :
             str, JSON response"""
         try : 
-            self.db.mkRequest("selectUserByEmail", True, email)
+            self.db.mkRequest("selectUserByEmail", False, email)
             user = self.db.cursor.fetchall()
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
                     self.db.mkRequest("selectLivreByISBN", False, isbn)
                     livre = self.db.cursor.fetchall()
                     if livre is not None and livre != () and livre != []:
-                        self.db.mkRequest("selectEmpruntByUser", True, email)
+                        self.db.mkRequest("selectEmpruntByUser", False, email)
                         emprunts = self.db.cursor.fetchall()
                         if emprunts is not None and emprunts != () and emprunts != []:
                             for emprunt in emprunts:
@@ -1061,7 +1061,7 @@ class Server(object):
     @cherrypy.tools.json_out()
     def addNote(self, email:str, password:str, isbn:str, note:str) -> str:
         try : 
-            self.db.mkRequest("selectUserByEmail", True, email)
+            self.db.mkRequest("selectUserByEmail", False, email)
             user = self.db.cursor.fetchall()
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
@@ -1073,11 +1073,10 @@ class Server(object):
                             tmp = self.db.cursor.fetchall()
                             if tmp == ():
                                 self.db.mkRequest("addNote", False, note, email, isbn)
-                                self.db.db.commit()
-                                return self.makeResponse(content="success")
                             else : 
                                 self.db.mkRequest("updateNote", False, note, email, isbn)
-                                return self.makeResponse(content="success")
+                            self.db.db.commit()
+                            return self.makeResponse(content="success")
                         else:
                             return self.makeResponse(is_error=True, error_message="Livre introuvable")
                     else :

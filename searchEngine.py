@@ -11,7 +11,7 @@ def searchEngine(recherche:list,requests:list, db:database.db)->tuple:
     """
     try : 
         result = []
-        blacklistword = ["le", "la", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
+        blacklistword = ["le", "la","tome", "les", "de", "du", "des", "un","moi", "une", "dans", "sur", "avec", "c'est","pour", "par", "et", "ou", "mais", "donc", "or", "ni", "car", "que","a", "the","an","of","in","on","with","for","by","and","or","but","so","yet","nor","because","that","to"]
         if len(recherche) > 30:#tronque la recherche si elle est trop longue pour éviter max recursion depth
             recherche = recherche[:30]
         for i in range(len(recherche)):
@@ -100,6 +100,8 @@ def searchAuteur(recherche:str, db:database.db)->list:
         recherche = recherche.strip().split()
         request = ["selectAuteurByPrenom", "selectAuteurByNom", "selectAuteurByAlias"]
         result = searchEngine(recherche, request, db)
+        if result == []:
+            return None
         result = [list(i[0]) for i in result if i]#format les résultats
         temp = []
         for i in result:#enlève les doublons
@@ -142,6 +144,22 @@ def searchPointDeVente(recherche:str, db:database.db, onlyOne:bool = False)->lis
     except Exception as e :
         print("\033[31mUne erreur est survenue lors de la recherche du point de vente : ",e ,e.__traceback__.tb_lineno,"\033[0m")
 
+def extract_tome_number(recherche:str):
+    """Extract the tome number from the search string"""
+    words = recherche.lower().split()
+    for i, word in enumerate(words):
+        if word == "tome" and i + 1 < len(words):
+            try:
+                return int(words[i + 1])
+            except ValueError:
+                continue
+        elif words[i].isdigit() and len(words[i]) <= 3:
+            try :
+                return int(words[i])
+            except ValueError:
+                continue
+    return None
+
 def searchLivre(recherche:str, db:database.db)->list:
     """This function search a book in the database
     Args :
@@ -152,6 +170,7 @@ def searchLivre(recherche:str, db:database.db)->list:
         result : list of tuple, the result of the search"""
     try: 
         result = []
+        tome_number = extract_tome_number(recherche)
         recherche = recherche.strip().split()
         request = ["selectLivreByTitre", "selectLivreByDescription","selectLivreByAuteurPrénom","selectLivreByAuteurNom","selectLivreByAuteurAlias","selectLivreByGenre"]
         for i in recherche: #evite les recherches de type ISBN si la recherche ne contient pas suffisament de chiffres
@@ -163,11 +182,16 @@ def searchLivre(recherche:str, db:database.db)->list:
         sortOrder = []
         #tri par ordre de pertinence : plus les elements sont duppliqués, plus ils sont pertinents
         for i in result:
-            max = 0
-            for j in result : 
+            max_score = 0
+            for j in result:
                 if j[0] == i[0]:
-                    max += 1
-            sortOrder.append((i,max))
+                    max_score += 1
+            # Bonus if the title contains a matching tome number
+            if tome_number and f'tome {tome_number}' in i[1].lower() and recherche[0].lower() in i[1].lower():
+                max_score += 3
+            elif  tome_number and f'{tome_number}' in i[1].lower() and recherche[0].lower() in i[1].lower():
+                max_score += 3
+            sortOrder.append((i, max_score))
         sortOrder.sort(key=lambda x: x[1], reverse=True)
         result = [i[0] for i in sortOrder]
         for i in result:#enlève les doublons

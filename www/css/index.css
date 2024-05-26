@@ -11,9 +11,10 @@ h1, h2, h3, p {
     color : #ffffff;
 }
 
-.logo {
+#logo {
     color: #ffffff;
     font-size: 5em;
+    text-decoration: none;
     text-align:  center;
 }
 

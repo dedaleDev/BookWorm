@@ -36,12 +36,11 @@ adresseInput.addEventListener("blur", function() {
 );
 
 function validateForm() {
-    //return true if all fields are valid, false otherwise
     try {
         const nom = document.getElementById('nom').value;
         const adresse = document.getElementById('adresse').value;
-        if (nom.length === 1 || nom.length > 20) return false;
-        if (adresse.length === 1 || adresse.length > 120) return false;
+        if (nom.length === 0 || nom.length > 20) return false;
+        if (adresse.length === 0 || adresse.length > 120) return false;
         return true;
     } catch (e) {
         console.error(e);
@@ -50,8 +49,8 @@ function validateForm() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    const addButton = document.getElementById('submit');
-    addButton.addEventListener('click', async (e) => {
+    const form = document.getElementById('editeurForm');
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (validateForm()) {
             const nom = document.getElementById('nom').value;
@@ -61,16 +60,22 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append('adresse', adresse);
             formData.append('email', email);
             formData.append('password', password);
-            const response = await fetch(`${API_URL}/newEditeur`, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data["content"] === 'success') {
-                alert('L\'éditeur a bien été ajouté');
-                window.location.href = '/config';
-            } else {
-                alert('Erreur lors de l\'ajout de l\'éditeur' + data["message"]);
+            try {
+                const response = await fetch(`${API_URL}/newEditeur`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                console.log(data);
+                if (data["content"] === 'success') {
+                    alert('L\'éditeur a bien été ajouté');
+                    window.location.href = '/config';
+                } else {
+                    alert('Erreur lors de l\'ajout de l\'éditeur : ' + data["message"]);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la requête', error);
+                alert('Erreur lors de la requête');
             }
         } else {
             alert('Veuillez remplir correctement tous les champs du formulaire');

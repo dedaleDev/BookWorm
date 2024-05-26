@@ -26,7 +26,7 @@ async function checkLoginAndGetUserInfo() {
             const adminResponse = await fetch(`${API_URL}/isAdmin?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
             const adminData = await adminResponse.json();
             if (adminData.content === "success") {
-                document.getElementById('config').innerHTML = `<img src="../img/smallConfig.svg" alt="Config" class="img-fluid" style="width: 60%;">`;
+                document.getElementById('config').innerHTML = `<img src="../img/smallConfig.svg" alt="Config" class="img-fluid"  style="width: 20vh;"">`;
             } else {
                 document.getElementById('config').innerHTML = "";
             }

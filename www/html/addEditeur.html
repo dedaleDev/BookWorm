@@ -10,7 +10,7 @@
     <a id="logo" href="./"><h1 class="logo" style="padding-top: 5vh; padding-left: 2vh;">Espace Administrateur</h1></a>
     <h1 style="padding-top: 2vh; padding-left: 5vh;">Ajouter un editeur : </h1>
     <div class="container" style="padding-top: 2vh;">
-        <form>
+        <form id="editeurForm">
             <div class="form-group" style="padding-top: 2vh;">
               <label for="nom">Nom :</label>
               <input type="text" maxlength="20" class="form-control" id="nom" name="nom" required>
@@ -21,7 +21,9 @@
                 <input type="text" maxlength="120" class="form-control" id="adresse" name="adresse" required>
                 <div class="invalid-feedback">Le l'adresse ne peux pas dépasser 120 caractères</div>
             </div>
-            <div style="padding-top: 2vh; padding-bottom: 10vh;"><button type="submit" class="btn btn-primary" style="background-color: #FF8C42; " id="submit">Ajouter</button></div>
+            <div style="padding-top: 2vh; padding-bottom: 10vh;">
+                <button type="submit" class="btn btn-primary" style="background-color: #FF8C42; " id="submit">Ajouter</button>
+            </div>
           </form>
     </div>
     <script src="../js/addEditeur.js"></script>
