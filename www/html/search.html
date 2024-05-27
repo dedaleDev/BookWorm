@@ -35,8 +35,8 @@
                 </button>
                 </span>
             </div>
-            <div class="d-flex justify-content-start" style="padding-left: 5vh;">
-                <div class="dropdown" style="padding-right: 5vh;">
+            <div class="d-flex justify-content-start" style="padding-left: 1vh;">
+                <div class="dropdown" style="padding-left: 4vh; padding-right: 10vh; margin-bottom: 10vh;">
                     <button id="selectTypeButton" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
                         Type de recherche
                     </button>
@@ -47,7 +47,7 @@
                         <li><a  class="dropdown-item" id="selectEditeur">Editeur</a></li>
                     </ul>
                 </div>
-                <div class="dropdown">
+                <div id="dropdownSort" class="dropdown">
                     <button id="selectSortButton" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
                         Trier par...
                     </button>
@@ -59,12 +59,50 @@
                         <li><a class="dropdown-item" id="sortByPrix">Prix</a></li>
                     </ul>
                 </div>
-                <div id="dropdownAuteurFilter" class="dropdown" style="padding-left: 5vh;">
+                <div id="dropdownAuteurFilter" class="dropdown" style="padding-left: 1vh;">
                     <button id="selectSortButton" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
-                      Filtrer
+                      Auteur
                     </button>
                     <div id="FilterAuteur" class="dropdown-menu">
                     </div>
+                </div>
+                <div id="disponibleCheckBox" style="padding-left: 1vh;">
+                    <div class="form-check btn btn-secondary d-flex align-items-center custom-checkbox" style="background-color: #FF8C42; padding-left: 40px; height: 38px;"> <!-- Assurez-vous que la hauteur correspond à celle du bouton -->
+                        <input class="form-check-input" type="checkbox" value="" id="dispo" style="width: 20px; height: 20px; margin-bottom: 3px;">
+                        <label class="form-check-label" for="dispo" style="margin-left: 10px;">
+                            Disponible uniquement.
+                        </label>
+                    </div>
+                </div>
+                <div id="dropdownGenre" class="dropdown" style="padding-left: 1vh;">
+                    <button id="selectGenre" class="btn btn-secondary dropdown-toggle" type="button" style="background-color: #FF8C42;" data-bs-toggle="dropdown" aria-expanded="false">
+                        Genre
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" id="Tout">Tout</a></li>
+                        <li><a class="dropdown-item" id="Historique">Historique</a></li>
+                        <li><a class="dropdown-item" id="Romantique">Romantique</a></li>
+                        <li><a class="dropdown-item" id="Policier">Policier</a></li>
+                        <li><a class="dropdown-item" id="Science-fiction">Science-fiction</a></li>
+                        <li><a class="dropdown-item" id="Fantastique">Fantastique</a></li>
+                        <li><a class="dropdown-item" id="Aventure">Aventure</a></li>
+                        <li><a class="dropdown-item" id="Biographique">Biographique</a></li>
+                        <li><a class="dropdown-item" id="Autobiographique">Autobiographique</a></li>
+                        <li><a class="dropdown-item" id="Épistolaire">Épistolaire</a></li>
+                        <li><a class="dropdown-item" id="Thriller">Thriller</a></li>
+                        <li><a class="dropdown-item" id="Tragédie">Tragédie</a></li>
+                        <li><a class="dropdown-item" id="Drame">Drame</a></li>
+                        <li><a class="dropdown-item" id="Absurde">Absurde</a></li>
+                        <li><a class="dropdown-item" id="Philosophique">Philosophique</a></li>
+                        <li><a class="dropdown-item" id="Politique">Politique</a></li>
+                        <li><a class="dropdown-item" id="Légendes & Mythes">Légendes & Mythes</a></li>
+                        <li><a class="dropdown-item" id="Lettres personnelles">Lettres personnelles</a></li>
+                        <li><a class="dropdown-item" id="Voyages">Voyages</a></li>
+                        <li><a class="dropdown-item" id="Journal intime">Journal intime</a></li>
+                        <li><a class="dropdown-item" id="Bandes dessinées">Bandes dessinées</a></li>
+                        <li><a class="dropdown-item" id="Documentaires">Documentaires</a></li>
+                        <li><a class="dropdown-item" id="Religieux">Religieux</a></li>
+                    </ul>
                 </div>
             </div>
             </form>

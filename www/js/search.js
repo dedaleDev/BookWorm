@@ -1,7 +1,7 @@
 const API_URL = 'http://192.168.1.20:8080'
 
 
-let email, password;
+let email, password, dispoOnly, genre;
 
 async function getCookieValue(name) {
     const cookieString = decodeURIComponent(document.cookie);
@@ -56,6 +56,82 @@ if (typeSearch == "Livre"){
         filterAuteur = "all";
     }
 }
+
+dispoOnly = false;
+async function checkDispo() {
+    dispoOnly = await getCookieValue('dispoOnly');
+    console.log("dispoOnly", dispoOnly);
+    const dispoCheckBox = document.getElementById("dispo");
+    if (dispoOnly == "true") {
+        dispoCheckBox.checked = true;
+    } else {
+        dispoCheckBox.checked = false;
+    }
+
+    dispoCheckBox.addEventListener('change', async (e) => {
+        if (e.target.checked) {
+            document.cookie = `dispoOnly=${true}`;
+            window.location.href = `search?search=${searchValue}&type=${typeSearch}&sort=${sort}&auteur=${filterAuteur}`;
+        } else {
+            document.cookie = `dispoOnly=${false}`;
+            window.location.href = `search?search=${searchValue}&type=${typeSearch}&sort=${sort}&auteur=${filterAuteur}`;
+        }
+    });
+}
+
+checkDispo();
+
+async function checkGenre() {
+    genre = await getCookieValue('genre');
+    if (genre == null){
+        genre = "all";
+    }
+    let genreButton = {
+        "Historique": "Historique",
+        "Romantique": "Romantique",
+        "Policier": "Policier",
+        "Science-fiction": "Science-fiction",
+        "Fantastique": "Fantastique",
+        "Aventure": "Aventure",
+        "Biographique": "Biographique",
+        "Autobiographique": "Autobiographique",
+        "Épistolaire": "Épistolaire",
+        "Thriller": "Thriller",
+        "Tragédie": "Tragédie",
+        "Drame": "Drame",
+        "Absurde": "Absurde",
+        "Philosophique": "Philosophique",
+        "Politique": "Politique",
+        "Légendes & Mythes": "Légendes & Mythes",
+        "Lettres personnelles": "Lettres personnelles",
+        "Voyages": "Voyages",
+        "Journal intime": "Journal intime",
+        "Bandes dessinées": "Bandes dessinées",
+        "Documentaires": "Documentaires",
+        "Religieux": "Religieux"
+    }
+    if (genre == "all"){
+        document.getElementById("selectGenre").textContent = "Genre";
+    } else {
+        document.getElementById("selectGenre").textContent = "Genre "+genreButton[genre];
+    }
+    console.log("Genre", genre);
+    let dropdownItems = document.querySelectorAll('.dropdown-item');//CHOIX DU TYPE DE RECHERCHE
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function() {
+            let selectedValue = this.textContent;
+            if (["Historique", "Romantique", "Policier", "Science-fiction", "Fantastique", "Aventure", "Biographique", "Autobiographique", "Épistolaire", "Thriller", "Tragédie", "Drame", "Absurde", "Philosophique", "Politique", "Légendes & Mythes", "Lettres personnelles", "Voyages", "Journal intime", "Bandes dessinées", "Documentaires", "Religieux"].includes(selectedValue)) {
+                document.cookie = `genre=${selectedValue}`;
+                window.location.href = `search?search=${searchValue}&type=${typeSearch}&sort=${sort}&auteur=${filterAuteur}`;
+            } else if (selectedValue == "Tout") {
+                document.cookie = `genre=all`;
+                window.location.href = `search?search=${searchValue}&type=${typeSearch}&sort=${sort}&auteur=${filterAuteur}`;
+            }
+        });
+    });
+}
+checkGenre();
+
 
 document.getElementById("selectTypeButton").textContent = "Type de recherche ("+typeSearch+")";
 let sortButton = {
@@ -204,31 +280,50 @@ let auteurs = []
 
 async function showLivre(searchData, isbnArray) {
     isbnArray.forEach(id => {
-        let template = _templateLivre.replace("{{ titre }}", searchData[id]["titre"]).replace("{{ auteur }}", searchData[id]["auteur"]).replace("{{ note }}", Math.round(searchData[id]["note"])).replace("{{ isbn }}", searchData[id]["ISBN"]).replace("{{ auteur }}", searchData[id]["auteur"]).replace("{{ NoteEx }}", searchData[id]["note"]);
-        const livre = document.createElement('div');
-        livre.innerHTML = template;
-        livre.addEventListener('click', () => {
-            window.location.href = `livre?isbn=${searchData[id]["ISBN"]}`;
-        });
-        document.getElementById("searchResult").appendChild(livre);
-        if (!auteurs.includes(searchData[id]["auteur"])) {
-            auteurs.push(searchData[id]["auteur"]);
-            const filter = document.getElementById("FilterAuteur");
-            const filterAuteur = document.createElement('div');
-            filterAuteur.innerHTML = _templateFilter.replace("{{ auteur }}", searchData[id]["auteur"]);
-            filter.appendChild(filterAuteur);
+        let display = true;
+        console.log("dispoOnly: ", dispoOnly, typeof(dispoOnly));
+        if (dispoOnly == "true") {
+            if (searchData[id]["status"] === "emprunté" || searchData[id]["status"] === "hors stock") {
+                display = false;
+            }
         }
-        if (filterAuteur != "all" && searchData[id]["auteur"] != filterAuteur) {
-            livre.style.display = "none";
+        if (genre != "all"){
+            if (!searchData[id]["genre"].includes(genre)){
+                display = false;
+            }
+        }
+        if (display){
+            let template = _templateLivre.replace("{{ titre }}", searchData[id]["titre"]).replace("{{ auteur }}", searchData[id]["auteur"]).replace("{{ note }}", Math.round(searchData[id]["note"])).replace("{{ isbn }}", searchData[id]["ISBN"]).replace("{{ auteur }}", searchData[id]["auteur"]).replace("{{ NoteEx }}", searchData[id]["note"]);
+            const livre = document.createElement('div');
+            livre.innerHTML = template;
+            livre.addEventListener('click', () => {
+                window.location.href = `livre?isbn=${searchData[id]["ISBN"]}`;
+            });
+            document.getElementById("searchResult").appendChild(livre);
+            if (!auteurs.includes(searchData[id]["auteur"])) {
+                auteurs.push(searchData[id]["auteur"]);
+                const filter = document.getElementById("FilterAuteur");
+                const filterAuteur = document.createElement('div');
+                filterAuteur.innerHTML = _templateFilter.replace("{{ auteur }}", searchData[id]["auteur"]);
+                filter.appendChild(filterAuteur);
+            }
+            if (filterAuteur != "all" && searchData[id]["auteur"] != filterAuteur) {
+                livre.style.display = "none";
+            }
+        } else {
+            console.log("livre non affiché : ", searchData[id]);
         }
     });
     if (auteurs.length <= 1){
         document.getElementById("dropdownAuteurFilter").style.display = "none";
-        console.log("1 auteur", auteurs.length, auteurs);
     }
 }
 
 async function showAuteur(searchData, idAuteur) {
+    document.getElementById("dropdownAuteurFilter").style.display = "none";
+    document.getElementById("dropdownGenre").style.display = "none";
+    document.getElementById("dropdownSort").style.display = "none";
+    document.getElementById("disponibleCheckBox").style.display = "none";
     idAuteur.forEach(id => {
         let template =  _templateAuteur.replace("{{ prenom }}", searchData[id]["prenom"]).replace("{{ nom }}", searchData[id]["nom"]).replace("{{ dateDeNaissance }}", searchData[id]["dateDeNaissance"]).replace("{{ description }}", searchData[id]["description"]);
         if (searchData[id]["alias"] != null) {
@@ -242,6 +337,10 @@ async function showAuteur(searchData, idAuteur) {
 }
 
 async function showPointDeVente(searchData, idPointDeVente) {
+    document.getElementById("dropdownAuteurFilter").style.display = "none";
+    document.getElementById("dropdownGenre").style.display = "none";
+    document.getElementById("dropdownSort").style.display = "none";
+    document.getElementById("disponibleCheckBox").style.display = "none";
     idPointDeVente.forEach(id => {
         let template =  _templatePointDeVente.replace("{{ nom }}", searchData[id]["nom"]).replace("{{ adresse }}", id).replace("{{ url }}", searchData[id]["url"]).replace("{{ tel }}", searchData[id]["tel"]);
         template = template.replace("{{ url }}", searchData[id]["url"]);
@@ -252,6 +351,10 @@ async function showPointDeVente(searchData, idPointDeVente) {
 }
 
 async function showEditeur(searchData, idEditeur) {
+    document.getElementById("dropdownAuteurFilter").style.display = "none";
+    document.getElementById("dropdownGenre").style.display = "none";
+    document.getElementById("dropdownSort").style.display = "none";
+    document.getElementById("disponibleCheckBox").style.display = "none";
     console.log(searchData)
     idEditeur.forEach(id => {
         let template =  _templateEditeur.replace("{{ nom }}", id).replace("{{ adresse }}", searchData[id]["adresse"]);
@@ -322,3 +425,5 @@ filtersAuteurs.addEventListener('click', async (e) => {
     console.log("filterAuteur: ", filterAuteur);
     window.location.href = `search?search=${searchValue}&type=${typeSearch}&sort=${sort}&auteur=${filterAuteur}`;
 })
+
+

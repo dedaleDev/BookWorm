@@ -148,8 +148,14 @@ class db():
             self.cursor.execute(self._requetes[request], tuple(args))
             self.maxRetry = 5
         except Exception as e:
-            errorPackSequece = ["packet sequence","has no attribute 'read'","lost connection","cursor closed", "read","EOF", "protocol error","settimeout","execute","bad file descriptor","unpack", "out of range","invalid literal"]
-            if any(x in str(e).lower() for x in errorPackSequece):
+            okError = ["not enough arguments", "not all arguments converted", "data too long", "data truncated "]
+            if str(e).lower() in okError:
+                print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
+                print("Args : ", args)
+                print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
+                print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m")
+            else : 
+                print("connection lost",e)
                 reload = self.retryDatabaseConnection()
                 if reload:
                     if self.maxRetry > 0:
@@ -163,11 +169,7 @@ class db():
                     print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
                     print(f"Database : {type(self.db)} Actif : {self.db!=None}")
                     print("Veuillez redémarrer le serveur.\033[0m")
-            else :
-                print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
-                print("Args : ", args)
-                print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
-                print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m")
+               
             
     def retryDatabaseConnection(self) -> bool:
         """This function retries to connect to the database if an error occured."""

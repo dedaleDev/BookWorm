@@ -35,3 +35,7 @@ margin-top: 10vh;
     border-radius: 0px 100% 100% 0px;
 }
 
+.form-check-input:checked{
+    background-color: #1D425C;
+    border-color: #1D425C;
+}
