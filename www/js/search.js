@@ -330,11 +330,13 @@ async function showLivre(searchData, isbnArray) {
 }
 
 async function showAuteur(searchData, idAuteur) {
+    let cmpt = 0;
     document.getElementById("dropdownAuteurFilter").style.display = "none";
     document.getElementById("dropdownGenre").style.display = "none";
     document.getElementById("dropdownSort").style.display = "none";
     document.getElementById("disponibleCheckBox").style.display = "none";
     idAuteur.forEach(id => {
+        cmpt++;
         let template =  _templateAuteur.replace("{{ prenom }}", searchData[id]["prenom"]).replace("{{ nom }}", searchData[id]["nom"]).replace("{{ dateDeNaissance }}", searchData[id]["dateDeNaissance"]).replace("{{ description }}", searchData[id]["description"]);
         if (searchData[id]["alias"] != null) {
             template = _templateAuteurWithAlias.replace("{{ alias }}", searchData[id]["alias"]).replace("{{ prenom }}", searchData[id]["prenom"]).replace("{{ nom }}", searchData[id]["nom"]).replace("{{ dateDeNaissance }}", searchData[id]["dateDeNaissance"]).replace("{{ description }}", searchData[id]["description"]);
@@ -344,9 +346,17 @@ async function showAuteur(searchData, idAuteur) {
         console.log("id: ", id);
         document.getElementById("searchResult").appendChild(auteur);
     });
+    if (cmpt == 0) {
+        let error404 = "<h2 class='text-center' style='color:white; padding:0px'>Oups, aucun résultat n'a été trouvé dans {{ typeSearch }}.<h2><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>".replace("{{ typeSearch }}", typeSearch);
+        document.getElementById("searchResult").innerHTML = error404;
+    } else {
+        console.log("cmpt: ", cmpt);
+        document.getElementById("cmpt").innerHTML = cmpt+" auteurs trouvés.";
+    }
 }
 
 async function showPointDeVente(searchData, idPointDeVente) {
+    let cmpt = 0;
     document.getElementById("dropdownAuteurFilter").style.display = "none";
     document.getElementById("dropdownGenre").style.display = "none";
     document.getElementById("dropdownSort").style.display = "none";
@@ -357,10 +367,19 @@ async function showPointDeVente(searchData, idPointDeVente) {
         const pointDeVente = document.createElement('div');
         pointDeVente.innerHTML = template;
         document.getElementById("searchResult").appendChild(pointDeVente);
+        cmpt++;
     });
+    if (cmpt == 0) {
+        let error404 = "<h2 class='text-center' style='color:white; padding:0px'>Oups, aucun résultat n'a été trouvé dans {{ typeSearch }}.<h2><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>".replace("{{ typeSearch }}", typeSearch);
+        document.getElementById("searchResult").innerHTML = error404;
+    } else {
+        console.log("cmpt: ", cmpt);
+        document.getElementById("cmpt").innerHTML = cmpt+" points de ventes trouvés.";
+    }
 }
 
 async function showEditeur(searchData, idEditeur) {
+    let cmpt = 0;
     document.getElementById("dropdownAuteurFilter").style.display = "none";
     document.getElementById("dropdownGenre").style.display = "none";
     document.getElementById("dropdownSort").style.display = "none";
@@ -371,7 +390,15 @@ async function showEditeur(searchData, idEditeur) {
         const editeur = document.createElement('div');
         editeur.innerHTML = template;
         document.getElementById("searchResult").appendChild(editeur);
+        cmpt++;
     });
+    if (cmpt == 0) {
+        let error404 = "<h2 class='text-center' style='color:white; padding:0px'>Oups, aucun résultat n'a été trouvé dans {{ typeSearch }}.<h2><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>".replace("{{ typeSearch }}", typeSearch);
+        document.getElementById("searchResult").innerHTML = error404;
+    } else {
+        console.log("cmpt: ", cmpt);
+        document.getElementById("cmpt").innerHTML = cmpt+"editeurs trouvés.";
+    }
 }
 
 search().then(searchData => {//AFFICHAGE DES RESULTATS

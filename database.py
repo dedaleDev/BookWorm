@@ -155,7 +155,6 @@ class db():
                 print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
                 print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m")
             else : 
-                print("connection lost",e)
                 reload = self.retryDatabaseConnection()
                 if reload:
                     if self.maxRetry > 0:
