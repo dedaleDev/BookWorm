@@ -279,6 +279,7 @@ async function search() {//RECHERCHE
 let auteurs = []
 
 async function showLivre(searchData, isbnArray) {
+    cmpt = 0;
     isbnArray.forEach(id => {
         let display = true;
         console.log("dispoOnly: ", dispoOnly, typeof(dispoOnly));
@@ -309,13 +310,22 @@ async function showLivre(searchData, isbnArray) {
             }
             if (filterAuteur != "all" && searchData[id]["auteur"] != filterAuteur) {
                 livre.style.display = "none";
+            } else {
+                cmpt++;
             }
         } else {
             console.log("livre non affiché : ", searchData[id]);
         }
-    });
+    }); 
     if (auteurs.length <= 1){
         document.getElementById("dropdownAuteurFilter").style.display = "none";
+    }
+    if (cmpt == 0) {
+        let error404 = "<h2 class='text-center' style='color:white; padding:0px'>Oups, aucun résultat n'a été trouvé dans {{ typeSearch }}.<h2><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>".replace("{{ typeSearch }}", typeSearch);
+        document.getElementById("searchResult").innerHTML = error404;
+    } else {
+        console.log("cmpt: ", cmpt);
+        document.getElementById("cmpt").innerHTML = cmpt+" documents trouvés.";
     }
 }
 
