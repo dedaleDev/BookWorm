@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = await response.json();
                 console.log(data);
                 if (data["content"] === 'success') {
-                    alert('L\'éditeur a bien été ajouté');
                     window.location.href = '/config';
                 } else {
                     alert('Erreur lors de l\'ajout de l\'éditeur : ' + data["message"]);

@@ -154,7 +154,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
             console.log(data);
             if (data["content"] === 'success') {
-                alert('Le compte a bien été créé. Bienvenue sur BookWorm ! ');
                 if (!isAdmin)
                     window.location.href = '/login';
                 else {

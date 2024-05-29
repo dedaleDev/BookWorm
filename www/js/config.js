@@ -67,7 +67,6 @@ async function deleteLivre(isbn) {
                 alert("Erreur lors de la suppression du livre, veuillez réessayer.")
                 throw new Error('Failed to delete livre');
             }
-            alert("Le livra a bien été supprimé !")
             showLivreArray();
         }
     } catch (error) {
@@ -84,7 +83,6 @@ async function deleteAuteur(id) {
                 alert("Erreur lors de la suppression de l'auteur, veuillez réessayer.");
                 throw new Error('Failed to delete auteur');
             }
-            alert("L'auteur a bien été supprimé !");
             showAuteurArray();
         }
     } catch (error) {
@@ -115,7 +113,6 @@ async function deletePointDeVente(adresse) {
                     alert("Erreur lors de la suppression du point de vente, veuillez réessayer.");
                     throw new Error('Failed to delete point de vente');
                 }
-                alert("Le point de vente a bien été supprimé !");
                 showPointDeVenteArray();
             }
         }
@@ -133,7 +130,6 @@ async function deleteEditeur(nom) {
                 alert("Erreur lors de la suppression de l'éditeur, veuillez réessayer.");
                 throw new Error('Failed to delete editeur');
             }
-            alert("L'éditeur a bien été supprimé !");
             showEditeurArray();
         }
     } catch (error) {
@@ -154,8 +150,6 @@ async function deleteUser(emailToDelete) {
                 alert("Erreur lors de la suppression de l'utilisateur, veuillez réessayer.", data.message);
                 console.error( data);
                 throw new Error('Failed to delete utilisateur');
-            } else {
-                alert("L'utilisateur a bien été supprimé !");
             }
             showUtilisateurArray();
         }
@@ -174,7 +168,6 @@ async function deleteEmprunt(id) {
                 alert("Erreur lors de la suppression de l'emprunt, veuillez réessayer.");
                 throw new Error('Failed to delete emprunt');
             }
-            alert("L'emprunt a bien été supprimé !");
             showEmpruntArray();
         }
     }
@@ -229,7 +222,6 @@ async function checkIfChangeLivres(originalLivres, auteurs) {
                         alert("Erreur lors de la mise à jour des livres, veuillez réessayer.")
                         throw new Error('Failed to update livres');
                     }
-                    alert("Les modifications ont bien été prises en compte !")
                     window.location.href = "/config";
                 } catch (error) {
                     console.error('Error updating livres:', error);
@@ -284,7 +276,6 @@ async function checkIfChangeAuteurs(originalAuteurs) {
                         alert("Erreur lors de la mise à jour des auteurs, veuillez réessayer.")
                         throw new Error('Failed to update auteurs');
                     }{
-                        alert("Les modifications ont bien été prises en compte !")
                         showAuteurArray();
                     }
                 } catch (error) {
@@ -330,9 +321,8 @@ async function checkifChangePointDeVentes(originalPointDeVentes) {
                     if (!response.ok) {
                         alert("Erreur lors de la mise à jour des points de ventes, veuillez réessayer.")
                         throw new Error('Failed to update points de ventes');
-                    } else {
-                        alert("Les modifications ont bien été prises en compte !")
                     }
+                    showPointDeVenteArray();
                 } catch (error) {
                     console.error('Error updating points de ventes:', error);
                 }
@@ -376,7 +366,6 @@ async function checkIfChangeEditeurs(originalEditeurs) {
                         alert("Erreur lors de la mise à jour des éditeurs, veuillez réessayer.")
                         throw new Error('Failed to update éditeurs');
                     } else {
-                        alert("Les modifications ont bien été prises en compte !")
                         showEditeurArray();
                     }
                 } catch (error) {
@@ -427,7 +416,6 @@ async function checkIfChangeUtilisateurs(originalUtilisateurs) {
                         alert("Erreur lors de la mise à jour des utilisateurs, veuillez réessayer.")
                         throw new Error('Failed to update utilisateurs');
                     } else {
-                        alert("Les modifications ont bien été prises en compte !")
                         showUtilisateurArray();
                     }
                 } catch (error) {
@@ -479,7 +467,6 @@ async function checkIfChangeEmprunts(originalEmprunts) {
                         alert("Erreur lors de la mise à jour des emprunts, veuillez réessayer.")
                         throw new Error('Failed to update emprunts');
                     } else {
-                        alert("Les modifications ont bien été prises en compte !")
                         showEmpruntArray();
                     }
                 } catch (error) {

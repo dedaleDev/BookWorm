@@ -228,7 +228,6 @@ async function form() {
         const data = await response.json();
         console.log(data);
         if (data["content"] === 'success') {
-          alert('Le livre a bien été ajouté');
           window.location.href = '/config';
         } else {
           alert('Erreur lors de l\'ajout du livre : ' + data["message"]);

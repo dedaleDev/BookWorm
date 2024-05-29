@@ -84,7 +84,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             const data = await response.json();
             if (data["content"] === 'success') {
-                alert('Le point de vente a bien été ajouté');
                 window.location.href = '/config';
             } else {
                 alert('Erreur lors de l\'ajout du point de vente' + data["message"]);

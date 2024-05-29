@@ -184,10 +184,7 @@ loadLivre(isbn).then(livreData => {
                     .then(response => response.json())
                     .then(data => {
                         console.log("data: ", data)
-                        if (data.message === "Vous avez déjà noté ce livre !"){
-                            alert("Vous avez déjà noté ce livre !");
-                        } else if (data.content === "success") {
-                            alert("Note ajoutée avec succès");
+                        if (data.content === "success") {
                             window.location.reload();
                         } else {
                             alert("Erreur lors de l'ajout de la note");
