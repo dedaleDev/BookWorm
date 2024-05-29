@@ -504,7 +504,7 @@ async function showLivreArray() {
                     allAuteur += _templateEltDropDown.replace("{{ elt }}",auteurs[id]["prénom"] +" " + auteurs[id]["nom"]).replace("{{ elt }}",auteurs[id]["prénom"] +" " + auteurs[id]["nom"]);
             });
             let status = _templateEltDropDown.replace("{{ elt }}",livres[isbn]["status"]).replace("{{ elt }}",livres[isbn]["status"]);
-            ["disponible", "emprunté", "hors stock"].forEach(s => {
+            ["disponible", "hors stock"].forEach(s => {
                 if (s !== livres[isbn]["status"])
                     status += _templateEltDropDown.replace("{{ elt }}",s).replace("{{ elt }}",s);
             });
