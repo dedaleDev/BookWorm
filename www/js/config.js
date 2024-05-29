@@ -56,8 +56,6 @@ _templateEmprunt = `<tr><td>{{ id }}</td>
     <td><select class="form-control" name="utilisateur">{{ utilisateur }}</select></td>
     <td><button class="btn btn-danger" onclick="deleteEmprunt('{{ id }}')">Remis</button></td></tr>`
 
-//Emprunts = ID, Livre (isbn), Date, Utilisateur (email)
-
 async function deleteLivre(isbn) {
     try {
         if (confirm("Voulez-vous vraiment supprimer ce livre ?") === true) {
