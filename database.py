@@ -1,5 +1,5 @@
 import pymysql
-import os, csv, time
+import os, csv, time, shutil
 
 class db():
     _requetes = {
@@ -148,7 +148,8 @@ class db():
             self.cursor.execute(self._requetes[request], tuple(args))
             self.maxRetry = 5
         except Exception as e:
-            okError = ["not enough arguments", "not all arguments converted", "data too long", "data truncated "]
+            okError = ["not enough arguments","arguments","data too long","data truncated","foreign key","primary","duplicate entry","cannot add or update a child row","incorrect","column cannot be null","truncated","syntax error","unknown","multiple primary key defined","table already exists","no such table","table doesn't exist","cannot delete or update","constraint failed",
+        ]
             if str(e).lower() in okError:
                 print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 print("Args : ", args)
@@ -168,7 +169,6 @@ class db():
                     print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
                     print(f"Database : {type(self.db)} Actif : {self.db!=None}")
                     print("Veuillez redémarrer le serveur.\033[0m")
-               
             
     def retryDatabaseConnection(self) -> bool:
         """This function retries to connect to the database if an error occured."""
@@ -230,7 +230,7 @@ class db():
         try :
             print("Importations des images de références...")
             for i in os.listdir("data/livres"):
-                os.system(f"cp data/livres/{i} www/img/livres/{i}")
+                shutil.copy(f"data/livres/{i}", f"www/img/livres/{i}")
         except Exception as e:
             print("\033[31mErreur : Impossible d'importer les images de références ! Une erreur est survenue : ",e,"\033[0m")
         
