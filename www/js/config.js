@@ -48,7 +48,7 @@ _templateUser = `<tr><td>{{ email }}</td>
     <td><input type="number" class="form-control" value="{{ tel }}" maxlength="10"></td>
     <td><button class="btn btn-danger" onclick="deleteUser('{{ email }}')">Supprimer</button></td></tr>`
 
-_templateHeaderEmprunt = `<tr><th>ID</th><th>Statut<th>Livre</th><th>Date</th><th>Utilisateur</th><th>Supprimer</th></tr>`
+_templateHeaderEmprunt = `<tr><th>ID</th><th>Statut<th>Livre</th><th>Date</th><th>Utilisateur</th><th>Remettre</th></tr>`
 _templateEmprunt = `<tr><td>{{ id }}</td>
     <td>{{ statut }}</td>
     <td><select class="form-control" name="livre">{{ livre }}</select></td>
