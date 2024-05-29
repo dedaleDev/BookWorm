@@ -39,3 +39,8 @@ margin-top: 10vh;
     background-color: #1D425C;
     border-color: #1D425C;
 }
+
+a{
+    color: black;
+    text-decoration: none;
+}
