@@ -1,4 +1,4 @@
-import pymysql
+import pymysql, threading
 import os, csv, time, shutil
 
 class db():
@@ -47,6 +47,8 @@ class db():
     "selectISBNAllLivres" : "SELECT ISBN FROM `Livre`;",
     "selectPointDeVenteNameByAdresse" : "SELECT Nom FROM `Point de vente` WHERE `Adresse` = %s;",
     "selectUserByEmail" : "SELECT * FROM `Utilisateur` WHERE `email` = %s;",
+    "selectAllEmail" : "SELECT email FROM `Utilisateur`;",
+    "selectAllAdressePointDeVente": "SELECT Adresse FROM `Point de vente`;",
     "selectEmpruntByUser" : "SELECT * FROM `Emprunt` WHERE `Utilisateur` = %s;",
     "selectEmpruntByISBN" : "SELECT * FROM `Emprunt` WHERE `Livre` = %s;",
     "selectAllLivre" : "SELECT * FROM `Livre`;",
@@ -57,6 +59,9 @@ class db():
     "selectAuteurByNomPrenom" : "SELECT * FROM `Auteur` WHERE `Nom` LIKE %s AND `Prénom` LIKE %s;",
     "deleteEmpruntByISBN" : "DELETE FROM `Emprunt` WHERE `Livre` = %s;",
     "deleteEmpruntByAuteurID" : "DELETE FROM `Emprunt` WHERE Livre IN (SELECT `ISBN` FROM `Livre` WHERE `Auteur` =  %s)",
+    "deleteEmpruntByEditeur" : "DELETE FROM `Emprunt` WHERE Livre IN (SELECT `ISBN` FROM `Livre` WHERE `Editeur` = %s);",
+    "deleteNoteByEditeur" : "DELETE FROM `Note` WHERE `Livre` IN (SELECT `ISBN` FROM `Livre` WHERE `Editeur` = %s);",
+    "deleteNoteByUser" : "DELETE FROM `Note` WHERE `Utilisateur` = %s;",
     "selectAllISBN" : "SELECT ISBN FROM `Livre`;",
     "selectAllUser" : "SELECT * FROM `Utilisateur`;",
     "selectAllEmprunt" : "SELECT * FROM `Emprunt`;",
@@ -75,6 +80,7 @@ class db():
         self.debug = debug
         self.needRestart = False
         self.maxRetry = 5
+        self.lock = threading.Lock()
         #-----initialisation de la base de donnée-----
         try :
             self.db = pymysql.connect(host=self.host, charset="utf8mb4",user=self.user, passwd=self.passwd, port=self.port, db="BookWorm", init_command='SET sql_mode="NO_ZERO_IN_DATE,NO_ZERO_DATE"')
@@ -139,22 +145,23 @@ class db():
             if request not in self._requetes.keys():
                 print(f"\033[31mErreur : La requête {request} n'existe pas dans la base de donnée !\033[0m")
                 return
-            args = list(args)
-            for i in range(len(args)):
-                if args[i] == "":
-                    args[i] = None
-            if verbose :
-                print(f"#{self._requetes[request] % tuple(args)}")
-            self.cursor.execute(self._requetes[request], tuple(args))
-            self.maxRetry = 5
+            with self.lock: 
+                args = list(args)
+                for i in range(len(args)):
+                    if args[i] == "":
+                        args[i] = None
+                if verbose :
+                    print(f"#{self._requetes[request] % tuple(args)}")
+                self.cursor.execute(self._requetes[request], tuple(args))
+                self.db.commit()
+                self.maxRetry = 5
         except Exception as e:
-            okError = ["not enough arguments","arguments","data too long","data truncated","foreign key","primary","duplicate entry","cannot add or update a child row","incorrect","column cannot be null","truncated","syntax error","unknown","multiple primary key defined","table already exists","no such table","table doesn't exist","cannot delete or update","constraint failed",
-        ]
+            okError = ["not enough arguments","arguments","data too long","data truncated","foreign key","primary","duplicate entry","cannot add or update a child row","incorrect","column cannot be null","truncated","syntax error","unknown","multiple primary key defined","table already exists","no such table","table doesn't exist","cannot delete or update","constraint failed",]
             if str(e).lower() in okError:
                 print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 print("Args : ", args)
                 print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
-                print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m")
+                print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m") 
             else : 
                 reload = self.retryDatabaseConnection()
                 if reload:
@@ -168,13 +175,12 @@ class db():
                     print(f"La requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}, {pymysql.MySQLError}")
                     print(f"Cursor : {type(self.cursor)} Actif : {self.cursor!=None}")
                     print(f"Database : {type(self.db)} Actif : {self.db!=None}")
-                    print("Veuillez redémarrer le serveur.\033[0m")
             
     def retryDatabaseConnection(self) -> bool:
         """This function retries to connect to the database if an error occured."""
         try :
-            maxRetries = 5
-            retryDelay = 0.2 #secondes
+            maxRetries = 15
+            retryDelay = 0.05 #secondes
             for i in range(maxRetries):
                 try: 
                     self.cursor.close()

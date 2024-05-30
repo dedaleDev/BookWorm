@@ -397,7 +397,7 @@ async function showEditeur(searchData, idEditeur) {
         document.getElementById("searchResult").innerHTML = error404;
     } else {
         console.log("cmpt: ", cmpt);
-        document.getElementById("cmpt").innerHTML = cmpt+"editeurs trouvés.";
+        document.getElementById("cmpt").innerHTML = cmpt+" editeurs trouvés.";
     }
 }
 

@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.href = '/config';
                 }
             } else {
-                alert('Erreur lors de la création du compte' + data["message"]);
+                alert('Erreur lors de la création du compte : ' + data["message"]);
             }
         } else {
             alert('Veuillez remplir correctement tous les champs du formulaire');

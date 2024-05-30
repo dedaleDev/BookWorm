@@ -343,6 +343,8 @@ class Server(object):
             if user is not None and user != () and user != []:
                 if user[0][1] == password:
                     if user[0][2] == "admin":
+                        self.db.mkRequest("deleteEmpruntByEditeur", False, nom)
+                        self.db.mkRequest("deleteNoteByEditeur", False, nom)
                         self.db.mkRequest("deleteLivreByEditeur", False, nom)#delete all books from this editor first
                         self.db.mkRequest("deleteEditeur", False, nom)
                         self.db.db.commit()
@@ -380,6 +382,7 @@ class Server(object):
                         if userToDelete is not None and userToDelete != () and userToDelete != []:
                             if userToDelete[0][2] == "admin":
                                 return self.makeResponse(is_error=True, error_message="Vous ne pouvez pas supprimer un administrateur")
+                        self.db.mkRequest("deleteNoteByUser", False, emailToDelete)
                         self.db.mkRequest("deleteEmpruntByUser", False, emailToDelete)
                         self.db.mkRequest("deleteUser", False, emailToDelete)
                         self.db.db.commit()
@@ -722,6 +725,8 @@ class Server(object):
                     return self.makeResponse(is_error=True, error_message="Aucun livre à mettre à jour")
                 for livre in livres:
                     try:
+                        if livre["dateDeParution"] == "" or livre["dateDeParution"] == "00-00-0000":
+                            livre["dateDeParution"] ="0001-01-01"
                         self.db.mkRequest("updateLivre", False,livre["titre"], livre["auteur"], livre["description"], livre["dateDeParution"],livre["status"], livre["genre"], livre["format"], livre["prix"], livre["pointDeVente"], livre["editeur"], livre["isbn"])
                         self.db.db.commit()
                     except Exception as e:
@@ -760,6 +765,10 @@ class Server(object):
                         if date_de_deces:
                             day, month, year = date_de_deces.split("/")
                             date_de_deces = f"{year}-{month}-{day}"
+                        if date_de_naissance == "" or date_de_naissance == "00-00-0000":
+                            date_de_naissance ="0001-01-01"
+                        if date_de_deces == "" or date_de_deces == "00-00-0000":
+                            date_de_deces ="0001-01-01"
                         self.db.mkRequest("updateAuteur", False,auteur["nom"], auteur["prénom"], auteur["biographie"],date_de_naissance, date_de_deces, auteur["alias"],auteur["id"])
                         self.db.db.commit()
                     except Exception as e:
@@ -909,18 +918,42 @@ class Server(object):
             if user and user[1] == password:
                 if user[2] == "admin":
                     isbn = params.get("isbn")
+                    if not isbn or isbn.isdigit() == False or len(isbn) not in [10,11,12, 13]:
+                        return self.makeResponse(is_error=True, error_message="ISBN incorrect")
                     titre = params.get("titre")
+                    if not titre or len(titre) < 1 or len(titre) > 100:
+                        return self.makeResponse(is_error=True, error_message="Titre incorrect")
                     auteur = params.get("auteur")
+                    if not auteur : 
+                        return self.makeResponse(is_error=True, error_message="Auteur incorrect")
                     description = params.get("description")
+                    if not description or len(description) < 1 or len(description) > 1000:
+                        return self.makeResponse(is_error=True, error_message="Description incorrecte")
                     dateDeParution = params.get("dateParution")
+                    if not dateDeParution or len(dateDeParution) != 10 or dateDeParution.count("-") != 2:
+                        return self.makeResponse(is_error=True, error_message="Date de parution incorrecte")
+                    if dateDeParution == "" or dateDeParution == "00-00-0000":
+                        dateDeParution ="0001-01-01"
                     note = params.get("note")
+                    if note and (note.isdigit() == False or int(note) < 0 or int(note) > 10):
+                        return self.makeResponse(is_error=True, error_message="Note incorrecte")
                     statut = params.get("statut")
+                    if not statut:
+                        return self.makeResponse(is_error=True, error_message="Statut incorrect")
                     genre = params.get("genre")
                     format = params.get("format")
                     prix = params.get("prix")
-                    pointDeVente = params.get("pointDeVente", "").strip()  # Remove leading/trailing whitespace
+                    if not prix or prix.isdigit() == False or int(prix) < 0:
+                        return self.makeResponse(is_error=True, error_message="Prix incorrect")
+                    pointDeVente = params.get("pointDeVente", "").strip()
+                    if not pointDeVente:
+                        return self.makeResponse(is_error=True, error_message="Point de vente incorrect")
                     editeur = params.get("editeur")
+                    if not editeur: 
+                        return self.makeResponse(is_error=True, error_message="Editeur incorrect")
                     image = params.get("image")
+                    if not image:
+                        return self.makeResponse(is_error=True, error_message="Image incorrecte")
                     # Check if all required fields are provided
                     if all([isbn, titre, auteur, description, dateDeParution, statut, genre, format, prix, pointDeVente, editeur]):
                         self.db.mkRequest("selectLivreByISBN", False, isbn)
@@ -971,12 +1004,26 @@ class Server(object):
             if user[0][2] != "admin":
                 return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
             nom = params.get("nom")
+            if not nom or len(nom) < 1 or len(nom) > 20:
+                return self.makeResponse(is_error=True, error_message="Nom incorrect")
             prenom = params.get("prenom")
+            if not prenom or len(prenom) < 1 or len(prenom) > 20:
+                return self.makeResponse(is_error=True, error_message="Prénom incorrect")
             alias = params.get("alias") or None
+            if alias and len(alias) > 20:
+                return self.makeResponse(is_error=True, error_message="Alias incorrect")
             biographie = params.get("biographie")
+            if not biographie or len(biographie) < 1 or len(biographie) > 1000:
+                return self.makeResponse(is_error=True, error_message="Biographie incorrecte")
             dateDeNaissance = params.get("dateNaissance")
+            if not dateDeNaissance or len(dateDeNaissance) != 10 or dateDeNaissance.count("-") != 2:
+                return self.makeResponse(is_error=True, error_message="Date de naissance incorrecte")
             dateDeDeces = params.get("dateDeces") or None
             if all([nom, prenom, biographie, dateDeNaissance]):
+                if dateDeNaissance == "" or dateDeNaissance == "0000-00-00":
+                    dateDeNaissance ="0001-01-01"
+                if dateDeDeces == "" or dateDeDeces == "0000-00-00":
+                    dateDeDeces ="0001-01-01"
                 self.db.mkRequest("insertAuteur", False, nom, prenom, biographie, dateDeNaissance, dateDeDeces, alias)
                 self.db.db.commit()
                 return self.makeResponse(content="success")
@@ -1000,10 +1047,22 @@ class Server(object):
             if user[0][2] != "admin":
                 return self.makeResponse(is_error=True, error_message="Vous n'êtes pas administrateur")
             nom = params.get("nom")
+            if not nom or len(nom) < 1 or len(nom) > 20:
+                return self.makeResponse(is_error=True, error_message="Nom incorrect")
             adresse = params.get("adresse")
+            if not adresse or len(adresse) < 1 or len(adresse) > 120:
+                return self.makeResponse(is_error=True, error_message="Adresse incorrecte")
             url = params.get("url")
+            if not url or len(url) < 1 or len(url) > 50:
+                return self.makeResponse(is_error=True, error_message="site web incorrect")
             tel = params.get("tel")
+            if not tel or len(tel) < 1 or len(tel) > 10:
+                return self.makeResponse(is_error=True, error_message="Téléphone incorrect")
             if all([nom, adresse]):
+                self.db.mkRequest("selectAllAdressePointDeVente", False)
+                for i in self.db.cursor.fetchall():
+                    if i[0] == adresse:
+                        return self.makeResponse(is_error=True, error_message="Ce point de vente existe déjà")
                 self.db.mkRequest("insertPointDeVente", False, adresse, nom, url, tel)
                 self.db.db.commit()
                 return self.makeResponse(content="success")
@@ -1043,11 +1102,29 @@ class Server(object):
     def newUser(self, **params):
         try:
             email = params.get("email")
+            if not email or len(email.split("@")) != 2:
+                return self.makeResponse(is_error=True, error_message="Email incorrect")
             mdp = params.get("mdp")
+            if not mdp or len(mdp) < 2 or len(mdp) > 200:
+                return self.makeResponse(is_error=True, error_message="Mot de passe incorrect")
             nom = params.get("nom")
+            if not nom or len(nom) < 1 or len(nom) > 20:
+                return self.makeResponse(is_error=True, error_message="Nom incorrect")
             prenom = params.get("prenom")
+            if not prenom or len(prenom) < 1 or len(prenom) > 20:
+                return self.makeResponse(is_error=True, error_message="Prénom incorrect")
             adresse = params.get("adresse")
+            if not adresse or len(adresse) < 1 or len(adresse) > 120:
+                return self.makeResponse(is_error=True, error_message="Adresse incorrecte")
             tel = params.get("tel")
+            if not tel or len(tel) < 1 or len(tel) > 10:
+                return self.makeResponse(is_error=True, error_message="Téléphone incorrect")
+            self.db.mkRequest("selectAllEmail", False)
+            user = self.db.cursor.fetchall()
+            print(user)
+            for i in user:
+                if i[0] == email:
+                    return self.makeResponse(is_error=True, error_message="Cet utilisateur existe déjà")
             if all([email, mdp, nom, prenom, adresse, tel]):
                 self.db.mkRequest("insertUtilisateur", False, email, mdp, "user", nom, prenom, adresse, tel)
                 self.db.db.commit()

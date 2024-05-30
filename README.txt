@@ -39,6 +39,9 @@
 # Modification de la base depuis l'étape 2 :
     La base fournie dans l'étape 2 est exactement la même que celle actuelle. Seuls quelques changements mineurs ont été effectués, notamment au niveau des données de la base. La structure en elle-même n'a pas été changée.
     La nouvelle version web a nécessité de coder et de recoder de nombreux scripts de gestion de la base, notamment pour s'adapter à la gestion de mon site via API.
+    J'ai du notamment effectuer d'important changement au niveau de ma fonction mkRequest() responsable de la gestion l'execution des requetes. En effet, l'utilisation d'une API a très rapidement satturé les capacités de traitement de ma base de donnée.
+    Ma base de donnée recevait plusieurs requetes à la fois et n'étant pas capable de les gérer correctement elle se déconnectait causant un crash général. Afin de pallier ce problème, j'ai du faire appel à un Lock du module threading. 
+    L'utilisation d'un Lock permet de s'assurer que l'ensemble des requetes sont executés dans l'ordre. 
 
 # Description du contenu de l'archive : 
     Le répertoire data contient l'ensemble des données utilisées pour importer le jeu de données, que ce soit les fichiers CSV, les images de couverture des livres.
@@ -62,7 +65,3 @@
     On trouve enfin deux fichiers .sql : 
         - backup.sql : permet de restaurer l'entièreté de la base de donnée s'il n'était pas possible de la récupérer autrement via l'exécution du code main.py.
         - template.sql : permet de créer la base de donnée ainsi que ses différentes tables (contrairement à backup.sql, ce fichier ne contient pas les données d'exemples)
-
-# Pannes : 
-    - En raison d'un bug inexpliqué de pymysql (packet sequence error) causant la déconnexion du curseur de manière aléatoire, j'ai implémenté une fonction de "retry" qui est chargée de relancer automatiquement le service dans les meilleurs délais. Néanmoins, dans de rares cas extrêmes, il n'est pas possible de relancer le service.
-    Si cela se produit, une erreur packet error sequence apparaitra en rouge dans le terminal. Tentez simplement de recharger la page. Si celle-ci refuse de se charger,  il est alors nécessaire de relancer complétement BookWorm. Cette reconnexion se fait de manière complètement transparente pour l'utilisateur, normalement, aucun souci de ce type ne devrait survenir. Je mentionne ici ce souci afin d'éviter toute déconvenue.

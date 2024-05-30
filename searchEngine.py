@@ -34,7 +34,7 @@ def getAuteurNameByID(db:database.db, id:int)->str:
     try :
         db.mkRequest("selectAuteurByID", False, id)
         result = db.cursor.fetchall()
-        if result == None or result == []: return "Auteur inconnu"
+        if result == None or result == (): return "Auteur inconnu"
         if result[0][6] != None:
             return f"{result[0][6]}"
         return f"{result[0][2]} {result[0][1]}"
@@ -51,10 +51,13 @@ def getAuteurAliasByID(db:database, id:int)->str:
     try :
         db.mkRequest("selectAuteurByID", False, id)
         result = db.cursor.fetchall()
-        if result == None or result == []: return "Auteur inconnu"
+        if result == None or result == (): 
+            db.mkRequest("selectAuteurByID", False, id)
+            result = db.cursor.fetchall()
+            if result == None or result == (): return "Auteur inconnu"
         return f"{result[0][6]}"
     except Exception as e:
-        print(f"\033[31mUne erreur est survenue lors de la recherche de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
+        print(f"\033[31mUne erreur est survenue lors de la recherche de l'alias de l'auteur :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
         
 def getAuteurIDByNomPrénom(db:database.db, nom:str, prenom:str)->int:
     """This function return the ID of the author by his name and first name

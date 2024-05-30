@@ -77,6 +77,17 @@ async function loadLivre(isbn) {
     let livreData = await response.json();
     livreData = JSON.parse(livreData["content"]);
     console.log("livre: ", livreData);
+    if (Object.keys(livreData).length === 0) {
+        console.log("No book found");
+        let error404 = "<h2 class='text-center' style='color:white; padding-top: 10vh'>Oups, aucun livre n'a été trouvé ici.<h2><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>";
+        document.getElementById("error404").innerHTML = error404;
+        document.getElementById("noter").style.display = "none";
+        document.getElementById("reserver").style.display = "none";
+        document.getElementById("LivreInfo").style.display = "none";
+        document.getElementById("imgLivre").style.display = "none";
+        document.getElementById("status").style.display = "none";
+        return null;
+    }
     return livreData[isbn];
 }
 
@@ -86,7 +97,6 @@ const isbn = urlParams.get('isbn');
 loadLivre(isbn).then(livreData => {
     if (typeof livreData === 'object' && livreData !== null) {
         console.log("livreData: ", livreData);
-        
         let template = _template
             .replace("{{ titre }}", livreData.titre)
             .replace("{{ auteur }}", livreData.auteur)

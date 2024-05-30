@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (data["content"] === 'success') {
                 window.location.href = '/config';
             } else {
-                alert('Erreur lors de l\'ajout du point de vente' + data["message"]);
+                alert('Erreur lors de l\'ajout du point de vente ' + data["message"]);
             }
         } else {
             alert('Veuillez remplir correctement tous les champs du formulaire');

@@ -5,7 +5,7 @@ import os, cherrypy
 db_HOST = "localhost"#changer si nécessaire
 db_USER = "root"#changer
 db_PASSWD = "1234"#changer
-db_PORT = 3306#changer si nécessaire
+db_PORT = 3306
 
 debug = False #Rénitialise l'ensemble des données au démarrage. En cas de problème, essayez d'activer ce mode.
 
@@ -13,7 +13,7 @@ www_dir = os.path.abspath('./www')
 print(os.path.join(www_dir, 'css'))
 serverConf = {
     'global': {
-        'server.socket_host': '192.168.1.20',#si nécessaire, changez l'adresse IP du site web
+        'server.socket_host': '127.0.0.1',#si nécessaire, changez l'adresse IP du site web
         'server.socket_port': 8080,
         'error_page.default': server.jsonify_error,
     },

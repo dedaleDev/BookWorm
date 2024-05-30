@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (data["content"] === 'success') {
           window.location.href = '/config';
         } else {
-          alert('Erreur lors de l\'ajout de l\'auteur' + data["message"]);
+          alert('Erreur lors de l\'ajout de l\'auteur : ' + data["message"]);
         }
       } else {
         alert('Veuillez remplir correctement tous les champs du formulaire');

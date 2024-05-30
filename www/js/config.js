@@ -68,7 +68,7 @@ async function deleteLivre(isbn) {
             showLivreArray();
         }
     } catch (error) {
-            console.error('Error deleting livre:', error);
+            console.error('Error deleting livre : ', error);
     }
 }
 
@@ -84,7 +84,7 @@ async function deleteAuteur(id) {
             showAuteurArray();
         }
     } catch (error) {
-        console.error('Error deleting auteur:', error);
+        console.error('Error deleting auteur : ', error);
     }
 }
 
@@ -115,7 +115,7 @@ async function deletePointDeVente(adresse) {
             }
         }
     } catch (error) {
-        console.error('Error deleting point de vente:', error);
+        console.error('Error deleting point de vente : ', error);
     }
 }
 
@@ -131,7 +131,7 @@ async function deleteEditeur(nom) {
             showEditeurArray();
         }
     } catch (error) {
-        console.error('Error deleting editeur:', error);
+        console.error('Error deleting editeur : ', error);
     }
 }
 
@@ -153,7 +153,7 @@ async function deleteUser(emailToDelete) {
         }
     }
     catch (error) {
-        console.error('Error deleting utilisateur:', error);
+        console.error('Error deleting utilisateur : ', error);
     }
 }
 
@@ -170,7 +170,7 @@ async function deleteEmprunt(id) {
         }
     }
     catch (error) {
-        console.error('Error deleting emprunt:', error);
+        console.error('Error deleting emprunt : ', error);
     }
 }
 
@@ -222,7 +222,7 @@ async function checkIfChangeLivres(originalLivres, auteurs) {
                     }
                     window.location.href = "/config";
                 } catch (error) {
-                    console.error('Error updating livres:', error);
+                    console.error('Error updating livres : ', error);
                 }
             } else {
                 alert("Vous êtes à jour !")
@@ -277,7 +277,7 @@ async function checkIfChangeAuteurs(originalAuteurs) {
                         showAuteurArray();
                     }
                 } catch (error) {
-                    console.error('Error updating auteurs:', error);
+                    console.error('Error updating auteurs : ', error);
                 }
             } else {
                 alert("Vous êtes à jour !")
@@ -322,7 +322,7 @@ async function checkifChangePointDeVentes(originalPointDeVentes) {
                     }
                     showPointDeVenteArray();
                 } catch (error) {
-                    console.error('Error updating points de ventes:', error);
+                    console.error('Error updating points de ventes : ', error);
                 }
             } else {
                 alert("Vous êtes à jour !")
@@ -367,7 +367,7 @@ async function checkIfChangeEditeurs(originalEditeurs) {
                         showEditeurArray();
                     }
                 } catch (error) {
-                    console.error('Error updating éditeurs:', error);
+                    console.error('Error updating éditeurs : ', error);
                 }
             } else {
                 alert("Vous êtes à jour !")
@@ -417,7 +417,7 @@ async function checkIfChangeUtilisateurs(originalUtilisateurs) {
                         showUtilisateurArray();
                     }
                 } catch (error) {
-                    console.error('Error updating utilisateurs:', error);
+                    console.error('Error updating utilisateurs : ', error);
                 }
             } else {
                 alert("Vous êtes à jour !")
@@ -468,7 +468,7 @@ async function checkIfChangeEmprunts(originalEmprunts) {
                         showEmpruntArray();
                     }
                 } catch (error) {
-                    console.error('Error updating emprunts:', error);
+                    console.error('Error updating emprunts : ', error);
                 }
             } else {
                 alert("Vous êtes à jour !")
@@ -483,6 +483,10 @@ async function showLivreArray() {
         let response = await fetch(`${API_URL}/getAllLivre`);
         let data = await response.json();
         const livres = JSON.parse(data["content"]);
+        if (Object.keys(livres).length === 0) {
+            alert("Aucun livre n'est présent dans la base de données.");
+            return;
+        }
         response = await fetch(`${API_URL}/getAllNomAuteur`);
         data = await response.json();
         const auteurs = JSON.parse(data["content"]);
@@ -492,6 +496,10 @@ async function showLivreArray() {
         response = await fetch(`${API_URL}/getAllEditeurs`);
         data = await response.json();
         const editeurs = JSON.parse(data["content"]);
+        if (Object.keys(auteurs).length === 0) {
+            alert("Aucun auteur n'est présent dans la base de données.");
+            return;
+        }
         const header = document.getElementById('templateHeader');
         header.innerHTML = _templateHeaderLivre;
         const contentRow = document.getElementById('contentRow');
@@ -546,7 +554,7 @@ async function showLivreArray() {
         contentRow.innerHTML = rows;
         checkIfChangeLivres(livres, auteurs);
     } catch (error) {
-        console.error('Error fetching or processing data:', error);
+        console.error('Error fetching or processing data : ', error);
     }
 }
 
@@ -588,7 +596,7 @@ async function showAuteurArray() {
         contentRow.innerHTML = rows;
         checkIfChangeAuteurs(auteurs);
     } catch (error) {
-        console.error('Error fetching or processing data:', error);
+        console.error('Error fetching or processing data : ', error);
     }
 }
 
@@ -615,7 +623,7 @@ async function showPointDeVenteArray() {
         contentRow.innerHTML = rows;
         checkifChangePointDeVentes(pointDeVentes);
     } catch (error) {
-        console.error('Error fetching or processing data:', error);
+        console.error('Error fetching or processing data : ', error);
     }
 }
 
@@ -639,7 +647,7 @@ async function showEditeurArray(){
         contentRow.innerHTML = rows;
         checkIfChangeEditeurs(editeurs);
     } catch (error) {
-        console.error('Error fetching or processing data:', error);
+        console.error('Error fetching or processing data : ', error);
     }
 }
 
@@ -674,7 +682,7 @@ async function showUtilisateurArray(){
         contentRow.innerHTML = rows;
         checkIfChangeUtilisateurs(utilisateurs);
     } catch (error) {
-        console.error('Error fetching or processing data:', error);
+        console.error('Error fetching or processing data : ', error);
     }
 }
 
@@ -737,7 +745,7 @@ async function showEmpruntArray(){
         contentRow.innerHTML = rows;
         checkIfChangeEmprunts(emprunts);
     } catch (error) {
-        console.error('Error fetching or processing data:', error);
+        console.error('Error fetching or processing data : ', error);
     }
 }
 

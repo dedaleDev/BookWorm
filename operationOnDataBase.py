@@ -86,10 +86,10 @@ def  getStatus(isbn:str, db:database.db):
         if livre != None:
             dbStatus = livre[0][6]
         if dbStatus == "hors stock": return "hors stock"
-        elif  emprunt == None or emprunt ==[] or emprunt == (): return "disponible"
+        elif  emprunt == None or emprunt == (): return "disponible"
         else : return "emprunté"
     except Exception as e:
-        print(f"\033[31m Une erreur est survenue lors de la recherche du status du livre :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
+        print(f"\033[31m Une erreur est survenue lors de la recherche du statut du livre :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
         return None
     
 def convertPointDeVenteToAcceptablePointDeVente(pointDeVente:str,db:database.db)->str:
@@ -126,7 +126,12 @@ def getRealNote(isbn:str,db:database.db) -> float :
         else : 
             db.mkRequest("selectLivreByISBN", False, isbn)
             result = db.cursor.fetchall()
+            if result == None or result == (): 
+                db.mkRequest("selectLivreByISBN", False, isbn)
+                result = db.cursor.fetchall()
+                if result == None or result == (): return 0
             return result[0][4]
     except Exception as e:
         print(f"\033[31m Une erreur est survenue lors de la recherche de la note réelle du livre :{e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
+        print("RESULT", result, "NB NOTES", nbNotes,"MOY", moy,"NOTES", notes)
         return 0
