@@ -9,11 +9,11 @@
 
 # Premier lancement :  
     - Assurez-vous que MariaDB et Apache2 sont bien lancés (systemctl start apache2, systemctl start mariadb)
-    - Modifiez la configuration présente dans le fichier main.py pour correspondre avec vos réglages locaux (ip, port, mot de 	passe de la base de donnée / site web). Des commentaires sont présents afin de faciliter la configuration.
+    - Modifiez la configuration présente dans le fichier main.py pour correspondre avec vos réglages locaux (ip, port, mot de passe de la base de donnée / site web). Des commentaires sont présents afin de faciliter la configuration.
     - Exécutez le fichier main.py (python3 main.py)
     - Vous serez ensuite guidé lors de l'installation de BookWorm
     - Accédez au site web via l'URL saisie dans la configuration (main.py) + le numéro de port  (par défaut localhost:8080).  
-    - Une fois le site lancé, vous pouvez utiliser l'un des différents utilisateurs disponibles par défaut ou vous en créer un compte.
+    - Une fois le site lancé, vous pouvez utiliser l'un des différents utilisateurs disponibles par défaut ou vous créer un compte.
 
     Compte Admin : 
             email : admin@admin.com 
@@ -38,10 +38,10 @@
 
 # Modification de la base depuis l'étape 2 :
     La base fournie dans l'étape 2 est exactement la même que celle actuelle. Seuls quelques changements mineurs ont été effectués, notamment au niveau des données de la base. La structure en elle-même n'a pas été changée.
-    La nouvelle version web a nécessité de coder et de recoder de nombreux scripts de gestion de la base, notamment pour s'adapter à la gestion de mon site via API.
-    J'ai du notamment effectuer d'important changement au niveau de ma fonction mkRequest() responsable de la gestion l'execution des requetes. En effet, l'utilisation d'une API a très rapidement satturé les capacités de traitement de ma base de donnée.
-    Ma base de donnée recevait plusieurs requetes à la fois et n'étant pas capable de les gérer correctement elle se déconnectait causant un crash général. Afin de pallier ce problème, j'ai du faire appel à un Lock du module threading. 
-    L'utilisation d'un Lock permet de s'assurer que l'ensemble des requetes sont executés dans l'ordre. 
+    La nouvelle version web a nécessité de coder et de recoder de nombreux scripts de gestion de la base, surtout pour s'adapter à la gestion de mon site via API.
+    J'ai dû notamment effectuer d'importants changements au niveau de ma fonction mkRequest() responsable de la gestion de l'exécution des requêtes. En effet, l'utilisation d'une API a très rapidement saturé les capacités de traitement de ma base de donnée.
+    Ma base de donnée recevait plusieurs requêtes à la fois et n'étant pas capable de les gérer correctement, elle se déconnectait, causant un crash général. Afin de pallier ce problème, j'ai dû faire appel à un Lock du module threading. 
+    L'utilisation d'un Lock permet de s'assurer que l'ensemble des requêtes sont exécutés dans l'ordre. 
 
 # Description du contenu de l'archive : 
     Le répertoire data contient l'ensemble des données utilisées pour importer le jeu de données, que ce soit les fichiers CSV, les images de couverture des livres.
