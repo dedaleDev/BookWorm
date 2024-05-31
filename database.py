@@ -157,12 +157,14 @@ class db():
                 self.maxRetry = 5
         except Exception as e:
             okError = ["not enough arguments","arguments","data too long","data truncated","foreign key","primary","duplicate entry","cannot add or update a child row","incorrect","column cannot be null","truncated","syntax error","unknown","multiple primary key defined","table already exists","no such table","table doesn't exist","cannot delete or update","constraint failed",]
-            if str(e).lower() in okError:
+            packetError = ["lost connection", "packet sequence",'cursor'] 
+            if str(e).lower() in okError and not any([i in str(e).lower() for i in packetError]):
                 print(f" \033[31mLa requête à échouée : {self._requetes[request] % tuple(args)}\n---, Erreur : {e}, ligne : {e.__traceback__.tb_lineno}\033[0m")
                 print("Args : ", args)
                 print(f"Nombre de placeholders : {self._requetes[request].count('%s')}")
                 print(f"Nombre d'arguments : {len(args)}\n--------------------------------------------------\033[0m") 
             else : 
+                print("LOST CONNECTION reload...")
                 reload = self.retryDatabaseConnection()
                 if reload:
                     if self.maxRetry > 0:

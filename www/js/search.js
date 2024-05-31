@@ -418,6 +418,10 @@ search().then(searchData => {//AFFICHAGE DES RESULTATS
     else {
         let error404 = "<h2 class='text-center' style='color:white; padding:0px'>Oups, aucun résultat n'a été trouvé dans {{ typeSearch }}.<h2><img id='mascotte404' class='img-fluid mx-auto d-block w-25' src='../img/error404.svg' alt='404'>".replace("{{ typeSearch }}", typeSearch);
         document.getElementById("searchResult").innerHTML = error404;
+        document.getElementById("dropdownGenre").style.display = "none";
+        document.getElementById("dropdownSort").style.display = "none";
+        document.getElementById("disponibleCheckBox").style.display = "none";
+        document.getElementById("dropdownAuteurFilter").style.display = "none";
     }
 });
 

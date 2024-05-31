@@ -190,6 +190,10 @@ loadLivre(isbn).then(livreData => {
             .then(response => response.json())
             .then(data => {
                 if (data.content === "success") {
+                    if (noteInput.value === "" || noteInput.value < 0 || noteInput.value > 10) {
+                        alert("Veuillez saisir une note valide (entre 0 et 10)");
+                        return;
+                    }
                     fetch(`${API_URL}/addNote?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&isbn=${isbn}&note=${noteInput.value}`)
                     .then(response => response.json())
                     .then(data => {
