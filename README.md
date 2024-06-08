@@ -1,4 +1,4 @@
-![masscotteOpenEeyes](https://github.com/dedaleDev/BookWorm/assets/101816097/e2ae4087-861b-41b8-8d45-9ea8cc29f71d)# BookWorm
+BOOKWORM
 ================
 
 ![192_168_1_20_8080 · 8 07am · 05-20](https://github.com/dedaleDev/BookWorm/assets/101816097/ef419c1d-f85d-4d3d-a6b3-9d9c54665615)
