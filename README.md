@@ -1,49 +1,50 @@
 BOOKWORM
 ================
 
-Bookworm est un gestionnaire de bibliothèque personnelle.
+Bookworm is a personal library manager.
 
 ![192_168_1_20_8080 · 8 07am · 05-20](https://github.com/dedaleDev/BookWorm/assets/101816097/ef419c1d-f85d-4d3d-a6b3-9d9c54665615)
 
 
 
-## Dépendances
+## Dependencies
 -------------
 
-* Python 3.11.8 ou ultérieur
-* Système basé sur Debian (non testé sur Windows)
+* Python 3.11.8 or later
+* Debian-based system (not tested on Windows)
 * Cherrypy (`pip install cherrypy`)
 * PyMySQL (`pip install pymysql`)
-* Apache 2 (`apt install apache2`) ou Nginx
+* Apache 2 (`apt install apache2`) or Nginx
 * MariaDB (`apt install mariadb-server`)
 
-## Premier lancement
+## First launch
 --------------
 
-### Étapes à suivre
+### Steps to follow
 
-1. Assurez-vous que MariaDB et Apache2 sont bien lancés :
+1. Make sure that MariaDB and Apache2 are running:
 ```
 systemctl start apache2
 systemctl start mariadb
 ```
-2. Modifiez la configuration présente dans le fichier `main.py` pour correspondre avec vos réglages locaux (ip, port, mot de passe de la base de données / site web). Des commentaires sont présents afin de faciliter la configuration.
-3. Exécutez le fichier `main.py` :
+2. Modify the configuration in the `main.py` file to match your local settings (ip, port, database/website password). Comments are provided to make configuration easier.
+3. Run the `main.py` file:
 ```
 python3 main.py
 ```
-4. Vous serez ensuite guidé lors de l'installation de BookWorm.
-5. Accédez au site web via l'URL saisie dans la configuration (`main.py`) + le numéro de port (par défaut `localhost:8080`).
+4. You will then be guided through the installation of BookWorm.
+5. Access the website using the URL entered in the configuration (`main.py`) + the port number (default `localhost:8080`).
 
-### Comptes par défaut
+
+### Default accounts
 ---------------------
 
-* Compte Admin :
-	+ Email : `admin@admin.com`
-	+ Mot de passe : `admin`
-* Compte Harry Potter :
-	+ Email : `harrypotter@magic.com`
-	+ Mot de passe : `harrypotter`
-* D'autres comptes par défaut sont disponibles, pour cela, veuillez vous référer à la section utilisateur dans l'espace d'administration.
+* Admin account :
+	+ Email: `admin@admin.com`
+	+ Password: `admin
+* Harry Potter account:
+	+ Email: `harrypotter@magic.com`
+	+ Password: `harrypotter` * Other default accounts are available.
+* Other default accounts are available, please refer to the user section in the administration area.
 
-Bienvenue sur BookWorm !
+Welcome to BookWorm!
